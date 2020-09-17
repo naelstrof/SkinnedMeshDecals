@@ -144,7 +144,7 @@ public class PaintDecal : MonoBehaviour {
         }
 
         // With a valid target, generate a material list with the decal projector on the right submesh, with all other submeshes set to an invisible material.
-        decalProjector.SetTexture("_BaseColorMap", decal);
+        decalProjector.SetTexture("_Decal", decal);
         decalProjector.SetColor("_BaseColor", color);
 
         decalCamera.transform.position = position;
