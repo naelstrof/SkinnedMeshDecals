@@ -11,9 +11,9 @@ public class DecalShooter : MonoBehaviour {
     void FixedUpdate() {
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.forward, out hit, 10f, hitMask, QueryTriggerInteraction.Ignore)) {
-            SkinnedMeshRenderer r = hit.collider.transform.root.GetComponentInChildren<SkinnedMeshRenderer>();
+            Renderer r = hit.collider.transform.root.GetComponentInChildren<Renderer>();
             if (r != null) {
-                PaintDecal.instance.RenderDecal(r, decal, hit.point, Quaternion.LookRotation(hit.normal, Vector3.up), color, size);
+                PaintDecal.instance.RenderDecal(r, decal, hit.point + hit.normal * 0.25f, Quaternion.FromToRotation(Vector3.forward,-hit.normal), color, size);
             }
         }
     }
