@@ -191,7 +191,7 @@ public class PaintDecal : MonoBehaviour {
         decalCamera.transform.position = position;
         decalCamera.transform.rotation = rotation;
         if (r.lightmapIndex >= 0) {
-            decalProjector.SetVector("_lightmapST", r.realtimeLightmapScaleOffset);
+            decalProjector.SetVector("_lightmapST", r.lightmapScaleOffset);
             decalCamera.orthographicSize = size * 3;
         } else {
             decalProjector.SetVector("_lightmapST", new Vector4(1,1,0,0));
