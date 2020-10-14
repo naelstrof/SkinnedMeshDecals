@@ -191,7 +191,15 @@ public class PaintDecal : MonoBehaviour {
         decalCamera.transform.position = position;
         decalCamera.transform.rotation = rotation;
         if (r.lightmapIndex >= 0) {
-            decalProjector.SetVector("_lightmapST", r.lightmapScaleOffset);
+            // FIXME: Not sure why, but there is a discrepancy between URP and HDRP's lightmap information. This might actually depend on lightmap settings.
+            // Though for now this works fine.
+            if (GraphicsSettings.currentRenderPipeline.GetType().ToString().Contains("HighDefinition")) {
+                // HDRP uses LightmapScaleOffset
+                decalProjector.SetVector("_lightmapST", r.lightmapScaleOffset);
+            } else {
+                // URP uses the realtimeLightmapScaleOffset
+                decalProjector.SetVector("_lightmapST", r.realtimeLightmapScaleOffset);
+            }
             decalCamera.orthographicSize = size * 3;
         } else {
             decalProjector.SetVector("_lightmapST", new Vector4(1,1,0,0));
