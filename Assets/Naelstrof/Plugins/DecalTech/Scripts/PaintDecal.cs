@@ -105,7 +105,12 @@ public class PaintDecal : MonoBehaviour {
             }
         }
     }
-
+    private void ClearRenderTexture(RenderTexture target) {
+        var rt = UnityEngine.RenderTexture.active;
+        UnityEngine.RenderTexture.active = target;
+        GL.Clear(true, true, Color.clear);
+        UnityEngine.RenderTexture.active = rt;
+    }
     public bool IsDecalable(Material m) {
         foreach(string s in m.GetTexturePropertyNames()) {
             if (s == "_DecalColorMap") {
@@ -161,6 +166,7 @@ public class PaintDecal : MonoBehaviour {
         if (target == null) {
             target = new RenderTexture(renderTextureResolution, renderTextureResolution, 0);
             target.name = r.name + " Decalmap";
+            ClearRenderTexture(target);
             dynamicRenderTextureCache[r] = new CachedRenderTexture { texture=target, timeCreated=Time.timeSinceLevelLoad, probableAlpha=1f };
         }
         foreach (Material m in mats) {
@@ -263,6 +269,7 @@ public class PaintDecal : MonoBehaviour {
         for(int i=0;i<LightmapSettings.lightmaps.Length;i++) {
             RenderTexture t = new RenderTexture(decalMapTextureResolution, decalMapTextureResolution,0);
             t.name = "Lightmap" + i;
+            ClearRenderTexture(t);
             decalMaps.Add(t);
         }
         foreach (KeyValuePair<Renderer, CachedRenderTexture> p in dynamicRenderTextureCache) {
