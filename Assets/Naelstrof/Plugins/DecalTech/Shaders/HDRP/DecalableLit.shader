@@ -6,7 +6,7 @@ Shader "Decalable/HDRP/Lit"
 	{
 		[HideInInspector] _AlphaCutoff("Alpha Cutoff ", Range(0, 1)) = 0.5
 		[HideInInspector] _EmissionColor("Emission Color", Color) = (1,1,1,1)
-		[ASEBegin]_BaseColorMap("BaseColorMap", 2D) = "white" {}
+		_BaseColorMap("BaseColorMap", 2D) = "white" {}
 		_DecalColorMap("DecalColorMap", 2D) = "black" {}
 		_NormalMap("NormalMap", 2D) = "bump" {}
 		_MaskMap("MaskMap", 2D) = "gray" {}
@@ -15,6 +15,7 @@ Shader "Decalable/HDRP/Lit"
 
 		[HideInInspector] _RenderQueueType("Render Queue Type", Float) = 1
 		[HideInInspector] [ToggleUI] _AddPrecomputedVelocity("Add Precomputed Velocity", Float) = 1
+		[HideInInspector] [ToggleUI]_SupportDecals("Boolean", Float) = 1
 		[HideInInspector] _StencilRef("Stencil Ref", Int) = 0
 		[HideInInspector] _StencilWriteMask("Stencil Write Mask", Int) = 6
 		[HideInInspector] _StencilRefDepth("Stencil Ref Depth", Int) = 8
@@ -28,6 +29,7 @@ Shader "Decalable/HDRP/Lit"
 		[HideInInspector] _ZTestGBuffer("ZTest GBuffer", Int) = 4
 		[HideInInspector] [ToggleUI] _RequireSplitLighting("Require Split Lighting", Float) = 0
 		[HideInInspector] [ToggleUI] _ReceivesSSR("Receives SSR", Float) = 1
+		[HideInInspector] [ToggleUI] _ReceivesSSRTransparent("Boolean", Float) = 0
 		[HideInInspector] _SurfaceType("Surface Type", Float) = 0
 		[HideInInspector] _BlendMode("Blend Mode", Float) = 0
 		[HideInInspector] _SrcBlend("Src Blend", Float) = 1
@@ -127,6 +129,8 @@ Shader "Decalable/HDRP/Lit"
 
 		struct PrePassSurfaceDescription // DepthPrePass
 		{
+			float3 Normal;
+			float Smoothness;
 			float Alpha;
 			float AlphaClipThresholdDepthPrepass;
 			float DepthOffset;
@@ -155,7 +159,9 @@ Shader "Decalable/HDRP/Lit"
 			float DistortionBlur;
 			float AlphaClipThreshold;
 		};
-
+		
+		#ifndef ASE_TESS_FUNCS
+		#define ASE_TESS_FUNCS
 		float4 FixedTess( float tessValue )
 		{
 			return tessValue;
@@ -253,6 +259,7 @@ Shader "Decalable/HDRP/Lit"
 			}
 			return tess;
 		}
+		#endif //ASE_TESS_FUNCS
 		ENDHLSL
 		
 		Pass
@@ -280,7 +287,7 @@ Shader "Decalable/HDRP/Lit"
 			#define _SPECULAR_OCCLUSION_FROM_AO 1
 			#define ASE_LIT_CLEAR_COAT 1
 			#define _AMBIENT_OCCLUSION 1
-			#define ASE_SRP_VERSION 70301
+			#define ASE_SRP_VERSION 100302
 
 
 			#pragma shader_feature _SURFACE_TYPE_TRANSPARENT
@@ -315,51 +322,12 @@ Shader "Decalable/HDRP/Lit"
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/NormalSurfaceGradient.hlsl"
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/FragInputs.hlsl"
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/ShaderPass.cs.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphHeader.hlsl"
 
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
 			#ifdef DEBUG_DISPLAY
 				#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Debug/DebugDisplay.hlsl"
 			#endif
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Material.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/Lit.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/BuiltinUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/MaterialUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Decal/DecalUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/LitDecalData.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
-
-			
-
-			#if defined(_DOUBLESIDED_ON) && !defined(ASE_NEED_CULLFACE)
-				#define ASE_NEED_CULLFACE 1
-			#endif
-
-			struct AttributesMesh
-			{
-				float3 positionOS : POSITION;
-				float3 normalOS : NORMAL;
-				float4 tangentOS : TANGENT;
-				float4 uv1 : TEXCOORD1;
-				float4 uv2 : TEXCOORD2;
-				float4 ase_texcoord : TEXCOORD0;
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-			};
-
-			struct PackedVaryingsMeshToPS
-			{
-				float4 positionCS : SV_Position;
-				float3 interp00 : TEXCOORD0;
-				float3 interp01 : TEXCOORD1;
-				float4 interp02 : TEXCOORD2;
-				float4 interp03 : TEXCOORD3;
-				float4 interp04 : TEXCOORD4;
-				float4 ase_texcoord5 : TEXCOORD5;
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-				UNITY_VERTEX_OUTPUT_STEREO
-				#if defined(SHADER_STAGE_FRAGMENT) && defined(ASE_NEED_CULLFACE)
-				FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
-				#endif
-			};
 
 			CBUFFER_START( UnityPerMaterial )
 			float4 _BaseColorMap_ST;
@@ -417,10 +385,50 @@ Shader "Decalable/HDRP/Lit"
 			CBUFFER_END
 			sampler2D _BaseColorMap;
 			sampler2D _DecalColorMap;
-			SAMPLER(sampler_DecalColorMap);
 			sampler2D _NormalMap;
 			sampler2D _MaskMap;
-			SAMPLER(sampler_MaskMap);
+
+
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Material.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/Lit.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/BuiltinUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/MaterialUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Decal/DecalUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/LitDecalData.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
+
+			
+
+			#if defined(_DOUBLESIDED_ON) && !defined(ASE_NEED_CULLFACE)
+				#define ASE_NEED_CULLFACE 1
+			#endif
+
+			struct AttributesMesh
+			{
+				float3 positionOS : POSITION;
+				float3 normalOS : NORMAL;
+				float4 tangentOS : TANGENT;
+				float4 uv1 : TEXCOORD1;
+				float4 uv2 : TEXCOORD2;
+				float4 ase_texcoord : TEXCOORD0;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+			};
+
+			struct PackedVaryingsMeshToPS
+			{
+				float4 positionCS : SV_Position;
+				float3 interp00 : TEXCOORD0;
+				float3 interp01 : TEXCOORD1;
+				float4 interp02 : TEXCOORD2;
+				float4 interp03 : TEXCOORD3;
+				float4 interp04 : TEXCOORD4;
+				float4 ase_texcoord5 : TEXCOORD5;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+				UNITY_VERTEX_OUTPUT_STEREO
+				#if defined(SHADER_STAGE_FRAGMENT) && defined(ASE_NEED_CULLFACE)
+				FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
+				#endif
+			};
 
 
 			
@@ -540,8 +548,8 @@ Shader "Decalable/HDRP/Lit"
 				#if HAVE_DECALS
 				if( _EnableDecals )
 				{
-					DecalSurfaceData decalSurfaceData = GetDecalSurfaceData( posInput, surfaceDescription.Alpha );
-					ApplyDecalToSurfaceData( decalSurfaceData, surfaceData );
+					DecalSurfaceData decalSurfaceData = GetDecalSurfaceData(posInput, fragInputs.tangentToWorld[2], surfaceDescription.Alpha);
+					ApplyDecalToSurfaceData(decalSurfaceData, fragInputs.tangentToWorld[2], surfaceData);
 				}
 				#endif
 
@@ -809,9 +817,9 @@ Shader "Decalable/HDRP/Lit"
 				#endif
 
 				surfaceDescription.Emission = 0;
-				surfaceDescription.Smoothness = tex2DNode17.a;
+				surfaceDescription.Smoothness = 0.5;
 				surfaceDescription.Occlusion = tex2DNode17.g;
-				surfaceDescription.Alpha = 1;
+				surfaceDescription.Alpha = tex2DNode17.a;
 
 				#ifdef _ALPHATEST_ON
 				surfaceDescription.AlphaClipThreshold = _AlphaCutoff;
@@ -901,7 +909,7 @@ Shader "Decalable/HDRP/Lit"
 			#define _SPECULAR_OCCLUSION_FROM_AO 1
 			#define ASE_LIT_CLEAR_COAT 1
 			#define _AMBIENT_OCCLUSION 1
-			#define ASE_SRP_VERSION 70301
+			#define ASE_SRP_VERSION 100302
 
 
 			#pragma shader_feature _SURFACE_TYPE_TRANSPARENT
@@ -925,47 +933,13 @@ Shader "Decalable/HDRP/Lit"
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/NormalSurfaceGradient.hlsl"
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/FragInputs.hlsl"
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/ShaderPass.cs.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphHeader.hlsl"
 
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
 			#ifdef DEBUG_DISPLAY
 				#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Debug/DebugDisplay.hlsl"
 			#endif
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Material.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/Lit.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/BuiltinUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/MaterialUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Decal/DecalUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/LitDecalData.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
-
 			
-
-			#if defined(_DOUBLESIDED_ON) && !defined(ASE_NEED_CULLFACE)
-				#define ASE_NEED_CULLFACE 1
-			#endif
-
-			struct AttributesMesh
-			{
-				float3 positionOS : POSITION;
-				float3 normalOS : NORMAL;
-				float4 tangentOS : TANGENT;
-				float4 uv0 : TEXCOORD0;
-				float4 uv1 : TEXCOORD1;
-				float4 uv2 : TEXCOORD2;
-				
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-			};
-
-			struct PackedVaryingsMeshToPS
-			{
-				float4 positionCS : SV_Position;
-				float4 ase_texcoord : TEXCOORD0;
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-				#if defined(SHADER_STAGE_FRAGMENT) && defined(ASE_NEED_CULLFACE)
-				FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
-				#endif
-			};
-
 			CBUFFER_START( UnityPerMaterial )
 			float4 _BaseColorMap_ST;
 			float4 _BaseColor;
@@ -1022,11 +996,45 @@ Shader "Decalable/HDRP/Lit"
 			CBUFFER_END
 			sampler2D _BaseColorMap;
 			sampler2D _DecalColorMap;
-			SAMPLER(sampler_DecalColorMap);
 			sampler2D _NormalMap;
 			sampler2D _MaskMap;
-			SAMPLER(sampler_MaskMap);
 
+
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Material.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/Lit.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/BuiltinUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/MaterialUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Decal/DecalUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/LitDecalData.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
+
+			
+
+			#if defined(_DOUBLESIDED_ON) && !defined(ASE_NEED_CULLFACE)
+				#define ASE_NEED_CULLFACE 1
+			#endif
+
+			struct AttributesMesh
+			{
+				float3 positionOS : POSITION;
+				float3 normalOS : NORMAL;
+				float4 tangentOS : TANGENT;
+				float4 uv0 : TEXCOORD0;
+				float4 uv1 : TEXCOORD1;
+				float4 uv2 : TEXCOORD2;
+				
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+			};
+
+			struct PackedVaryingsMeshToPS
+			{
+				float4 positionCS : SV_Position;
+				float4 ase_texcoord : TEXCOORD0;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+				#if defined(SHADER_STAGE_FRAGMENT) && defined(ASE_NEED_CULLFACE)
+				FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
+				#endif
+			};
 
 			
 			void BuildSurfaceData(FragInputs fragInputs, inout GlobalSurfaceDescription surfaceDescription, float3 V, PositionInputs posInput, out SurfaceData surfaceData, out float3 bentNormalWS)
@@ -1145,8 +1153,8 @@ Shader "Decalable/HDRP/Lit"
 				#if HAVE_DECALS
 				if( _EnableDecals )
 				{
-					DecalSurfaceData decalSurfaceData = GetDecalSurfaceData( posInput, surfaceDescription.Alpha );
-					ApplyDecalToSurfaceData( decalSurfaceData, surfaceData );
+					DecalSurfaceData decalSurfaceData = GetDecalSurfaceData(posInput, fragInputs.tangentToWorld[2], surfaceDescription.Alpha);
+					ApplyDecalToSurfaceData(decalSurfaceData, fragInputs.tangentToWorld[2], surfaceData);
 				}
 				#endif
 
@@ -1400,9 +1408,9 @@ Shader "Decalable/HDRP/Lit"
 				#endif
 
 				surfaceDescription.Emission = 0;
-				surfaceDescription.Smoothness = tex2DNode17.a;
+				surfaceDescription.Smoothness = 0.5;
 				surfaceDescription.Occlusion = tex2DNode17.g;
-				surfaceDescription.Alpha = 1;
+				surfaceDescription.Alpha = tex2DNode17.a;
 
 				#ifdef _ALPHATEST_ON
 				surfaceDescription.AlphaClipThreshold = _AlphaCutoff;
@@ -1485,7 +1493,7 @@ Shader "Decalable/HDRP/Lit"
 			#define _SPECULAR_OCCLUSION_FROM_AO 1
 			#define ASE_LIT_CLEAR_COAT 1
 			#define _AMBIENT_OCCLUSION 1
-			#define ASE_SRP_VERSION 70301
+			#define ASE_SRP_VERSION 100302
 
 
 			#pragma shader_feature _SURFACE_TYPE_TRANSPARENT
@@ -1509,6 +1517,7 @@ Shader "Decalable/HDRP/Lit"
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/NormalSurfaceGradient.hlsl"
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/FragInputs.hlsl"
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/ShaderPass.cs.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphHeader.hlsl"
 
 			//#define USE_LEGACY_UNITY_MATRIX_VARIABLES
 
@@ -1516,39 +1525,6 @@ Shader "Decalable/HDRP/Lit"
 			#ifdef DEBUG_DISPLAY
 				#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Debug/DebugDisplay.hlsl"
 			#endif
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Material.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/Lit.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/BuiltinUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/MaterialUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Decal/DecalUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/LitDecalData.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
-
-			
-
-			#if defined(_DOUBLESIDED_ON) && !defined(ASE_NEED_CULLFACE)
-				#define ASE_NEED_CULLFACE 1
-			#endif
-
-			struct AttributesMesh
-			{
-				float3 positionOS : POSITION;
-				float3 normalOS : NORMAL;
-				
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-			};
-
-			struct PackedVaryingsMeshToPS
-			{
-				float4 positionCS : SV_Position;
-				float3 interp00 : TEXCOORD0;
-				
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-				UNITY_VERTEX_OUTPUT_STEREO
-				#if defined(SHADER_STAGE_FRAGMENT) && defined(ASE_NEED_CULLFACE)
-				FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
-				#endif
-			};
 
 			CBUFFER_START( UnityPerMaterial )
 			float4 _BaseColorMap_ST;
@@ -1604,7 +1580,42 @@ Shader "Decalable/HDRP/Lit"
 				float _TessMaxDisp;
 			#endif
 			CBUFFER_END
+			sampler2D _MaskMap;
+
+
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Material.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/Lit.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/BuiltinUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/MaterialUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Decal/DecalUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/LitDecalData.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
+
 			
+
+			#if defined(_DOUBLESIDED_ON) && !defined(ASE_NEED_CULLFACE)
+				#define ASE_NEED_CULLFACE 1
+			#endif
+
+			struct AttributesMesh
+			{
+				float3 positionOS : POSITION;
+				float3 normalOS : NORMAL;
+				float4 ase_texcoord : TEXCOORD0;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+			};
+
+			struct PackedVaryingsMeshToPS
+			{
+				float4 positionCS : SV_Position;
+				float3 interp00 : TEXCOORD0;
+				float4 ase_texcoord1 : TEXCOORD1;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+				UNITY_VERTEX_OUTPUT_STEREO
+				#if defined(SHADER_STAGE_FRAGMENT) && defined(ASE_NEED_CULLFACE)
+				FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
+				#endif
+			};
 
 			
 			void BuildSurfaceData(FragInputs fragInputs, inout AlphaSurfaceDescription surfaceDescription, float3 V, PositionInputs posInput, out SurfaceData surfaceData, out float3 bentNormalWS)
@@ -1684,8 +1695,8 @@ Shader "Decalable/HDRP/Lit"
 				#if HAVE_DECALS
 				if( _EnableDecals )
 				{
-					DecalSurfaceData decalSurfaceData = GetDecalSurfaceData( posInput, surfaceDescription.Alpha );
-					ApplyDecalToSurfaceData( decalSurfaceData, surfaceData );
+					DecalSurfaceData decalSurfaceData = GetDecalSurfaceData(posInput, fragInputs.tangentToWorld[2], surfaceDescription.Alpha);
+					ApplyDecalToSurfaceData(decalSurfaceData, fragInputs.tangentToWorld[2], surfaceData);
 				}
 				#endif
 
@@ -1748,7 +1759,10 @@ Shader "Decalable/HDRP/Lit"
 				UNITY_TRANSFER_INSTANCE_ID(inputMesh, outputPackedVaryingsMeshToPS);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO( outputPackedVaryingsMeshToPS );
 
+				outputPackedVaryingsMeshToPS.ase_texcoord1.xy = inputMesh.ase_texcoord.xy;
 				
+				//setting value to unused interpolator channels and avoid initialization warnings
+				outputPackedVaryingsMeshToPS.ase_texcoord1.zw = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 				float3 defaultVertexValue = inputMesh.positionOS.xyz;
@@ -1776,7 +1790,8 @@ Shader "Decalable/HDRP/Lit"
 			{
 				float3 positionOS : INTERNALTESSPOS;
 				float3 normalOS : NORMAL;
-				
+				float4 ase_texcoord : TEXCOORD0;
+
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -1793,7 +1808,7 @@ Shader "Decalable/HDRP/Lit"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				o.positionOS = v.positionOS;
 				o.normalOS = v.normalOS;
-				
+				o.ase_texcoord = v.ase_texcoord;
 				return o;
 			}
 
@@ -1837,7 +1852,7 @@ Shader "Decalable/HDRP/Lit"
 				AttributesMesh o = (AttributesMesh) 0;
 				o.positionOS = patch[0].positionOS * bary.x + patch[1].positionOS * bary.y + patch[2].positionOS * bary.z;
 				o.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
-				
+				o.ase_texcoord = patch[0].ase_texcoord * bary.x + patch[1].ase_texcoord * bary.y + patch[2].ase_texcoord * bary.z;
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
 				for (int i = 0; i < 3; ++i)
@@ -1900,8 +1915,10 @@ Shader "Decalable/HDRP/Lit"
 				float3 V = GetWorldSpaceNormalizeViewDir(input.positionRWS);
 
 				AlphaSurfaceDescription surfaceDescription = (AlphaSurfaceDescription)0;
+				float2 uv_MaskMap = packedInput.ase_texcoord1.xy * _MaskMap_ST.xy + _MaskMap_ST.zw;
+				float4 tex2DNode17 = tex2D( _MaskMap, uv_MaskMap );
 				
-				surfaceDescription.Alpha = 1;
+				surfaceDescription.Alpha = tex2DNode17.a;
 
 				#ifdef _ALPHATEST_ON
 				surfaceDescription.AlphaClipThreshold = _AlphaCutoff;
@@ -1951,7 +1968,7 @@ Shader "Decalable/HDRP/Lit"
 			#define _SPECULAR_OCCLUSION_FROM_AO 1
 			#define ASE_LIT_CLEAR_COAT 1
 			#define _AMBIENT_OCCLUSION 1
-			#define ASE_SRP_VERSION 70301
+			#define ASE_SRP_VERSION 100302
 
 
 			#pragma shader_feature _SURFACE_TYPE_TRANSPARENT
@@ -1977,47 +1994,12 @@ Shader "Decalable/HDRP/Lit"
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/NormalSurfaceGradient.hlsl"
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/FragInputs.hlsl"
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/ShaderPass.cs.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphHeader.hlsl"
 
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
 			#ifdef DEBUG_DISPLAY
 				#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Debug/DebugDisplay.hlsl"
 			#endif
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Material.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/Lit.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/BuiltinUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/MaterialUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Decal/DecalUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/LitDecalData.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
-
-			
-
-			#if defined(_DOUBLESIDED_ON) && !defined(ASE_NEED_CULLFACE)
-				#define ASE_NEED_CULLFACE 1
-			#endif
-
-			struct AttributesMesh
-			{
-				float3 positionOS : POSITION;
-				float3 normalOS : NORMAL;
-				
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-			};
-
-			struct PackedVaryingsMeshToPS
-			{
-				float4 positionCS : SV_Position;
-				float3 interp00 : TEXCOORD0;
-				
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-				UNITY_VERTEX_OUTPUT_STEREO
-				#if defined(SHADER_STAGE_FRAGMENT) && defined(ASE_NEED_CULLFACE)
-				FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
-				#endif
-			};
-
-			int _ObjectId;
-			int _PassValue;
 
 			CBUFFER_START( UnityPerMaterial )
 			float4 _BaseColorMap_ST;
@@ -2074,7 +2056,45 @@ Shader "Decalable/HDRP/Lit"
 			#endif
 			CBUFFER_END
 
+			sampler2D _MaskMap;
+
+
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Material.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/Lit.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/BuiltinUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/MaterialUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Decal/DecalUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/LitDecalData.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
+
 			
+
+			#if defined(_DOUBLESIDED_ON) && !defined(ASE_NEED_CULLFACE)
+				#define ASE_NEED_CULLFACE 1
+			#endif
+
+			struct AttributesMesh
+			{
+				float3 positionOS : POSITION;
+				float3 normalOS : NORMAL;
+				float4 ase_texcoord : TEXCOORD0;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+			};
+
+			struct PackedVaryingsMeshToPS
+			{
+				float4 positionCS : SV_Position;
+				float3 interp00 : TEXCOORD0;
+				float4 ase_texcoord1 : TEXCOORD1;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+				UNITY_VERTEX_OUTPUT_STEREO
+				#if defined(SHADER_STAGE_FRAGMENT) && defined(ASE_NEED_CULLFACE)
+				FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
+				#endif
+			};
+
+			int _ObjectId;
+			int _PassValue;
 
 			
 			void BuildSurfaceData(FragInputs fragInputs, inout SceneSurfaceDescription surfaceDescription, float3 V, PositionInputs posInput, out SurfaceData surfaceData, out float3 bentNormalWS)
@@ -2154,8 +2174,8 @@ Shader "Decalable/HDRP/Lit"
 				#if HAVE_DECALS
 				if( _EnableDecals )
 				{
-					DecalSurfaceData decalSurfaceData = GetDecalSurfaceData( posInput, surfaceDescription.Alpha );
-					ApplyDecalToSurfaceData( decalSurfaceData, surfaceData );
+					DecalSurfaceData decalSurfaceData = GetDecalSurfaceData(posInput, fragInputs.tangentToWorld[2], surfaceDescription.Alpha);
+					ApplyDecalToSurfaceData(decalSurfaceData, fragInputs.tangentToWorld[2], surfaceData);
 				}
 				#endif
 
@@ -2214,7 +2234,10 @@ Shader "Decalable/HDRP/Lit"
 				UNITY_TRANSFER_INSTANCE_ID(inputMesh, outputPackedVaryingsMeshToPS);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO( outputPackedVaryingsMeshToPS );
 
+				outputPackedVaryingsMeshToPS.ase_texcoord1.xy = inputMesh.ase_texcoord.xy;
 				
+				//setting value to unused interpolator channels and avoid initialization warnings
+				outputPackedVaryingsMeshToPS.ase_texcoord1.zw = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 				float3 defaultVertexValue = inputMesh.positionOS.xyz;
@@ -2242,7 +2265,8 @@ Shader "Decalable/HDRP/Lit"
 			{
 				float3 positionOS : INTERNALTESSPOS;
 				float3 normalOS : NORMAL;
-				
+				float4 ase_texcoord : TEXCOORD0;
+
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -2259,7 +2283,7 @@ Shader "Decalable/HDRP/Lit"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				o.positionOS = v.positionOS;
 				o.normalOS = v.normalOS;
-				
+				o.ase_texcoord = v.ase_texcoord;
 				return o;
 			}
 
@@ -2303,7 +2327,7 @@ Shader "Decalable/HDRP/Lit"
 				AttributesMesh o = (AttributesMesh) 0;
 				o.positionOS = patch[0].positionOS * bary.x + patch[1].positionOS * bary.y + patch[2].positionOS * bary.z;
 				o.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
-				
+				o.ase_texcoord = patch[0].ase_texcoord * bary.x + patch[1].ase_texcoord * bary.y + patch[2].ase_texcoord * bary.z;
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
 				for (int i = 0; i < 3; ++i)
@@ -2366,8 +2390,10 @@ Shader "Decalable/HDRP/Lit"
 				float3 V = GetWorldSpaceNormalizeViewDir(input.positionRWS);
 
 				SceneSurfaceDescription surfaceDescription = (SceneSurfaceDescription)0;
+				float2 uv_MaskMap = packedInput.ase_texcoord1.xy * _MaskMap_ST.xy + _MaskMap_ST.zw;
+				float4 tex2DNode17 = tex2D( _MaskMap, uv_MaskMap );
 				
-				surfaceDescription.Alpha = 1;
+				surfaceDescription.Alpha = tex2DNode17.a;
 
 				#ifdef _ALPHATEST_ON
 				surfaceDescription.AlphaClipThreshold = _AlphaCutoff;
@@ -2427,18 +2453,20 @@ Shader "Decalable/HDRP/Lit"
 			#define _SPECULAR_OCCLUSION_FROM_AO 1
 			#define ASE_LIT_CLEAR_COAT 1
 			#define _AMBIENT_OCCLUSION 1
-			#define ASE_SRP_VERSION 70301
+			#define ASE_SRP_VERSION 100302
 
 
 			#pragma shader_feature _SURFACE_TYPE_TRANSPARENT
 			#pragma shader_feature_local _DOUBLESIDED_ON
-			#pragma shader_feature_local _ _BLENDMODE_ALPHA _BLENDMODE_ADD _BLENDMODE_PRE_MULTIPLY
+			#pragma shader_feature_local _BLENDMODE_OFF _BLENDMODE_ALPHA _BLENDMODE_ADD _BLENDMODE_PRE_MULTIPLY
 			#pragma shader_feature_local _ENABLE_FOG_ON_TRANSPARENT
 			#pragma shader_feature_local _ALPHATEST_ON
+			#pragma shader_feature_local _ _DISABLE_DECALS
 
 			#define SHADERPASS SHADERPASS_DEPTH_ONLY
 			#pragma multi_compile _ WRITE_NORMAL_BUFFER
 			#pragma multi_compile _ WRITE_MSAA_DEPTH
+			#pragma multi_compile _ WRITE_DECAL_BUFFER
 
 			#pragma vertex Vert
 			#pragma fragment Frag
@@ -2453,48 +2481,13 @@ Shader "Decalable/HDRP/Lit"
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/NormalSurfaceGradient.hlsl"
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/FragInputs.hlsl"
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/ShaderPass.cs.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphHeader.hlsl"
 
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
 			#ifdef DEBUG_DISPLAY
 				#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Debug/DebugDisplay.hlsl"
 			#endif
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Material.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/Lit.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/BuiltinUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/MaterialUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Decal/DecalUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/LitDecalData.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
-
 			
-
-			#if defined(_DOUBLESIDED_ON) && !defined(ASE_NEED_CULLFACE)
-				#define ASE_NEED_CULLFACE 1
-			#endif
-
-			struct AttributesMesh
-			{
-				float3 positionOS : POSITION;
-				float3 normalOS : NORMAL;
-				float4 tangentOS : TANGENT;
-				float4 ase_texcoord : TEXCOORD0;
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-			};
-
-			struct PackedVaryingsMeshToPS
-			{
-				float4 positionCS : SV_Position;
-				float3 interp00 : TEXCOORD0;
-				float3 interp01 : TEXCOORD1;
-				float4 interp02 : TEXCOORD2;
-				float4 ase_texcoord3 : TEXCOORD3;
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-				UNITY_VERTEX_OUTPUT_STEREO
-				#if defined(SHADER_STAGE_FRAGMENT) && defined(ASE_NEED_CULLFACE)
-				FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
-				#endif
-			};
-
 			CBUFFER_START( UnityPerMaterial )
 			float4 _BaseColorMap_ST;
 			float4 _BaseColor;
@@ -2551,8 +2544,44 @@ Shader "Decalable/HDRP/Lit"
 			CBUFFER_END
 			sampler2D _NormalMap;
 			sampler2D _MaskMap;
-			SAMPLER(sampler_MaskMap);
 
+
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Material.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/Lit.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/BuiltinUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/MaterialUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Decal/DecalUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/LitDecalData.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
+
+			
+
+			#if defined(_DOUBLESIDED_ON) && !defined(ASE_NEED_CULLFACE)
+				#define ASE_NEED_CULLFACE 1
+			#endif
+
+			struct AttributesMesh
+			{
+				float3 positionOS : POSITION;
+				float3 normalOS : NORMAL;
+				float4 tangentOS : TANGENT;
+				float4 ase_texcoord : TEXCOORD0;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+			};
+
+			struct PackedVaryingsMeshToPS
+			{
+				float4 positionCS : SV_Position;
+				float3 interp00 : TEXCOORD0;
+				float3 interp01 : TEXCOORD1;
+				float4 interp02 : TEXCOORD2;
+				float4 ase_texcoord3 : TEXCOORD3;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+				UNITY_VERTEX_OUTPUT_STEREO
+				#if defined(SHADER_STAGE_FRAGMENT) && defined(ASE_NEED_CULLFACE)
+				FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
+				#endif
+			};
 
 			
 			void BuildSurfaceData(FragInputs fragInputs, inout SmoothSurfaceDescription surfaceDescription, float3 V, PositionInputs posInput, out SurfaceData surfaceData, out float3 bentNormalWS)
@@ -2634,8 +2663,8 @@ Shader "Decalable/HDRP/Lit"
 				#if HAVE_DECALS
 				if( _EnableDecals )
 				{
-					DecalSurfaceData decalSurfaceData = GetDecalSurfaceData( posInput, surfaceDescription.Alpha );
-					ApplyDecalToSurfaceData( decalSurfaceData, surfaceData );
+					DecalSurfaceData decalSurfaceData = GetDecalSurfaceData(posInput, fragInputs.tangentToWorld[2], surfaceDescription.Alpha);
+					ApplyDecalToSurfaceData(decalSurfaceData, fragInputs.tangentToWorld[2], surfaceData);
 				}
 				#endif
 
@@ -2687,6 +2716,9 @@ Shader "Decalable/HDRP/Lit"
 				PostInitBuiltinData(V, posInput, surfaceData, builtinData);
 			}
 
+			#if defined(WRITE_DECAL_BUFFER) && !defined(_DISABLE_DECALS)
+				#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Decal/DecalPrepassBuffer.hlsl"
+			#endif
 			PackedVaryingsMeshToPS VertexFunction(AttributesMesh inputMesh )
 			{
 				PackedVaryingsMeshToPS outputPackedVaryingsMeshToPS;
@@ -2815,6 +2847,13 @@ Shader "Decalable/HDRP/Lit"
 			}
 			#endif
 
+			#if defined(WRITE_NORMAL_BUFFER) && defined(WRITE_MSAA_DEPTH)
+				#define SV_TARGET_DECAL SV_Target2
+			#elif defined(WRITE_NORMAL_BUFFER) || defined(WRITE_MSAA_DEPTH)
+				#define SV_TARGET_DECAL SV_Target1
+			#else
+				#define SV_TARGET_DECAL SV_Target0
+			#endif
 			void Frag( PackedVaryingsMeshToPS packedInput
 						#ifdef WRITE_NORMAL_BUFFER
 						, out float4 outNormalBuffer : SV_Target0
@@ -2826,6 +2865,9 @@ Shader "Decalable/HDRP/Lit"
 						, out float1 depthColor : SV_Target1
 						#elif defined(SCENESELECTIONPASS)
 						, out float4 outColor : SV_Target0
+						#endif
+						#if defined(WRITE_DECAL_BUFFER) && !defined(_DISABLE_DECALS)
+						, out float4 outDecalBuffer : SV_TARGET_DECAL
 						#endif
 						#ifdef _DEPTHOFFSET_ON
 						, out float outputDepth : SV_Depth
@@ -2869,8 +2911,8 @@ Shader "Decalable/HDRP/Lit"
 				float4 tex2DNode17 = tex2D( _MaskMap, uv_MaskMap );
 				
 				surfaceDescription.Normal = UnpackNormalScale( tex2D( _NormalMap, uv_NormalMap ), 1.0f );
-				surfaceDescription.Smoothness = tex2DNode17.a;
-				surfaceDescription.Alpha = 1;
+				surfaceDescription.Smoothness = 1;
+				surfaceDescription.Alpha = tex2DNode17.a;
 
 				#ifdef _ALPHATEST_ON
 				surfaceDescription.AlphaClipThreshold = _AlphaCutoff;
@@ -2898,6 +2940,13 @@ Shader "Decalable/HDRP/Lit"
 				depthColor = packedInput.positionCS.z;
 				#elif defined(SCENESELECTIONPASS)
 				outColor = float4( _ObjectId, _PassValue, 1.0, 1.0 );
+				#endif
+
+				#if defined(WRITE_DECAL_BUFFER) && !defined(_DISABLE_DECALS)
+				DecalPrepassData decalPrepassData;
+				decalPrepassData.geomNormalWS = surfaceData.geomNormalWS;
+				decalPrepassData.decalLayerMask = GetMeshRenderingDecalLayer();
+				EncodeIntoDecalPrepassBuffer(decalPrepassData, outDecalBuffer);
 				#endif
 			}
 
@@ -2931,7 +2980,7 @@ Shader "Decalable/HDRP/Lit"
 			#define _SPECULAR_OCCLUSION_FROM_AO 1
 			#define ASE_LIT_CLEAR_COAT 1
 			#define _AMBIENT_OCCLUSION 1
-			#define ASE_SRP_VERSION 70301
+			#define ASE_SRP_VERSION 100302
 
 
 			#pragma shader_feature _SURFACE_TYPE_TRANSPARENT
@@ -2957,53 +3006,14 @@ Shader "Decalable/HDRP/Lit"
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/NormalSurfaceGradient.hlsl"
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/FragInputs.hlsl"
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/ShaderPass.cs.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphHeader.hlsl"
 
 
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
 			#ifdef DEBUG_DISPLAY
 				#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Debug/DebugDisplay.hlsl"
 			#endif
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Material.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/Lit.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/BuiltinUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/MaterialUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Decal/DecalUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/LitDecalData.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
-
 			
-
-			#if defined(_DOUBLESIDED_ON) && !defined(ASE_NEED_CULLFACE)
-				#define ASE_NEED_CULLFACE 1
-			#endif
-
-
-			struct AttributesMesh
-			{
-				float3 positionOS : POSITION;
-				float3 normalOS : NORMAL;
-				float3 previousPositionOS : TEXCOORD4;
-				#if defined (_ADD_PRECOMPUTED_VELOCITY)
-					float3 precomputedVelocity : TEXCOORD5;
-				#endif
-				float4 ase_texcoord : TEXCOORD0;
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-			};
-
-			struct PackedVaryingsMeshToPS
-			{
-				float4 vmeshPositionCS : SV_Position;
-				float3 vmeshInterp00 : TEXCOORD0;
-				float3 vpassInterpolators0 : TEXCOORD1; //interpolators0
-				float3 vpassInterpolators1 : TEXCOORD2; //interpolators1
-				float4 ase_texcoord3 : TEXCOORD3;
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-				UNITY_VERTEX_OUTPUT_STEREO
-				#if defined(SHADER_STAGE_FRAGMENT) && defined(ASE_NEED_CULLFACE)
-				FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
-				#endif
-			};
-
 			CBUFFER_START( UnityPerMaterial )
 			float4 _BaseColorMap_ST;
 			float4 _BaseColor;
@@ -3060,7 +3070,48 @@ Shader "Decalable/HDRP/Lit"
 			CBUFFER_END
 			sampler2D _NormalMap;
 			sampler2D _MaskMap;
-			SAMPLER(sampler_MaskMap);
+
+
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Material.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/Lit.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/BuiltinUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/MaterialUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Decal/DecalUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/LitDecalData.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
+
+			
+
+			#if defined(_DOUBLESIDED_ON) && !defined(ASE_NEED_CULLFACE)
+				#define ASE_NEED_CULLFACE 1
+			#endif
+
+
+			struct AttributesMesh
+			{
+				float3 positionOS : POSITION;
+				float3 normalOS : NORMAL;
+				float3 previousPositionOS : TEXCOORD4;
+				#if defined (_ADD_PRECOMPUTED_VELOCITY)
+					float3 precomputedVelocity : TEXCOORD5;
+				#endif
+				float4 ase_texcoord : TEXCOORD0;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+			};
+
+			struct PackedVaryingsMeshToPS
+			{
+				float4 vmeshPositionCS : SV_Position;
+				float3 vmeshInterp00 : TEXCOORD0;
+				float3 vpassInterpolators0 : TEXCOORD1; //interpolators0
+				float3 vpassInterpolators1 : TEXCOORD2; //interpolators1
+				float4 ase_texcoord3 : TEXCOORD3;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+				UNITY_VERTEX_OUTPUT_STEREO
+				#if defined(SHADER_STAGE_FRAGMENT) && defined(ASE_NEED_CULLFACE)
+				FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
+				#endif
+			};
 
 
 			
@@ -3143,8 +3194,8 @@ Shader "Decalable/HDRP/Lit"
 				#if HAVE_DECALS
 				if( _EnableDecals )
 				{
-					DecalSurfaceData decalSurfaceData = GetDecalSurfaceData( posInput, surfaceDescription.Alpha );
-					ApplyDecalToSurfaceData( decalSurfaceData, surfaceData );
+					DecalSurfaceData decalSurfaceData = GetDecalSurfaceData(posInput, fragInputs.tangentToWorld[2], surfaceDescription.Alpha);
+					ApplyDecalToSurfaceData(decalSurfaceData, fragInputs.tangentToWorld[2], surfaceData);
 				}
 				#endif
 
@@ -3423,8 +3474,8 @@ Shader "Decalable/HDRP/Lit"
 				float4 tex2DNode17 = tex2D( _MaskMap, uv_MaskMap );
 				
 				surfaceDescription.Normal = UnpackNormalScale( tex2D( _NormalMap, uv_NormalMap ), 1.0f );
-				surfaceDescription.Smoothness = tex2DNode17.a;
-				surfaceDescription.Alpha = 1;
+				surfaceDescription.Smoothness = 1;
+				surfaceDescription.Alpha = tex2DNode17.a;
 
 				#ifdef _ALPHATEST_ON
 				surfaceDescription.AlphaClipThreshold = _AlphaCutoff;
@@ -3500,7 +3551,7 @@ Shader "Decalable/HDRP/Lit"
 			#define _SPECULAR_OCCLUSION_FROM_AO 1
 			#define ASE_LIT_CLEAR_COAT 1
 			#define _AMBIENT_OCCLUSION 1
-			#define ASE_SRP_VERSION 70301
+			#define ASE_SRP_VERSION 100302
 
 
 			#pragma shader_feature _SURFACE_TYPE_TRANSPARENT
@@ -3536,66 +3587,14 @@ Shader "Decalable/HDRP/Lit"
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/NormalSurfaceGradient.hlsl"
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/FragInputs.hlsl"
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/ShaderPass.cs.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphHeader.hlsl"
 
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
 			#ifdef DEBUG_DISPLAY
 				#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Debug/DebugDisplay.hlsl"
 			#endif
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Material.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/Lighting.hlsl"
-			#define HAS_LIGHTLOOP
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/LightLoop/LightLoopDef.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/Lit.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/LightLoop/LightLoop.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/BuiltinUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/MaterialUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Decal/DecalUtilities.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/LitDecalData.hlsl"
-			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
 
-			
-
-			#if defined(_DOUBLESIDED_ON) && !defined(ASE_NEED_CULLFACE)
-				#define ASE_NEED_CULLFACE 1
-			#endif
-
-			struct AttributesMesh
-			{
-				float3 positionOS : POSITION;
-				float3 normalOS : NORMAL;
-				float4 tangentOS : TANGENT;
-				float4 uv1 : TEXCOORD1;
-				float4 uv2 : TEXCOORD2;
-				#ifdef _WRITE_TRANSPARENT_MOTION_VECTOR
-					float3 previousPositionOS : TEXCOORD4;
-					#if defined (_ADD_PRECOMPUTED_VELOCITY)
-						float3 precomputedVelocity : TEXCOORD5;
-					#endif
-				#endif
-				float4 ase_texcoord : TEXCOORD0;
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-			};
-
-			struct PackedVaryingsMeshToPS
-			{
-				float4 positionCS : SV_Position;
-				float3 interp00 : TEXCOORD0;
-				float3 interp01 : TEXCOORD1;
-				float4 interp02 : TEXCOORD2;
-				float4 interp03 : TEXCOORD3;
-				float4 interp04 : TEXCOORD4;
-				#ifdef _WRITE_TRANSPARENT_MOTION_VECTOR
-					float3 vpassPositionCS : TEXCOORD5;
-					float3 vpassPreviousPositionCS : TEXCOORD6;
-				#endif
-				float4 ase_texcoord7 : TEXCOORD7;
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-				UNITY_VERTEX_OUTPUT_STEREO
-				#if defined(SHADER_STAGE_FRAGMENT) && defined(ASE_NEED_CULLFACE)
-				FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
-				#endif
-			};
-
+			// CBuffer must be declared before Material.hlsl since it internaly uses _BlendMode now
 			CBUFFER_START( UnityPerMaterial )
 			float4 _BaseColorMap_ST;
 			float4 _BaseColor;
@@ -3652,11 +3651,64 @@ Shader "Decalable/HDRP/Lit"
 			CBUFFER_END
 			sampler2D _BaseColorMap;
 			sampler2D _DecalColorMap;
-			SAMPLER(sampler_DecalColorMap);
 			sampler2D _NormalMap;
 			sampler2D _MaskMap;
-			SAMPLER(sampler_MaskMap);
 
+
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Material.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/Lighting.hlsl"
+			#define HAS_LIGHTLOOP
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/LightLoop/LightLoopDef.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/Lit.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/LightLoop/LightLoop.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/BuiltinUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/MaterialUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Decal/DecalUtilities.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Lit/LitDecalData.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderGraphFunctions.hlsl"
+
+			
+
+			#if defined(_DOUBLESIDED_ON) && !defined(ASE_NEED_CULLFACE)
+				#define ASE_NEED_CULLFACE 1
+			#endif
+
+			struct AttributesMesh
+			{
+				float3 positionOS : POSITION;
+				float3 normalOS : NORMAL;
+				float4 tangentOS : TANGENT;
+				float4 uv1 : TEXCOORD1;
+				float4 uv2 : TEXCOORD2;
+				#ifdef _WRITE_TRANSPARENT_MOTION_VECTOR
+					float3 previousPositionOS : TEXCOORD4;
+					#if defined (_ADD_PRECOMPUTED_VELOCITY)
+						float3 precomputedVelocity : TEXCOORD5;
+					#endif
+				#endif
+				float4 ase_texcoord : TEXCOORD0;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+			};
+
+			struct PackedVaryingsMeshToPS
+			{
+				float4 positionCS : SV_Position;
+				float3 interp00 : TEXCOORD0;
+				float3 interp01 : TEXCOORD1;
+				float4 interp02 : TEXCOORD2;
+				float4 interp03 : TEXCOORD3;
+				float4 interp04 : TEXCOORD4;
+				#ifdef _WRITE_TRANSPARENT_MOTION_VECTOR
+					float3 vpassPositionCS : TEXCOORD5;
+					float3 vpassPreviousPositionCS : TEXCOORD6;
+				#endif
+				float4 ase_texcoord7 : TEXCOORD7;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+				UNITY_VERTEX_OUTPUT_STEREO
+				#if defined(SHADER_STAGE_FRAGMENT) && defined(ASE_NEED_CULLFACE)
+				FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
+				#endif
+			};
 
 			
 			void BuildSurfaceData(FragInputs fragInputs, inout GlobalSurfaceDescription surfaceDescription, float3 V, PositionInputs posInput, out SurfaceData surfaceData, out float3 bentNormalWS)
@@ -3775,8 +3827,8 @@ Shader "Decalable/HDRP/Lit"
 				#if HAVE_DECALS
 				if( _EnableDecals )
 				{
-					DecalSurfaceData decalSurfaceData = GetDecalSurfaceData( posInput, surfaceDescription.Alpha );
-					ApplyDecalToSurfaceData( decalSurfaceData, surfaceData );
+					DecalSurfaceData decalSurfaceData = GetDecalSurfaceData(posInput, fragInputs.tangentToWorld[2], surfaceDescription.Alpha);
+					ApplyDecalToSurfaceData(decalSurfaceData, fragInputs.tangentToWorld[2], surfaceData);
 				}
 				#endif
 
@@ -4124,9 +4176,9 @@ Shader "Decalable/HDRP/Lit"
 				#endif
 
 				surfaceDescription.Emission = 0;
-				surfaceDescription.Smoothness = tex2DNode17.a;
+				surfaceDescription.Smoothness = 0.5;
 				surfaceDescription.Occlusion = tex2DNode17.g;
-				surfaceDescription.Alpha = 1;
+				surfaceDescription.Alpha = tex2DNode17.a;
 
 				#ifdef _ALPHATEST_ON
 				surfaceDescription.AlphaClipThreshold = _AlphaCutoff;
@@ -4196,7 +4248,7 @@ Shader "Decalable/HDRP/Lit"
 				#endif
 
 				bool viewMaterial = false;
-				int bufferSize = int(_DebugViewMaterialArray[0]);
+				int bufferSize = int(_DebugViewMaterialArray[0].x);
 				if (bufferSize != 0)
 				{
 					bool needLinearToSRGB = false;
@@ -4204,7 +4256,7 @@ Shader "Decalable/HDRP/Lit"
 
 					for (int index = 1; index <= bufferSize; index++)
 					{
-						int indexMaterialProperty = int(_DebugViewMaterialArray[index]);
+						int indexMaterialProperty = int(_DebugViewMaterialArray[index].x);
 
 						if (indexMaterialProperty != 0)
 						{
@@ -4212,7 +4264,7 @@ Shader "Decalable/HDRP/Lit"
 
 							GetPropertiesDataDebug(indexMaterialProperty, result, needLinearToSRGB);
 							GetVaryingsDataDebug(indexMaterialProperty, input, result, needLinearToSRGB);
-							GetBuiltinDataDebug(indexMaterialProperty, builtinData, result, needLinearToSRGB);
+							GetBuiltinDataDebug(indexMaterialProperty, builtinData, posInput, result, needLinearToSRGB);
 							GetSurfaceDataDebug(indexMaterialProperty, surfaceData, result, needLinearToSRGB);
 							GetBSDFDataDebug(indexMaterialProperty, bsdfData, result, needLinearToSRGB);
 						}
@@ -4247,11 +4299,14 @@ Shader "Decalable/HDRP/Lit"
 				#else
 						uint featureFlags = LIGHT_FEATURE_MASK_FLAGS_OPAQUE;
 				#endif
-						float3 diffuseLighting;
-						float3 specularLighting;
+					
+						LightLoopOutput lightLoopOutput;
+						LightLoop(V, posInput, preLightData, bsdfData, builtinData, featureFlags, lightLoopOutput);
 
-						LightLoop(V, posInput, preLightData, bsdfData, builtinData, featureFlags, diffuseLighting, specularLighting);
-
+						// Alias
+						float3 diffuseLighting = lightLoopOutput.diffuseLighting;
+						float3 specularLighting = lightLoopOutput.specularLighting;
+					
 						diffuseLighting *= GetCurrentExposureMultiplier();
 						specularLighting *= GetCurrentExposureMultiplier();
 
@@ -4298,43 +4353,43 @@ Shader "Decalable/HDRP/Lit"
 		}
 		
 	}
-	CustomEditor "UnityEditor.Rendering.HighDefinition.HDLitGUI"
+	CustomEditor "Rendering.HighDefinition.LightingShaderGraphGUI"
 	
 	
 }
 /*ASEBEGIN
-Version=18500
-0;146;1506;822;2903.232;857.4128;1.990986;True;False
-Node;AmplifyShaderEditor.SamplerNode;11;-709.5739,-155.5721;Inherit;True;Property;_BaseColorMap;BaseColorMap;0;0;Create;True;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Version=18900
+694;4;1675;834;1853.373;896.2886;1.762646;True;False
+Node;AmplifyShaderEditor.SamplerNode;11;-709.5739,-155.5721;Inherit;True;Property;_BaseColorMap;BaseColorMap;0;0;Create;True;0;0;0;False;0;False;-1;None;0a0e8af2869fa45f78e25460db578482;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.TextureCoordinatesNode;34;-1072.415,-341.8156;Inherit;False;1;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.ColorNode;18;-607.924,42.78532;Inherit;False;Property;_BaseColor;BaseColor;4;0;Create;True;0;0;False;0;False;1,1,1,1;1,1,1,1;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.SamplerNode;12;-720.6975,-353.5765;Inherit;True;Property;_DecalColorMap;DecalColorMap;1;0;Create;True;0;0;False;0;False;-1;None;None;True;1;False;black;Auto;False;Object;-1;MipLevel;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.ColorNode;18;-607.924,42.78532;Inherit;False;Property;_BaseColor;BaseColor;4;0;Create;True;0;0;0;False;0;False;1,1,1,1;1,1,1,1;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.SamplerNode;12;-720.6975,-353.5765;Inherit;True;Property;_DecalColorMap;DecalColorMap;1;0;Create;True;0;0;0;False;0;False;-1;None;None;True;1;False;black;Auto;False;Object;-1;MipLevel;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;19;-401.6703,-74.02283;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.LerpOp;13;-233.7054,-77.47118;Inherit;False;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
-Node;AmplifyShaderEditor.SamplerNode;14;-678.8062,228.2764;Inherit;True;Property;_NormalMap;NormalMap;2;0;Create;True;0;0;False;0;False;-1;None;None;True;0;False;bump;Auto;True;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.SamplerNode;17;-660.3961,424.7957;Inherit;True;Property;_MaskMap;MaskMap;3;0;Create;True;0;0;False;0;False;-1;None;None;True;0;False;gray;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;25;0,0;Float;False;False;-1;2;UnityEditor.Rendering.HighDefinition.HDLitGUI;0;2;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;ShadowCaster;0;2;ShadowCaster;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;False;False;False;False;False;False;False;False;False;True;0;True;-25;True;False;False;False;False;0;False;-1;False;False;False;False;True;1;False;-1;True;3;False;-1;False;True;1;LightMode=ShadowCaster;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;32;0,0;Float;False;False;-1;2;UnityEditor.Rendering.HighDefinition.HDLitGUI;0;2;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;TransparentDepthPostpass;0;9;TransparentDepthPostpass;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;True;1;1;False;-1;0;False;-1;0;1;False;-1;0;False;-1;False;False;False;False;False;False;False;False;True;0;True;-25;True;False;False;False;False;0;False;-1;False;False;False;False;True;1;False;-1;False;False;True;1;LightMode=TransparentDepthPostpass;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;31;0,0;Float;False;False;-1;2;UnityEditor.Rendering.HighDefinition.HDLitGUI;0;2;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;TransparentDepthPrepass;0;8;TransparentDepthPrepass;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;True;1;1;False;-1;0;False;-1;0;1;False;-1;0;False;-1;False;False;False;False;False;False;False;False;True;0;True;-25;True;False;False;False;False;0;False;-1;False;False;False;False;True;1;False;-1;False;False;True;1;LightMode=TransparentDepthPrepass;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;23;-54.53815,-81.62981;Float;False;True;-1;2;UnityEditor.Rendering.HighDefinition.HDLitGUI;0;4;Decalable/HDRP/Lit;53b46d85872c5b24c8f4f0a1c3fe4c87;True;GBuffer;0;0;GBuffer;35;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;False;False;False;False;False;False;False;False;False;True;0;True;-25;False;False;False;False;True;True;0;True;-13;255;False;-1;255;True;-12;7;False;-1;3;False;-1;1;False;-1;1;False;-1;7;False;-1;1;False;-1;1;False;-1;1;False;-1;False;True;0;True;-14;False;True;1;LightMode=GBuffer;False;0;;0;0;Standard;41;Surface Type;0;  Rendering Pass;1;  Refraction Model;0;    Blending Mode;0;    Blend Preserves Specular;1;  Receive Fog;1;  Back Then Front Rendering;0;  Transparent Depth Prepass;0;  Transparent Depth Postpass;0;  Transparent Writes Motion Vector;0;  Distortion;0;    Distortion Mode;0;    Distortion Depth Test;1;  ZWrite;0;  Z Test;4;Double-Sided;0;Alpha Clipping;0;  Use Shadow Threshold;0;Material Type,InvertActionOnDeselection;0;  Energy Conserving Specular;1;  Transmission;1;Receive Decals;1;Receives SSR;1;Motion Vectors;1;  Add Precomputed Velocity;0;Specular AA;0;Specular Occlusion Mode;1;Override Baked GI;0;Depth Offset;0;DOTS Instancing;0;LOD CrossFade;0;Tessellation;0;  Phong;0;  Strength;0.5,False,-1;  Type;0;  Tess;16,False,-1;  Min;10,False,-1;  Max;25,False,-1;  Edge Length;16,False,-1;  Max Displacement;25,False,-1;Vertex Position;1;0;11;True;True;True;True;True;True;False;False;False;False;True;False;;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;27;0,0;Float;False;False;-1;2;UnityEditor.Rendering.HighDefinition.HDLitGUI;0;2;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;DepthOnly;0;4;DepthOnly;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;False;False;False;False;False;False;False;False;False;True;0;True;-25;False;False;False;False;True;True;0;True;-6;255;False;-1;255;True;-7;7;False;-1;3;False;-1;1;False;-1;1;False;-1;7;False;-1;1;False;-1;1;False;-1;1;False;-1;True;1;False;-1;False;False;True;1;LightMode=DepthOnly;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;29;0,0;Float;False;False;-1;2;UnityEditor.Rendering.HighDefinition.HDLitGUI;0;2;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;Distortion;0;6;Distortion;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;True;4;1;False;-1;1;False;-1;4;1;False;-1;1;False;-1;True;1;False;-1;1;False;-1;False;False;False;False;False;False;False;False;False;False;False;False;True;True;0;True;-10;255;False;-1;255;True;-11;7;False;-1;3;False;-1;1;False;-1;1;False;-1;7;False;-1;1;False;-1;1;False;-1;1;False;-1;True;2;False;-1;True;3;False;-1;False;True;1;LightMode=DistortionVectors;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;24;0,0;Float;False;False;-1;2;UnityEditor.Rendering.HighDefinition.HDLitGUI;0;2;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;META;0;1;META;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;False;False;False;False;False;False;False;False;False;True;2;False;-1;False;False;False;False;False;False;False;False;True;1;LightMode=Meta;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;28;0,0;Float;False;False;-1;2;UnityEditor.Rendering.HighDefinition.HDLitGUI;0;2;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;Motion Vectors;0;5;Motion Vectors;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;False;False;False;False;False;False;False;False;False;True;0;True;-25;False;False;False;False;True;True;0;True;-8;255;False;-1;255;True;-9;7;False;-1;3;False;-1;1;False;-1;1;False;-1;7;False;-1;1;False;-1;1;False;-1;1;False;-1;True;1;False;-1;False;False;True;1;LightMode=MotionVectors;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;30;0,0;Float;False;False;-1;2;UnityEditor.Rendering.HighDefinition.HDLitGUI;0;2;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;TransparentBackface;0;7;TransparentBackface;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;True;1;0;True;-19;0;True;-20;1;0;True;-21;0;True;-22;False;False;False;False;False;False;False;False;True;1;False;-1;False;True;True;True;True;True;0;True;-44;False;False;False;True;0;True;-23;True;0;True;-31;False;True;1;LightMode=TransparentBackface;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;33;0,0;Float;False;False;-1;2;UnityEditor.Rendering.HighDefinition.HDLitGUI;0;2;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;Forward;0;10;Forward;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;True;1;0;True;-19;0;True;-20;1;0;True;-21;0;True;-22;False;False;False;False;False;False;False;False;True;0;True;-28;False;True;True;True;True;True;0;True;-44;False;False;True;True;0;True;-4;255;False;-1;255;True;-5;7;False;-1;3;False;-1;1;False;-1;1;False;-1;7;False;-1;1;False;-1;1;False;-1;1;False;-1;True;0;True;-23;True;0;True;-30;False;True;1;LightMode=Forward;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;26;0,0;Float;False;False;-1;2;UnityEditor.Rendering.HighDefinition.HDLitGUI;0;2;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;SceneSelectionPass;0;3;SceneSelectionPass;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;False;False;False;False;False;False;False;False;False;False;True;False;False;False;False;0;False;-1;False;False;False;False;False;False;False;True;1;LightMode=SceneSelectionPass;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.SamplerNode;17;-660.3961,424.7957;Inherit;True;Property;_MaskMap;MaskMap;3;0;Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;gray;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.SamplerNode;14;-678.8062,228.2764;Inherit;True;Property;_NormalMap;NormalMap;2;0;Create;True;0;0;0;False;0;False;-1;None;94c473c9137744d7eabd829f1150da8d;True;0;True;bump;Auto;True;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;46;-3.538151,-60.62981;Float;False;False;-1;2;Rendering.HighDefinition.LightingShaderGraphGUI;0;1;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;Forward;0;10;Forward;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;False;True;1;0;True;-21;0;True;-22;1;0;True;-23;0;True;-24;False;False;False;False;False;False;False;False;False;False;False;False;True;0;True;-30;False;False;False;True;True;True;True;True;0;True;-46;False;False;False;False;False;True;True;0;True;-5;255;False;-1;255;True;-6;7;False;-1;3;False;-1;1;False;-1;1;False;-1;7;False;-1;1;False;-1;1;False;-1;1;False;-1;False;True;0;True;-25;True;0;True;-32;False;True;1;LightMode=Forward;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;37;-3.538151,-60.62981;Float;False;False;-1;2;Rendering.HighDefinition.LightingShaderGraphGUI;0;1;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;META;0;1;META;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;2;False;-1;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=Meta;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;44;-3.538151,-60.62981;Float;False;False;-1;2;Rendering.HighDefinition.LightingShaderGraphGUI;0;1;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;TransparentDepthPrepass;0;8;TransparentDepthPrepass;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;False;True;1;1;False;-1;0;False;-1;0;1;False;-1;0;False;-1;False;False;False;False;False;False;False;False;False;False;False;False;True;0;True;-27;False;False;False;False;False;False;False;False;False;True;True;0;True;-7;255;False;-1;255;True;-8;7;False;-1;3;False;-1;1;False;-1;1;False;-1;7;False;-1;3;False;-1;1;False;-1;1;False;-1;False;True;1;False;-1;False;False;True;1;LightMode=TransparentDepthPrepass;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;40;-3.538151,-60.62981;Float;False;False;-1;2;Rendering.HighDefinition.LightingShaderGraphGUI;0;1;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;DepthOnly;0;4;DepthOnly;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;0;True;-27;False;False;False;False;False;False;False;False;False;True;True;0;True;-7;255;False;-1;255;True;-8;7;False;-1;3;False;-1;1;False;-1;1;False;-1;7;False;-1;1;False;-1;1;False;-1;1;False;-1;False;True;1;False;-1;False;False;True;1;LightMode=DepthOnly;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;43;-3.538151,-60.62981;Float;False;False;-1;2;Rendering.HighDefinition.LightingShaderGraphGUI;0;1;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;TransparentBackface;0;7;TransparentBackface;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;False;True;1;0;True;-21;0;True;-22;1;0;True;-23;0;True;-24;False;False;False;False;False;False;False;False;False;False;False;False;True;1;False;-1;False;False;False;True;True;True;True;True;0;True;-46;False;False;False;False;False;False;False;True;0;True;-25;True;0;True;-33;False;True;1;LightMode=TransparentBackface;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;41;-3.538151,-60.62981;Float;False;False;-1;2;Rendering.HighDefinition.LightingShaderGraphGUI;0;1;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;Motion Vectors;0;5;Motion Vectors;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;0;True;-27;False;False;False;False;False;False;False;False;False;True;True;0;True;-9;255;False;-1;255;True;-10;7;False;-1;3;False;-1;1;False;-1;1;False;-1;7;False;-1;1;False;-1;1;False;-1;1;False;-1;False;True;1;False;-1;False;False;True;1;LightMode=MotionVectors;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;38;-3.538151,-60.62981;Float;False;False;-1;2;Rendering.HighDefinition.LightingShaderGraphGUI;0;1;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;ShadowCaster;0;2;ShadowCaster;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;0;True;-27;False;True;False;False;False;False;0;False;-1;False;False;False;False;False;False;False;False;False;True;1;False;-1;True;3;False;-1;False;True;1;LightMode=ShadowCaster;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;45;-3.538151,-60.62981;Float;False;False;-1;2;Rendering.HighDefinition.LightingShaderGraphGUI;0;1;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;TransparentDepthPostpass;0;9;TransparentDepthPostpass;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;False;True;1;1;False;-1;0;False;-1;0;1;False;-1;0;False;-1;False;False;False;False;False;False;False;False;False;False;False;False;True;0;True;-27;False;True;False;False;False;False;0;False;-1;False;False;False;False;False;False;False;False;False;True;1;False;-1;False;False;True;1;LightMode=TransparentDepthPostpass;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;36;-3.538151,-60.62981;Float;False;True;-1;2;Rendering.HighDefinition.LightingShaderGraphGUI;0;4;Decalable/HDRP/Lit;53b46d85872c5b24c8f4f0a1c3fe4c87;True;GBuffer;0;0;GBuffer;35;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;0;True;-27;False;False;False;False;False;False;False;False;False;True;True;0;True;-14;255;False;-1;255;True;-13;7;False;-1;3;False;-1;1;False;-1;1;False;-1;7;False;-1;1;False;-1;1;False;-1;1;False;-1;False;False;True;0;True;-15;False;True;1;LightMode=GBuffer;False;0;;0;0;Standard;42;Surface Type;0;  Rendering Pass;1;  Refraction Model;0;    Blending Mode;0;    Blend Preserves Specular;1;  Receive Fog;1;  Back Then Front Rendering;0;  Transparent Depth Prepass;0;  Transparent Depth Postpass;0;  Transparent Writes Motion Vector;0;  Distortion;0;    Distortion Mode;0;    Distortion Depth Test;1;  ZWrite;0;  Z Test;4;Double-Sided;0;Alpha Clipping;0;  Use Shadow Threshold;0;Material Type,InvertActionOnDeselection;0;  Energy Conserving Specular;1;  Transmission;1;Receive Decals;1;Receives SSR;1;Receive SSR Transparent;0;Motion Vectors;1;  Add Precomputed Velocity;0;Specular AA;0;Specular Occlusion Mode;1;Override Baked GI;0;Depth Offset;0;DOTS Instancing;0;LOD CrossFade;0;Tessellation;0;  Phong;0;  Strength;0.5,False,-1;  Type;0;  Tess;16,False,-1;  Min;10,False,-1;  Max;25,False,-1;  Edge Length;16,False,-1;  Max Displacement;25,False,-1;Vertex Position;1;0;11;True;True;True;True;True;True;False;False;False;False;True;False;;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;42;-3.538151,-60.62981;Float;False;False;-1;2;Rendering.HighDefinition.LightingShaderGraphGUI;0;1;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;Distortion;0;6;Distortion;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;False;True;4;1;False;-1;1;False;-1;4;1;False;-1;1;False;-1;True;1;False;-1;1;False;-1;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;0;True;-11;255;False;-1;255;True;-12;7;False;-1;3;False;-1;1;False;-1;1;False;-1;7;False;-1;1;False;-1;1;False;-1;1;False;-1;False;True;2;False;-1;True;3;False;-1;False;True;1;LightMode=DistortionVectors;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;39;-3.538151,-60.62981;Float;False;False;-1;2;Rendering.HighDefinition.LightingShaderGraphGUI;0;1;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;SceneSelectionPass;0;3;SceneSelectionPass;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;False;False;False;False;0;False;-1;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=SceneSelectionPass;False;0;;0;0;Standard;0;False;0
 WireConnection;12;1;34;0
 WireConnection;19;0;11;0
 WireConnection;19;1;18;0
 WireConnection;13;0;19;0
 WireConnection;13;1;12;0
 WireConnection;13;2;12;4
-WireConnection;23;0;13;0
-WireConnection;23;1;14;0
-WireConnection;23;3;12;4
-WireConnection;23;4;17;1
-WireConnection;23;7;17;4
-WireConnection;23;8;17;2
+WireConnection;36;0;13;0
+WireConnection;36;1;14;0
+WireConnection;36;3;12;4
+WireConnection;36;4;17;1
+WireConnection;36;8;17;2
+WireConnection;36;9;17;4
 ASEEND*/
-//CHKSM=70F25E066FD6AE66BD55FEE2FFA5E94ECE96C811
+//CHKSM=4D678301248690CBE4CCF8844105B9346EF34D0D
