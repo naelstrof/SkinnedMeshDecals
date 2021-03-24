@@ -125,7 +125,6 @@ public class PaintDecal : MonoBehaviour {
         foreach (Material m in r.materials) {
             if (IsDecalable(m)) {
                 decalableMaterials.Add(m);
-                break;
             }
         }
         return decalableMaterials;
