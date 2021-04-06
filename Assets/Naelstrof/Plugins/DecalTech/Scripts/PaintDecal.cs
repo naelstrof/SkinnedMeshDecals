@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine.Rendering;
 using UnityEngine;
-using System;
-using UnityEngine.SceneManagement;
 
 public class PaintDecal : MonoBehaviour {
     public static PaintDecal instance = null;
@@ -17,100 +15,97 @@ public class PaintDecal : MonoBehaviour {
             return;
         }
     }
-    private class CachedRenderTexture {
+    private class PackedRenderer {
+        private int CeilPowerOfTwo(int v) {
+            v--;
+            v |= v >> 1;
+            v |= v >> 2;
+            v |= v >> 4;
+            v |= v >> 8;
+            v |= v >> 16;
+            v++;
+            return v;
+        }
+        public PackedRenderer(Renderer r, List<Material> mats, float texelsPerMeter) {
+            int worldScale = Mathf.RoundToInt(r.bounds.extents.magnitude*texelsPerMeter);
+            int textureScale = Mathf.Clamp(CeilPowerOfTwo(worldScale), 16, 4096);
+            texture = new RenderTexture(textureScale, textureScale, 0);
+            ClearRenderTexture(texture);
+            decalableMaterials = mats;
+            lastUse = Time.time;
+        }
         public RenderTexture texture;
-        public float timeCreated;
-        public float probableAlpha = 1f;
+        public List<Material> decalableMaterials;
+        public float lastUse;
     }
+    [Tooltip("The camera used to paint the decals, isn't actually used except to generate the perspective and culling matrices.")]
     public Camera decalCamera;
-    [Tooltip("Material with a shader that projects decals on skinned meshes. Uses _BaseColorMap and _BaseColor to set the texture and color respectively.")]
+    [Tooltip("The material used to actually project decals onto meshes. This generally should be the one included-- though custom ones with custom blend modes could be used instead.")]
     public Material decalProjector;
-    [Tooltip("Material used to fade existing decals away (By blending a low-transparency texture over existing framebuffers). I use a AlphaBlendOp of Subtract with the AlphaBlend set to One One.")]
-    public Material alphaBlend;
+    [Tooltip("Same as the decal projector, but this time with a subtractive mode enabled.")]
+    public Material subtractiveProjector;
 
-    [Tooltip("Resolution for textures generated on skinned mesh renderers.")]
-    public int renderTextureResolution = 1024;
+    [Range(32,1024)]
+    [Tooltip("Memory usage in megabytes before old textures get removed.")]
+    public float memoryBudget = 512;
+    private float memoryInUsage = 0f;
+    [Tooltip("This determines how big the textures are for each objects' scale. Calculated by pixels per meter.")]
+    public int texelsPerMeter = 256;
+    private Dictionary<Renderer, PackedRenderer> rendererCache = new Dictionary<Renderer, PackedRenderer>();
+    private WaitForSeconds waitForASec = new WaitForSeconds(8f);
 
-    [Tooltip("Resolution for world-decals (Expensive!), makes one-per-lightmap atlas. Set to 0 if you don't want map decals.")]
-    public int decalMapTextureResolution = 2048;
-    [Tooltip("Maximum number of allowed render textures for dynamic objects.")]
-    public int maxRenderTextures = 16;
-    [Tooltip("Number of seconds before dynamic textures are completely transparent.")]
-    public float fadeTime = 60f;
-    private Dictionary<Renderer, CachedRenderTexture> dynamicRenderTextureCache = new Dictionary<Renderer, CachedRenderTexture>();
-    private HashSet<Renderer> staticRenderables = new HashSet<Renderer>();
-    private RenderTexture transparentTex;
-    private List<RenderTexture> decalMaps = new List<RenderTexture>();
-    // Debug stuff
-    //public GameObject debugPlane;
-    //public Material shader;
-    //public Transform debugLocation;
-    //private List<GameObject> debugPlanes = new List<GameObject>();
+    public IEnumerator CleanUpOccasionally() {
+        while(true) {
+            yield return waitForASec;
+            Validate();
+            while (memoryInUsage > memoryBudget && memoryInUsage > 0 && rendererCache.Count > 0) {
+                RemoveOldest();
+            }
+        }
+    }
+    private void RemoveOldest() {
+        Renderer oldestRenderer = null;
+        foreach (var pair in rendererCache) {
+            oldestRenderer = pair.Key;
+            break;
+        }
+
+        float oldestTime = float.MaxValue;
+        foreach( var pair in rendererCache) {
+            if (pair.Value.lastUse < oldestTime) {
+                oldestRenderer = pair.Key;
+                oldestTime = pair.Value.lastUse;
+            }
+        }
+        if (oldestRenderer != null) {
+            foreach(Material m in rendererCache[oldestRenderer].decalableMaterials) {
+                m.SetTexture("_DecalColorMap", null);
+            }
+            RenderTexture t = rendererCache[oldestRenderer].texture;
+            memoryInUsage -= (t.width * t.height * 4f) / (float)(1e+6f);
+            t.Release();
+            rendererCache.Remove(oldestRenderer);
+        }
+    }
+    private void Validate() {
+        List<Renderer> removeList = new List<Renderer>();
+        foreach( var pair in rendererCache) {
+            if (pair.Key == null) {
+                removeList.Add(pair.Key);
+                // Don't need to unset materials, since the renderer was destroyed!
+                pair.Value.texture.Release();
+                memoryInUsage -= (pair.Value.texture.width*pair.Value.texture.height*4f)/(float)(1e+6f);
+            }
+        }
+        foreach(var r in removeList) {
+            rendererCache.Remove(r);
+        }
+    }
 
     public void Start() {
-        RegenerateDecalMaps();
-        transparentTex = new RenderTexture(16, 16, 0);
-        CommandBuffer buffer = new CommandBuffer();
-        buffer.SetRenderTarget(transparentTex);
-        buffer.ClearRenderTarget(false, true, new Color(0, 0, 0, 1f/256f));
-        Graphics.ExecuteCommandBuffer(buffer);
-        StartCoroutine(FadeOutDynamicTextures(fadeTime/256f));
-        SceneManager.sceneLoaded += RegenerateDecalMaps;
+        StartCoroutine(CleanUpOccasionally());
     }
 
-    /*void CreateDebugPlanes() {
-        foreach( GameObject p in debugPlanes) {
-            Destroy(p);
-        }
-        debugPlanes.Clear();
-        for (int i=0;i<decalMaps.Count;i++) {
-            GameObject plane = GameObject.Instantiate(debugPlane);
-            Material m = Material.Instantiate(shader);
-            m.SetTexture("_BaseMap", decalMaps[i]);
-            plane.GetComponent<Renderer>().material = m;
-            plane.transform.position = debugLocation.position + debugLocation.right * i;
-            debugPlanes.Add(plane);
-        }
-    }*/
-
-    IEnumerator FadeOutDynamicTextures(float period) {
-        while(true) {
-            yield return new WaitForSeconds(period);
-            List<Renderer> shouldRemoveBecauseFadedOut = new List<Renderer>();
-            CommandBuffer buffer = new CommandBuffer();
-            foreach (KeyValuePair<Renderer, CachedRenderTexture> p in dynamicRenderTextureCache) {
-                buffer.Blit(transparentTex, p.Value.texture, alphaBlend);
-                p.Value.probableAlpha=Mathf.Max(p.Value.probableAlpha-(1f/255f),0f);
-                if (p.Value.probableAlpha <= 0f) {
-                    shouldRemoveBecauseFadedOut.Add(p.Key);
-                }
-            }
-            Graphics.ExecuteCommandBuffer(buffer);
-            buffer.Release();
-            // We try to clean up textures if they're completely transparent, or if we're over the max
-            foreach(Renderer r in shouldRemoveBecauseFadedOut) {
-                dynamicRenderTextureCache[r].texture.Release();
-                dynamicRenderTextureCache.Remove(r);
-            }
-            while (dynamicRenderTextureCache.Count > maxRenderTextures && maxRenderTextures > 0) {
-                Renderer r = null;
-                float oldest = float.MaxValue;
-                foreach (KeyValuePair<Renderer, CachedRenderTexture> p in dynamicRenderTextureCache) {
-                    if (p.Value.timeCreated < oldest) {
-                        oldest = p.Value.timeCreated;
-                        r = p.Key;
-                    }
-                }
-                dynamicRenderTextureCache.Remove(r);
-            }
-        }
-    }
-    private void ClearRenderTexture(RenderTexture target) {
-        var rt = UnityEngine.RenderTexture.active;
-        UnityEngine.RenderTexture.active = target;
-        GL.Clear(true, true, Color.clear);
-        UnityEngine.RenderTexture.active = rt;
-    }
     public bool IsDecalable(Material m) {
         foreach(string s in m.GetTexturePropertyNames()) {
             if (s == "_DecalColorMap") {
@@ -129,87 +124,68 @@ public class PaintDecal : MonoBehaviour {
         }
         return decalableMaterials;
     }
-
-    public RenderTexture GetStaticRenderTexture(Renderer r) {
-        if (staticRenderables.Contains(r)) {
-            return decalMaps[r.lightmapIndex];
-        }
-        // If we already have an instanciated material of the right type, use that.
-        foreach(Material m in r.materials) {
-            if (!IsDecalable(m)) {
-                continue;
-            }
-            m.SetTexture("_DecalColorMap", decalMaps[r.lightmapIndex]);
-        }
-        staticRenderables.Add(r);
-        return decalMaps[r.lightmapIndex];
+    private static void ClearRenderTexture(RenderTexture target) {
+        var rt = UnityEngine.RenderTexture.active;
+        UnityEngine.RenderTexture.active = target;
+        GL.Clear(true, true, Color.clear);
+        UnityEngine.RenderTexture.active = rt;
     }
 
     // Check if we're a valid renderer to render a decal too.
     // If we have any material with a _DecalColorMap texture variable
     // We try to use the render target that exists there, if not we create one.
     // We also try to use dedicated DecalMaps for lightmapped objects.
-    public RenderTexture GetDynamicRenderTexture(Renderer r) {
+    private PackedRenderer GetPackedRenderer(Renderer r) {
         // we've already cached this material, return it
-        if (dynamicRenderTextureCache.ContainsKey(r)) {
-            dynamicRenderTextureCache[r].probableAlpha = 1f;
-            dynamicRenderTextureCache[r].timeCreated = Time.timeSinceLevelLoad;
-            return dynamicRenderTextureCache[r].texture;
+        if (rendererCache.ContainsKey(r)) {
+            rendererCache[r].lastUse = Time.time;
+            return rendererCache[r];
         }
+
         List<Material> mats;
         mats = GetDecalableMaterials(r);
         if (mats.Count <= 0 ) {
             return null;
         }
+        // FIXME: On mac, there's a chance this texture is not null, but also uninitialized. Need to know when to clear in those cases!
         RenderTexture target = (RenderTexture)mats[0].GetTexture("_DecalColorMap");
-        if (target == null) {
-            target = new RenderTexture(renderTextureResolution, renderTextureResolution, 0);
-            target.name = r.name + " Decalmap";
-            ClearRenderTexture(target);
-            dynamicRenderTextureCache[r] = new CachedRenderTexture { texture=target, timeCreated=Time.timeSinceLevelLoad, probableAlpha=1f };
+        if (target == null || !target.IsCreated()) {
+            // Gotta find a texture location to place it on.
+            rendererCache.Add(r, new PackedRenderer(r, mats, texelsPerMeter));
+            target = rendererCache[r].texture;
+            memoryInUsage += (target.width*target.height*4f)/(float)(1e+6f);
         }
         foreach (Material m in mats) {
             m.SetTexture("_DecalColorMap", target);
         }
-        return target;
+        return rendererCache[r];
     }
 
-    public RenderTexture RenderDecal(Renderer r, Texture decal, Vector3 position, Quaternion rotation, Color color, float size = 1f, float depth = 0.5f, bool addPadding = true) {
-        //Debug.Log(r + " " + decal + " " + color + " " + size);
+    public RenderTexture RenderDecal(Renderer r, Texture decal, Vector3 position, Quaternion rotation, Color color, float size = 1f, float depth = 0.5f, bool addPadding = true, bool cullBack = true, bool subtract = false) {
         RenderTexture target = null;
-        if (r.lightmapIndex >= 0) {
-            // Skip static geo if we don't have decal maps to render to.
-            if (decalMapTextureResolution <= 0) {
-                return null;
-            }
-            target = GetStaticRenderTexture(r);
-        } else {
-            target = GetDynamicRenderTexture(r);
-        }
-        if (target == null) {
+        PackedRenderer packed = GetPackedRenderer(r);
+        if (packed == null) {
             return null;
         }
+        target = packed.texture;
+        Material projector = subtract ? subtractiveProjector : decalProjector;
+
         // With a valid target, generate a material list with the decal projector on the right submesh, with all other submeshes set to an invisible material.
-        decalProjector.SetTexture("_Decal", decal);
-        decalProjector.SetColor("_BaseColor", color);
+        projector.SetTexture("_Decal", decal);
+        if (addPadding && r.lightmapIndex == -1) {
+            color.a *= 0.25f;
+        }
+        projector.SetColor("_BaseColor", color);
+
+        if (cullBack) {
+            projector.EnableKeyword("_BACKFACECULLING");
+        } else {
+            projector.DisableKeyword("_BACKFACECULLING");
+        }
 
         decalCamera.transform.position = position;
         decalCamera.transform.rotation = rotation;
-        if (r.lightmapIndex >= 0) {
-            // FIXME: Not sure why, but there is a discrepancy between URP and HDRP's lightmap information. This might actually depend on lightmap settings.
-            // Though for now this works fine.
-            if (GraphicsSettings.currentRenderPipeline.GetType().ToString().Contains("HighDefinition")) {
-                // HDRP uses LightmapScaleOffset
-                decalProjector.SetVector("_lightmapST", r.lightmapScaleOffset);
-            } else {
-                // URP uses the realtimeLightmapScaleOffset
-                decalProjector.SetVector("_lightmapST", r.realtimeLightmapScaleOffset);
-            }
-            decalCamera.orthographicSize = size * 3;
-        } else {
-            decalProjector.SetVector("_lightmapST", new Vector4(1,1,0,0));
-            decalCamera.orthographicSize = size;
-        }
+        decalCamera.orthographicSize = size;
         decalCamera.farClipPlane = depth;
         decalCamera.nearClipPlane = 0f;
         decalCamera.targetTexture = target;
@@ -236,62 +212,34 @@ public class PaintDecal : MonoBehaviour {
             // For padding we just render the same thing repeatedly with diagonal offsets.
             // This doesn't look good on lightmapped geo, since a one pixel offset can send it drastically off-target,
             // so we only render to dynamic meshes.
-            if (addPadding && r.lightmapIndex == -1) {
+            if (addPadding) {
                 Vector2 pixelSize = new Vector2(1f,1f);
                 Vector2 pixelSizeAlso = new Vector2(-1f,1f);
                 buffer.SetViewport(new Rect(pixelSize, pixelRect + pixelSize));
-                buffer.DrawRenderer(r, decalProjector, i);
+                buffer.DrawRenderer(r, projector, i);
                 buffer.SetViewport(new Rect(-pixelSize, pixelRect - pixelSize));
-                buffer.DrawRenderer(r, decalProjector, i);
+                buffer.DrawRenderer(r, projector, i);
                 buffer.SetViewport(new Rect(pixelSizeAlso, pixelRect + pixelSizeAlso));
-                buffer.DrawRenderer(r, decalProjector, i);
+                buffer.DrawRenderer(r, projector, i);
                 buffer.SetViewport(new Rect(-pixelSizeAlso, pixelRect - pixelSizeAlso));
-                buffer.DrawRenderer(r, decalProjector, i);
+                buffer.DrawRenderer(r, projector, i);
             } else {
-                buffer.DrawRenderer(r, decalProjector, i);
+                buffer.DrawRenderer(r, projector, i);
             }
         }
         Graphics.ExecuteCommandBuffer(buffer);
         return target;
     }
 
-    // This releases all render textures and then creates new ones at the desired resolution.
-    // A cool feature might be to copy the data over so that decals don't get reset completely, but this doesn't do that.
-    public void RegenerateDecalMaps(Scene scene = default(Scene), LoadSceneMode mode = LoadSceneMode.Single) {
-        if (decalMapTextureResolution <= 0) {
-            return;
+    public void ClearDecalMaps() {
+        foreach(var pair in rendererCache) {
+            foreach (var material in pair.Value.decalableMaterials) {
+                material.SetTexture("_DecalColorMap", null);
+            }
+            pair.Value.texture.Release();
         }
-        for(int i=0;i<decalMaps.Count;i++) {
-            decalMaps[i].Release();
-        }
-        decalMaps.Clear();
-        for(int i=0;i<LightmapSettings.lightmaps.Length;i++) {
-            RenderTexture t = new RenderTexture(decalMapTextureResolution, decalMapTextureResolution,0);
-            t.name = "Lightmap" + i;
-            ClearRenderTexture(t);
-            decalMaps.Add(t);
-        }
-        foreach (KeyValuePair<Renderer, CachedRenderTexture> p in dynamicRenderTextureCache) {
-            p.Value.texture.Release();
-        }
-        dynamicRenderTextureCache.Clear();
-        staticRenderables.Clear();
-        //CreateDebugPlanes();
+        rendererCache.Clear();
     }
-
-/* public void OnEventRaised(GraphicsOptions.OptionType target, float value) {
-        switch(target) {
-            case GraphicsOptions.OptionType.DecalQuality:
-                // 0 == 256, 1 == 512, 2 == 1024
-                renderTextureResolution = (int)Mathf.Pow(2,8+(value-1));
-                // 0 == 512, 1 == 1024, 2 == 2048
-                decalMapTextureResolution = (int)Mathf.Pow(2,9+(value-1));
-                // 0 == 4, 1 == 8, 2 == 16
-                maxRenderTextures = (int)Mathf.Pow(2,2+(value-1));
-                RegenerateDecalMaps();
-                break;
-        }
-    }*/
 }
 
 

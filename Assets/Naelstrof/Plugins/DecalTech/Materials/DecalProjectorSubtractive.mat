@@ -7,13 +7,13 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DecalProjector
-  m_Shader: {fileID: 4800000, guid: 01fbbcdc080ae1f408f4d363f8bcc20d, type: 3}
-  m_ShaderKeywords: _BACKFACECULLING _DISABLE_SSR _DOUBLESIDED_ON _NORMALMAP_TANGENT_SPACE
+  m_Name: DecalProjectorSubtractive
+  m_Shader: {fileID: 4800000, guid: 5afa2da5947c4064a80635d32f4a80dd, type: 3}
+  m_ShaderKeywords: _DISABLE_SSR _DOUBLESIDED_ON _NORMALMAP_TANGENT_SPACE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 1
-  m_CustomRenderQueue: 2000
+  m_CustomRenderQueue: -1
   stringTagMap:
     MotionVector: User
   disabledShaderPasses:
@@ -252,7 +252,7 @@ Material:
     - _UVDetailsMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
-    - _lightmapST: {r: 0.9425193, g: 0.9425193, b: -0.0038226382, a: -0.0038226382}
+    - _lightmapST: {r: 1, g: 1, b: 0, a: -0.0038226382}
   m_BuildTextureStacks: []
 --- !u!114 &2339078307204095179
 MonoBehaviour:

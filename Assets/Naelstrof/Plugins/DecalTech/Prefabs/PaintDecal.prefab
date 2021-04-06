@@ -47,10 +47,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   decalCamera: {fileID: 4494287579167976095}
   decalProjector: {fileID: 2100000, guid: 421ff51ed149e414589e1b62cd76d3c5, type: 2}
-  alphaBlend: {fileID: 2100000, guid: d2495f0795a634b4ea191aac6be83ae6, type: 2}
-  fadeRate: 0.01
-  renderTextureResolution: 1024
-  maxRenderTextures: 16
+  subtractiveProjector: {fileID: 2100000, guid: 62682fdf8d1b510419604c86c9a3f010,
+    type: 2}
+  memoryBudget: 512
+  texelsPerMeter: 512
 --- !u!20 &4494287579167976095
 Camera:
   m_ObjectHideFlags: 0
@@ -165,6 +165,11 @@ MonoBehaviour:
   dithering: 0
   stopNaNs: 0
   taaSharpenStrength: 0.6
+  TAAQuality: 1
+  taaHistorySharpening: 0.35
+  taaAntiFlicker: 0.5
+  taaMotionVectorRejection: 0
+  taaAntiHistoryRinging: 0
   physicalParameters:
     m_Iso: 200
     m_ShutterSpeed: 0.005
@@ -174,6 +179,7 @@ MonoBehaviour:
     m_BarrelClipping: 0.25
     m_Anamorphism: 0
   flipYMode: 0
+  xrRendering: 1
   fullscreenPassthrough: 0
   allowDynamicResolution: 0
   customRenderingSettings: 0
@@ -182,6 +188,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   hasPersistentHistory: 0
+  exposureTarget: {fileID: 0}
   m_RenderingPathCustomFrameSettings:
     bitDatas:
       data1: 69838050393933
@@ -192,6 +199,9 @@ MonoBehaviour:
     maximumLODLevel: 0
     maximumLODLevelMode: 0
     maximumLODLevelQualityLevel: 0
+    sssQualityMode: 0
+    sssQualityLevel: 0
+    sssCustomSampleBudget: 20
     materialQuality: 0
   renderingPathCustomFrameSettingsOverrideMask:
     mask:
