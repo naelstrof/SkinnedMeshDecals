@@ -172,7 +172,7 @@ public class PaintDecal : MonoBehaviour {
 
         // With a valid target, generate a material list with the decal projector on the right submesh, with all other submeshes set to an invisible material.
         projector.SetTexture("_Decal", decal);
-        if (addPadding && r.lightmapIndex == -1) {
+        if (addPadding) {
             color.a *= 0.25f;
         }
         projector.SetColor("_BaseColor", color);
