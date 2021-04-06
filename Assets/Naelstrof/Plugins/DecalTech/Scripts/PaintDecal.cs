@@ -239,6 +239,7 @@ public class PaintDecal : MonoBehaviour {
             pair.Value.texture.Release();
         }
         rendererCache.Clear();
+        memoryInUsage = 0f;
     }
 }
 
