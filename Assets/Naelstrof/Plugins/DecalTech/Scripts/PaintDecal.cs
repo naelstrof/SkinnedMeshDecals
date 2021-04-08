@@ -154,11 +154,12 @@ public class PaintDecal : MonoBehaviour {
             rendererCache.Add(r, new PackedRenderer(r, mats, texelsPerMeter));
             target = rendererCache[r].texture;
             memoryInUsage += (target.width*target.height*4f)/(float)(1e+6f);
+            foreach (Material m in mats) {
+                m.SetTexture("_DecalColorMap", target);
+            }
+            return rendererCache[r];
         }
-        foreach (Material m in mats) {
-            m.SetTexture("_DecalColorMap", target);
-        }
-        return rendererCache[r];
+        return null;
     }
 
     public RenderTexture RenderDecal(Renderer r, Texture decal, Vector3 position, Quaternion rotation, Color color, float size = 1f, float depth = 0.5f, bool addPadding = true, bool cullBack = true, bool subtract = false) {
