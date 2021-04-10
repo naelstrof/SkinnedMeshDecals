@@ -191,11 +191,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: PaintDecal
       objectReference: {fileID: 0}
-    - target: {fileID: 4494287579167976093, guid: 6998698b2bf4cdc4eb99afa3492cdab8,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6998698b2bf4cdc4eb99afa3492cdab8, type: 3}
 --- !u!1 &79409009 stripped

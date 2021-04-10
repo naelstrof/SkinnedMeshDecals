@@ -38,8 +38,6 @@ public class PaintDecal : MonoBehaviour {
         public List<Material> decalableMaterials;
         public float lastUse;
     }
-    [Tooltip("The camera used to paint the decals, isn't actually used except to generate the perspective and culling matrices.")]
-    public Camera decalCamera;
     [Tooltip("The material used to actually project decals onto meshes. This generally should be the one included-- though custom ones with custom blend modes could be used instead.")]
     public Material decalProjector;
     [Tooltip("Same as the decal projector, but this time with a subtractive mode enabled.")]
@@ -162,7 +160,7 @@ public class PaintDecal : MonoBehaviour {
         return null;
     }
 
-    public RenderTexture RenderDecal(Renderer r, Texture decal, Vector3 position, Quaternion rotation, Color color, float size = 1f, float depth = 0.5f, bool addPadding = true, bool cullBack = true, bool subtract = false) {
+    public RenderTexture RenderDecal(Renderer r, Texture decal, Vector3 position, Quaternion rotation, Color color, Vector2 size, float depth = 0.5f, bool addPadding = true, bool cullBack = true, bool subtract = false) {
         RenderTexture target = null;
         PackedRenderer packed = GetPackedRenderer(r);
         if (packed == null) {
@@ -184,15 +182,13 @@ public class PaintDecal : MonoBehaviour {
             projector.DisableKeyword("_BACKFACECULLING");
         }
 
-        decalCamera.transform.position = position;
-        decalCamera.transform.rotation = rotation;
-        decalCamera.orthographicSize = size;
-        decalCamera.farClipPlane = depth;
-        decalCamera.nearClipPlane = 0f;
-        decalCamera.targetTexture = target;
+        Matrix4x4 projection = Matrix4x4.Ortho(-size.x, size.x, -size.y, size.y, 0f, depth);
+        Matrix4x4 view = Matrix4x4.Inverse(Matrix4x4.TRS(position, rotation, new Vector3(1, 1, -1)));
+
         CommandBuffer buffer = new CommandBuffer();
         buffer.SetRenderTarget(target);
-        buffer.SetViewProjectionMatrices(decalCamera.worldToCameraMatrix, decalCamera.projectionMatrix);
+        // Model matrix comes from CommandBuffer.DrawRenderer
+        buffer.SetViewProjectionMatrices(view, projection);
         Vector2 pixelRect = new Vector2(target.width, target.height);
         int maxIndex = 1;
         MeshFilter f = r.GetComponent<MeshFilter>();
