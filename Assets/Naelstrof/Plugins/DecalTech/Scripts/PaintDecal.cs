@@ -143,6 +143,7 @@ public class PaintDecal : MonoBehaviour {
         List<Material> mats;
         mats = GetDecalableMaterials(r);
         if (mats.Count <= 0 ) {
+            Debug.LogWarning("Tried to paint decal on object " + r.gameObject + " which doesn't have any decalable materials applied!", r.gameObject);
             return null;
         }
         // FIXME: On mac, there's a chance this texture is not null, but also uninitialized. Need to know when to clear in those cases!
@@ -157,10 +158,11 @@ public class PaintDecal : MonoBehaviour {
             }
             return rendererCache[r];
         }
+        Debug.LogWarning("Tried to paint decal on object " + r.gameObject + ", but the decalable material " + mats[0] + " appears to be misconfigured. (Leave the _DecalColorMap null!).");
         return null;
     }
 
-    public RenderTexture RenderDecal(Renderer r, Texture decal, Vector3 position, Quaternion rotation, Color color, Vector2 size, float depth = 0.5f, bool addPadding = true, bool cullBack = true, bool subtract = false) {
+    public RenderTexture RenderDecal(Renderer r, Texture decal, Vector3 position, Quaternion rotation, Color color, Vector2 size, float depth = 0.5f, bool addPadding = false, bool cullBack = true, bool subtract = false) {
         RenderTexture target = null;
         PackedRenderer packed = GetPackedRenderer(r);
         if (packed == null) {
@@ -171,7 +173,9 @@ public class PaintDecal : MonoBehaviour {
 
         // With a valid target, generate a material list with the decal projector on the right submesh, with all other submeshes set to an invisible material.
         projector.SetTexture("_Decal", decal);
-        if (addPadding) {
+
+        // FIXME: This is specifically for semi-transparent decals which need padding. So we ignore full alpha decals. Though this isn't verifyable with just the alpha, but it works for me.
+        if (addPadding && color.a != 1f) {
             color.a *= 0.25f;
         }
         projector.SetColor("_BaseColor", color);
@@ -182,6 +186,7 @@ public class PaintDecal : MonoBehaviour {
             projector.DisableKeyword("_BACKFACECULLING");
         }
 
+        // Could use a Matrix4x4.Perspective instead! depends on use case.
         Matrix4x4 projection = Matrix4x4.Ortho(-size.x, size.x, -size.y, size.y, 0f, depth);
         Matrix4x4 view = Matrix4x4.Inverse(Matrix4x4.TRS(position, rotation, new Vector3(1, 1, -1)));
 
@@ -207,8 +212,7 @@ public class PaintDecal : MonoBehaviour {
                 continue;
             }
             // For padding we just render the same thing repeatedly with diagonal offsets.
-            // This doesn't look good on lightmapped geo, since a one pixel offset can send it drastically off-target,
-            // so we only render to dynamic meshes.
+            // This makes it more blurry, though for really opaque decals it should help with hiding seams.
             if (addPadding) {
                 Vector2 pixelSize = new Vector2(1f,1f);
                 Vector2 pixelSizeAlso = new Vector2(-1f,1f);

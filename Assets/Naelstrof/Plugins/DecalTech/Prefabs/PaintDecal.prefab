@@ -47,4 +47,4 @@ MonoBehaviour:
   subtractiveProjector: {fileID: 2100000, guid: 62682fdf8d1b510419604c86c9a3f010,
     type: 2}
   memoryBudget: 512
-  texelsPerMeter: 512
+  texelsPerMeter: 1024
