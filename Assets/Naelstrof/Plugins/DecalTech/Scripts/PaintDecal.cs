@@ -242,6 +242,20 @@ public class PaintDecal : MonoBehaviour {
         rendererCache.Clear();
         memoryInUsage = 0f;
     }
+    // This clears the decals and frees memory for the specified renderer.
+    // If you wanted to "clean" renderers in a more belivable way, you could draw decals in a subtractive mode on the renderer.
+    public void ClearDecalsForRenderer(Renderer r) {
+        if (!rendererCache.ContainsKey(r)) {
+            return;
+        }
+        var p = rendererCache[r];
+        foreach (var material in p.decalableMaterials) {
+            material.SetTexture("_DecalColorMap", null);
+        }
+        memoryInUsage -= (p.texture.width * p.texture.height * 4f) / (float)(1e+6f);
+        p.texture.Release();
+        rendererCache.Remove(r);
+    }
 }
 
 
