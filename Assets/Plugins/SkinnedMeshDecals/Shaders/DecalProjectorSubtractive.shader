@@ -15,6 +15,7 @@ Shader "Naelstrof/DecalProjectorSubtractive"
 		
 		Tags { "RenderType"="Opaque" }
 	LOD 100
+		Conservative True
 
 		CGINCLUDE
 		#pragma target 3.0
@@ -156,7 +157,7 @@ Shader "Naelstrof/DecalProjectorSubtractive"
 }
 /*ASEBEGIN
 Version=18900
-4;143;1675;800;1692.337;259.8796;1.3;True;False
+56;133;1675;700;3054.828;1118.404;3.365807;True;False
 Node;AmplifyShaderEditor.PosVertexDataNode;37;-1503.841,-313.4268;Inherit;False;0;0;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.UnityObjToClipPosHlpNode;38;-1233.169,-320.4389;Inherit;False;1;0;FLOAT3;0,0,0;False;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.SwizzleNode;83;-1033.156,-417.5779;Inherit;False;FLOAT2;0;1;2;3;1;0;FLOAT4;0,0,0,0;False;1;FLOAT2;0
@@ -171,9 +172,9 @@ Node;AmplifyShaderEditor.OneMinusNode;96;-922.4614,-777.0283;Inherit;False;1;0;F
 Node;AmplifyShaderEditor.DynamicAppendNode;97;-697.4612,-808.0283;Inherit;False;FLOAT2;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT2;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;88;-156.519,-69.39052;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;1000;False;1;FLOAT;0
 Node;AmplifyShaderEditor.BreakToComponentsNode;91;-574.3605,567.3722;Inherit;False;FLOAT2;1;0;FLOAT2;0,0;False;16;FLOAT;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT;5;FLOAT;6;FLOAT;7;FLOAT;8;FLOAT;9;FLOAT;10;FLOAT;11;FLOAT;12;FLOAT;13;FLOAT;14;FLOAT;15
-Node;AmplifyShaderEditor.StaticSwitch;98;-520.894,-838.0788;Inherit;False;Property;UNITY_UV_STARTS_AT_TOP3;UNITY_UV_STARTS_AT_TOP;3;0;Create;False;0;0;0;False;0;False;0;0;0;False;UNITY_UV_STARTS_AT_TOP;Toggle;2;Key0;Key1;Fetch;False;True;9;1;FLOAT2;0,0;False;0;FLOAT2;0,0;False;2;FLOAT2;0,0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT2;0,0;False;6;FLOAT2;0,0;False;7;FLOAT2;0,0;False;8;FLOAT2;0,0;False;1;FLOAT2;0
-Node;AmplifyShaderEditor.OneMinusNode;92;-432.361,624.3719;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SaturateNode;89;3.381158,-35.59052;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.OneMinusNode;92;-432.361,624.3719;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.StaticSwitch;98;-520.894,-838.0788;Inherit;False;Property;UNITY_UV_STARTS_AT_TOP3;UNITY_UV_STARTS_AT_TOP;3;0;Create;False;0;0;0;False;0;False;0;0;0;False;UNITY_UV_STARTS_AT_TOP;Toggle;2;Key0;Key1;Fetch;False;True;9;1;FLOAT2;0,0;False;0;FLOAT2;0,0;False;2;FLOAT2;0,0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT2;0,0;False;6;FLOAT2;0,0;False;7;FLOAT2;0,0;False;8;FLOAT2;0,0;False;1;FLOAT2;0
 Node;AmplifyShaderEditor.ColorNode;39;-190.8542,-673.1726;Inherit;False;Property;_BaseColor;BaseColor;1;1;[HDR];Create;True;0;0;0;False;0;False;1,1,1,1;0.02937579,1,0,1;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.DynamicAppendNode;93;-207.3609,593.3719;Inherit;False;FLOAT2;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT2;0
 Node;AmplifyShaderEditor.SamplerNode;18;-416.8339,-420.1366;Inherit;True;Property;_Decal;Decal;0;0;Create;True;0;0;0;False;0;False;-1;None;3207072c6b926894ca9955969b0ce8f0;True;0;False;white;Auto;False;Object;-1;MipLevel;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
@@ -201,10 +202,10 @@ WireConnection;97;0;95;0
 WireConnection;97;1;96;0
 WireConnection;88;0;43;0
 WireConnection;91;0;7;0
+WireConnection;89;0;88;0
+WireConnection;92;0;91;1
 WireConnection;98;1;97;0
 WireConnection;98;0;32;0
-WireConnection;92;0;91;1
-WireConnection;89;0;88;0
 WireConnection;93;0;91;0
 WireConnection;93;1;92;0
 WireConnection;18;1;98;0
@@ -227,4 +228,4 @@ WireConnection;99;0;86;0
 WireConnection;42;0;99;0
 WireConnection;42;1;10;0
 ASEEND*/
-//CHKSM=F04C0A862577D641288C7E3E7DDBA7CA9F0E2404
+//CHKSM=71E59012BD84D7D99FF0CEC260B1F7A1A7B70958

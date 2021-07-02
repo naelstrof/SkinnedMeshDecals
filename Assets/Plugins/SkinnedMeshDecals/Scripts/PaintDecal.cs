@@ -213,20 +213,11 @@ public class PaintDecal : MonoBehaviour {
             }
             // For padding we just render the same thing repeatedly with diagonal offsets.
             // This makes it more blurry, though for really opaque decals it should help with hiding seams.
-            if (addPadding) {
-                Vector2 pixelSize = new Vector2(1f,1f);
-                Vector2 pixelSizeAlso = new Vector2(-1f,1f);
-                buffer.SetViewport(new Rect(pixelSize, pixelRect + pixelSize));
-                buffer.DrawRenderer(r, projector, i);
-                buffer.SetViewport(new Rect(-pixelSize, pixelRect - pixelSize));
-                buffer.DrawRenderer(r, projector, i);
-                buffer.SetViewport(new Rect(pixelSizeAlso, pixelRect + pixelSizeAlso));
-                buffer.DrawRenderer(r, projector, i);
-                buffer.SetViewport(new Rect(-pixelSizeAlso, pixelRect - pixelSizeAlso));
-                buffer.DrawRenderer(r, projector, i);
-            } else {
-                buffer.DrawRenderer(r, projector, i);
-            }
+            //if (addPadding && SystemInfo.supportsConservativeRaster) {
+                //buffer
+                //UnityEngine.Rendering.RasterState = 
+            //}
+            buffer.DrawRenderer(r, projector, i);
         }
         Graphics.ExecuteCommandBuffer(buffer);
         return target;
