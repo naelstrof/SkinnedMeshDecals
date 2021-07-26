@@ -71,7 +71,7 @@ It figures out which polygons reference which part of the texture, and projects 
 
 If we imagine there's a decal overlayed on the 3D screen-- we basically have to do the reverse!
 
-![kobold 3d to uv map](uv_samples_reversed.jpg)
+![kobold 3d to uv map](uv_samples_reverse.jpg)
 
 We sample directly from the decal texture, using the projected 3D mesh as UV inputs. And output directly to a mesh that has been unwrapped into screen-space. After a bit of fiddling, it was pretty simple to create the shader.
 
