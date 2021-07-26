@@ -20,7 +20,7 @@ An example of how to create efficient projected decals on moving skinned meshes.
 
 You can install this package either by adding by adding `https://github.com/naelstrof/SkinnedMeshDecals.git#upm` through the Package Manager's "Add package from git URL" or by using the openupm badge above.
 
-## Details
+# Detailed explanation
 
 This is going to be a technical description, I was surprised how little information online there is about rendering decals on a skinned mesh.
 
@@ -99,7 +99,7 @@ This lets me just manually draw a mesh to the screen with a specific shader. HDR
 
 WOW AGAIN! Complete opposite of doing a full HDRP camera render, command buffers take around 0.02 MS to execute. They're basically free! (provided your graphics card is adequate).
 
-There's one more problem to tackle though, GPUs don't fully render to partial pixels-- causing seams to appear. (You can watch this to s)
+There's one more problem to tackle though, GPUs don't fully render to partial pixels-- causing seams to appear.
 
 This is due to the GPU not fully rendering partial pixels. Simply turning on the Conservative Rendering feature of the GPU causes these pixels to fill in completely.
 
