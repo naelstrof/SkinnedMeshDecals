@@ -65,13 +65,13 @@ Minion's decal strategy basically goes like this:
 
 Seems simple enough! Starting with the "projector" shader, I realized that it's basically the entire texture pipeline but in reverse. Here's what a normal shader typically computes.
 
-![kobold uv to 3d map](uv_sample.jpg)
+![kobold uv to 3d map](uv_samples.jpg)
 
 It figures out which polygons reference which part of the texture, and projects it into the correct space on the screen.
 
 If we imagine there's a decal overlayed on the 3D screen-- we basically have to do the reverse!
 
-![kobold 3d to uv map](uv_sample_reversed.jpg)
+![kobold 3d to uv map](uv_samples_reversed.jpg)
 
 We sample directly from the decal texture, using the projected 3D mesh as UV inputs. And output directly to a mesh that has been unwrapped into screen-space. After a bit of fiddling, it was pretty simple to create the shader.
 
