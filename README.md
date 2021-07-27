@@ -75,6 +75,8 @@ If we imagine there's a decal overlayed on the 3D screen-- we basically have to 
 
 We sample directly from the decal texture, using the projected 3D mesh as UV inputs. And output directly to a mesh that has been unwrapped into screen-space. After a bit of fiddling, it was pretty simple to create the shader.
 
+![decal on kobold](decalUnwrap.gif)
+
 This leaves us with a material we can apply to a mesh to render a uv-space decal.
 
 So all I have to do is render the mesh by itself to an extra HDRP camera to render a decal on it... right?
