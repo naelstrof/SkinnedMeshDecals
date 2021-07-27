@@ -103,7 +103,7 @@ WOW AGAIN! Complete opposite of doing a full HDRP camera render, command buffers
 
 There's one more problem to tackle though, GPUs don't fully render to partial pixels-- causing seams to appear.
 
-This is due to the GPU not fully rendering partial pixels. Simply turning on the Conservative Rendering feature of the GPU causes these pixels to fill in completely.
+Simply turning on the Conservative Rendering feature of the GPU causes these pixels to fill in completely.
 
 ![no seams decals](no_seams.jpg)
 

@@ -75,6 +75,8 @@ If we imagine there's a decal overlayed on the 3D screen-- we basically have to 
 
 We sample directly from the decal texture, using the projected 3D mesh as UV inputs. And output directly to a mesh that has been unwrapped into screen-space. After a bit of fiddling, it was pretty simple to create the shader.
 
+![decal on kobold](https://github.com/naelstrof/SkinnedMeshDecals/blob/master/decalUnwrap.gif)
+
 This leaves us with a material we can apply to a mesh to render a uv-space decal.
 
 So all I have to do is render the mesh by itself to an extra HDRP camera to render a decal on it... right?
@@ -101,7 +103,7 @@ WOW AGAIN! Complete opposite of doing a full HDRP camera render, command buffers
 
 There's one more problem to tackle though, GPUs don't fully render to partial pixels-- causing seams to appear.
 
-This is due to the GPU not fully rendering partial pixels. Simply turning on the Conservative Rendering feature of the GPU causes these pixels to fill in completely.
+Simply turning on the Conservative Rendering feature of the GPU causes these pixels to fill in completely.
 
 ![no seams decals](https://github.com/naelstrof/SkinnedMeshDecals/raw/master/no_seams.jpg)
 
