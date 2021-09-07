@@ -39,13 +39,8 @@ Shader "Naelstrof/DecalProjectorSubtractive"
 			#define ASE_ABSOLUTE_VERTEX_POS 1
 
 
-			#ifndef UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX
-			//only defining to not throw compilation error over Unity 5.5
-			#define UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input)
-			#endif
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma multi_compile_instancing
 			#include "UnityCG.cginc"
 			#define ASE_NEEDS_VERT_POSITION
 			#pragma multi_compile_local __ _BACKFACECULLING
@@ -55,7 +50,6 @@ Shader "Naelstrof/DecalProjectorSubtractive"
 			{
 				float4 vertex : POSITION;
 				float4 color : COLOR;
-				UNITY_VERTEX_INPUT_INSTANCE_ID
 				float4 ase_texcoord1 : TEXCOORD1;
 				float3 ase_normal : NORMAL;
 			};
@@ -66,8 +60,6 @@ Shader "Naelstrof/DecalProjectorSubtractive"
 #ifdef ASE_NEEDS_FRAG_WORLD_POSITION
 				float3 worldPos : TEXCOORD0;
 #endif
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-				UNITY_VERTEX_OUTPUT_STEREO
 				float4 ase_texcoord1 : TEXCOORD1;
 			};
 
@@ -78,10 +70,6 @@ Shader "Naelstrof/DecalProjectorSubtractive"
 			v2f vert ( appdata v )
 			{
 				v2f o;
-				UNITY_SETUP_INSTANCE_ID(v);
-				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
-				UNITY_TRANSFER_INSTANCE_ID(v, o);
-
 				float2 texCoord7 = v.ase_texcoord1.xy * float2( 1,1 ) + float2( 0,0 );
 				float2 break91 = texCoord7;
 				float2 appendResult93 = (float2(break91.x , ( 1.0 - break91.y )));
@@ -121,8 +109,6 @@ Shader "Naelstrof/DecalProjectorSubtractive"
 			
 			fixed4 frag (v2f i ) : SV_Target
 			{
-				UNITY_SETUP_INSTANCE_ID(i);
-				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
 				fixed4 finalColor;
 #ifdef ASE_NEEDS_FRAG_WORLD_POSITION
 				float3 WorldPosition = i.worldPos;
@@ -151,13 +137,86 @@ Shader "Naelstrof/DecalProjectorSubtractive"
 			ENDCG
 		}
 	}
+
+	SubShader
+	{
+		
+		
+		Tags { "RenderType"="Opaque" }
+		LOD 100
+
+		/*ase_all_modules*/
+		
+		/*ase_pass*/
+		Pass
+		{
+			Name "Unlit"
+			Tags { "LightMode" = "ForwardBase" }
+			CGPROGRAM
+
+			/*ase_pragma_before*/
+
+			#pragma vertex vert
+			#pragma fragment frag
+			#include "UnityCG.cginc"
+			/*ase_pragma*/
+
+			struct appdata
+			{
+				float4 vertex : POSITION;
+				float4 color : COLOR;
+				/*ase_vdata:p=p;c=c*/
+			};
+			
+			struct v2f
+			{
+				float4 vertex : SV_POSITION;
+#ifdef ASE_NEEDS_FRAG_WORLD_POSITION
+				float3 worldPos : TEXCOORD0;
+#endif
+				/*ase_interp(1,):sp=sp.xyzw;wp=tc0*/
+			};
+
+			/*ase_globals*/
+			
+			v2f vert ( appdata v /*ase_vert_input*/)
+			{
+				v2f o;
+				/*ase_vert_code:v=appdata;o=v2f*/
+				float3 vertexValue = float3(0, 0, 0);
+				#if ASE_ABSOLUTE_VERTEX_POS
+				vertexValue = v.vertex.xyz;
+				#endif
+				vertexValue = /*ase_vert_out:Vertex Offset;Float3*/vertexValue/*end*/;
+				o.vertex = float4(vertexValue.xyz,1);
+
+#ifdef ASE_NEEDS_FRAG_WORLD_POSITION
+				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+#endif
+				return o;
+			}
+			
+			fixed4 frag (v2f i /*ase_frag_input*/) : SV_Target
+			{
+				fixed4 finalColor;
+#ifdef ASE_NEEDS_FRAG_WORLD_POSITION
+				float3 WorldPosition = i.worldPos;
+#endif
+				/*ase_frag_code:i=v2f*/
+				
+				finalColor = /*ase_frag_out:Frag Color;Float4*/fixed4(1,1,1,1)/*end*/;
+				return finalColor;
+			}
+			ENDCG
+		}
+	}
 	CustomEditor "ASEMaterialInspector"
 	
 	
 }
 /*ASEBEGIN
 Version=18900
-56;133;1675;700;3054.828;1118.404;3.365807;True;False
+578;417;1436;601;2322.677;1115.672;2.157738;True;False
 Node;AmplifyShaderEditor.PosVertexDataNode;37;-1503.841,-313.4268;Inherit;False;0;0;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.UnityObjToClipPosHlpNode;38;-1233.169,-320.4389;Inherit;False;1;0;FLOAT3;0,0,0;False;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.SwizzleNode;83;-1033.156,-417.5779;Inherit;False;FLOAT2;0;1;2;3;1;0;FLOAT4;0,0,0,0;False;1;FLOAT2;0
@@ -228,4 +287,4 @@ WireConnection;99;0;86;0
 WireConnection;42;0;99;0
 WireConnection;42;1;10;0
 ASEEND*/
-//CHKSM=71E59012BD84D7D99FF0CEC260B1F7A1A7B70958
+//CHKSM=6CDE21C6194523A1C0E5055F6CBD80C5997E040A

@@ -38,13 +38,8 @@ Shader "Naelstrof/DecalProjector"
 			#define ASE_ABSOLUTE_VERTEX_POS 1
 
 
-			#ifndef UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX
-			//only defining to not throw compilation error over Unity 5.5
-			#define UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input)
-			#endif
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma multi_compile_instancing
 			#include "UnityCG.cginc"
 			#define ASE_NEEDS_VERT_POSITION
 			#pragma multi_compile_local __ _BACKFACECULLING
@@ -54,7 +49,6 @@ Shader "Naelstrof/DecalProjector"
 			{
 				float4 vertex : POSITION;
 				float4 color : COLOR;
-				UNITY_VERTEX_INPUT_INSTANCE_ID
 				float4 ase_texcoord1 : TEXCOORD1;
 				float3 ase_normal : NORMAL;
 			};
@@ -65,8 +59,6 @@ Shader "Naelstrof/DecalProjector"
 #ifdef ASE_NEEDS_FRAG_WORLD_POSITION
 				float3 worldPos : TEXCOORD0;
 #endif
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-				UNITY_VERTEX_OUTPUT_STEREO
 				float4 ase_texcoord1 : TEXCOORD1;
 			};
 
@@ -77,10 +69,6 @@ Shader "Naelstrof/DecalProjector"
 			v2f vert ( appdata v )
 			{
 				v2f o;
-				UNITY_SETUP_INSTANCE_ID(v);
-				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
-				UNITY_TRANSFER_INSTANCE_ID(v, o);
-
 				float2 texCoord7 = v.ase_texcoord1.xy * float2( 1,1 ) + float2( 0,0 );
 				float2 break101 = texCoord7;
 				float2 appendResult103 = (float2(break101.x , ( 1.0 - break101.y )));
@@ -121,8 +109,6 @@ Shader "Naelstrof/DecalProjector"
 			
 			fixed4 frag (v2f i ) : SV_Target
 			{
-				UNITY_SETUP_INSTANCE_ID(i);
-				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
 				fixed4 finalColor;
 #ifdef ASE_NEEDS_FRAG_WORLD_POSITION
 				float3 WorldPosition = i.worldPos;
@@ -151,13 +137,86 @@ Shader "Naelstrof/DecalProjector"
 			ENDCG
 		}
 	}
+
+	SubShader
+	{
+		
+		
+		Tags { "RenderType"="Opaque" }
+		LOD 100
+
+		/*ase_all_modules*/
+		
+		/*ase_pass*/
+		Pass
+		{
+			Name "Unlit"
+			Tags { "LightMode" = "ForwardBase" }
+			CGPROGRAM
+
+			/*ase_pragma_before*/
+
+			#pragma vertex vert
+			#pragma fragment frag
+			#include "UnityCG.cginc"
+			/*ase_pragma*/
+
+			struct appdata
+			{
+				float4 vertex : POSITION;
+				float4 color : COLOR;
+				/*ase_vdata:p=p;c=c*/
+			};
+			
+			struct v2f
+			{
+				float4 vertex : SV_POSITION;
+#ifdef ASE_NEEDS_FRAG_WORLD_POSITION
+				float3 worldPos : TEXCOORD0;
+#endif
+				/*ase_interp(1,):sp=sp.xyzw;wp=tc0*/
+			};
+
+			/*ase_globals*/
+			
+			v2f vert ( appdata v /*ase_vert_input*/)
+			{
+				v2f o;
+				/*ase_vert_code:v=appdata;o=v2f*/
+				float3 vertexValue = float3(0, 0, 0);
+				#if ASE_ABSOLUTE_VERTEX_POS
+				vertexValue = v.vertex.xyz;
+				#endif
+				vertexValue = /*ase_vert_out:Vertex Offset;Float3*/vertexValue/*end*/;
+				o.vertex = float4(vertexValue.xyz,1);
+
+#ifdef ASE_NEEDS_FRAG_WORLD_POSITION
+				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+#endif
+				return o;
+			}
+			
+			fixed4 frag (v2f i /*ase_frag_input*/) : SV_Target
+			{
+				fixed4 finalColor;
+#ifdef ASE_NEEDS_FRAG_WORLD_POSITION
+				float3 WorldPosition = i.worldPos;
+#endif
+				/*ase_frag_code:i=v2f*/
+				
+				finalColor = /*ase_frag_out:Frag Color;Float4*/fixed4(1,1,1,1)/*end*/;
+				return finalColor;
+			}
+			ENDCG
+		}
+	}
 	CustomEditor "ASEMaterialInspector"
 	
 	
 }
 /*ASEBEGIN
 Version=18900
-56;133;1675;700;2664.676;996.5717;2.475157;True;False
+535;251;1436;600;2525.403;983.5923;2.775157;True;False
 Node;AmplifyShaderEditor.PosVertexDataNode;37;-1503.841,-313.4268;Inherit;False;0;0;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.UnityObjToClipPosHlpNode;38;-1233.169,-320.4389;Inherit;False;1;0;FLOAT3;0,0,0;False;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.SwizzleNode;83;-1033.156,-417.5779;Inherit;False;FLOAT2;0;1;2;3;1;0;FLOAT4;0,0,0,0;False;1;FLOAT2;0
@@ -172,9 +231,9 @@ Node;AmplifyShaderEditor.OneMinusNode;97;-954.2413,-758.1356;Inherit;False;1;0;F
 Node;AmplifyShaderEditor.DynamicAppendNode;98;-729.2418,-789.1357;Inherit;False;FLOAT2;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT2;0
 Node;AmplifyShaderEditor.SignOpNode;91;-322.1364,-130.7534;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.BreakToComponentsNode;101;-804.4938,480.4535;Inherit;False;FLOAT2;1;0;FLOAT2;0,0;False;16;FLOAT;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT;5;FLOAT;6;FLOAT;7;FLOAT;8;FLOAT;9;FLOAT;10;FLOAT;11;FLOAT;12;FLOAT;13;FLOAT;14;FLOAT;15
-Node;AmplifyShaderEditor.SaturateNode;89;-182.2188,-125.5905;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.OneMinusNode;102;-662.494,537.4532;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.StaticSwitch;99;-548.9712,-820.4207;Inherit;False;Property;UNITY_UV_STARTS_AT_TOP;UNITY_UV_STARTS_AT_TOP;3;0;Create;False;0;0;0;False;0;False;0;0;0;False;UNITY_UV_STARTS_AT_TOP;Toggle;2;Key0;Key1;Fetch;False;True;9;1;FLOAT2;0,0;False;0;FLOAT2;0,0;False;2;FLOAT2;0,0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT2;0,0;False;6;FLOAT2;0,0;False;7;FLOAT2;0,0;False;8;FLOAT2;0,0;False;1;FLOAT2;0
+Node;AmplifyShaderEditor.OneMinusNode;102;-662.494,537.4532;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SaturateNode;89;-182.2188,-125.5905;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SamplerNode;18;-416.8339,-420.1366;Inherit;True;Property;_Decal;Decal;0;0;Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;MipLevel;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.DynamicAppendNode;103;-437.494,506.4532;Inherit;False;FLOAT2;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT2;0
 Node;AmplifyShaderEditor.VertexToFragmentNode;49;4.79973,-84.86951;Inherit;False;False;False;1;0;FLOAT;0;False;1;FLOAT;0
@@ -202,10 +261,10 @@ WireConnection;98;0;96;0
 WireConnection;98;1;97;0
 WireConnection;91;0;43;0
 WireConnection;101;0;7;0
-WireConnection;89;0;91;0
-WireConnection;102;0;101;1
 WireConnection;99;1;98;0
 WireConnection;99;0;32;0
+WireConnection;102;0;101;1
+WireConnection;89;0;91;0
 WireConnection;18;1;99;0
 WireConnection;103;0;101;0
 WireConnection;103;1;102;0
@@ -228,4 +287,4 @@ WireConnection;104;0;86;0
 WireConnection;42;0;104;0
 WireConnection;42;1;10;0
 ASEEND*/
-//CHKSM=DB2C20B498431E429C5CF99CF03C689042C9A2C7
+//CHKSM=1FF03BD143D286FB072E99FFB65D66FD49C59140
