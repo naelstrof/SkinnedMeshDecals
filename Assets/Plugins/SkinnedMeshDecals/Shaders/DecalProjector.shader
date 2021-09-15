@@ -9,10 +9,7 @@ Shader "Naelstrof/DecalProjector"
 
 	}
 	
-	SubShader
-	{
-		
-		
+	SubShader {
 		Tags { "RenderType"="Opaque" }
 	LOD 100
 		Conservative True
@@ -140,32 +137,40 @@ Shader "Naelstrof/DecalProjector"
 
 	SubShader
 	{
-		
-		
 		Tags { "RenderType"="Opaque" }
 		LOD 100
 
-		/*ase_all_modules*/
+		CGINCLUDE
+		#pragma target 3.0
+		ENDCG
+		Blend SrcAlpha OneMinusSrcAlpha, One OneMinusSrcAlpha
+		AlphaToMask Off
+		Cull Off
+		ColorMask RGBA
+		ZWrite Off
+		ZTest Always
 		
-		/*ase_pass*/
-		Pass
-		{
-			Name "Unlit"
-			Tags { "LightMode" = "ForwardBase" }
+		Pass {
+			Name "UnlitNoConservativeRaster"
+			Tags { "LightMode"="ForwardBase" }
 			CGPROGRAM
 
-			/*ase_pragma_before*/
+			#define ASE_ABSOLUTE_VERTEX_POS 1
+
 
 			#pragma vertex vert
 			#pragma fragment frag
 			#include "UnityCG.cginc"
-			/*ase_pragma*/
+			#define ASE_NEEDS_VERT_POSITION
+			#pragma multi_compile_local __ _BACKFACECULLING
+
 
 			struct appdata
 			{
 				float4 vertex : POSITION;
 				float4 color : COLOR;
-				/*ase_vdata:p=p;c=c*/
+				float4 ase_texcoord1 : TEXCOORD1;
+				float3 ase_normal : NORMAL;
 			};
 			
 			struct v2f
@@ -174,20 +179,46 @@ Shader "Naelstrof/DecalProjector"
 #ifdef ASE_NEEDS_FRAG_WORLD_POSITION
 				float3 worldPos : TEXCOORD0;
 #endif
-				/*ase_interp(1,):sp=sp.xyzw;wp=tc0*/
+				float4 ase_texcoord1 : TEXCOORD1;
 			};
 
-			/*ase_globals*/
+			uniform float4 _BaseColor;
+			uniform sampler2D _Decal;
+
 			
-			v2f vert ( appdata v /*ase_vert_input*/)
+			v2f vert ( appdata v )
 			{
 				v2f o;
-				/*ase_vert_code:v=appdata;o=v2f*/
+				float2 texCoord7 = v.ase_texcoord1.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 break101 = texCoord7;
+				float2 appendResult103 = (float2(break101.x , ( 1.0 - break101.y )));
+				#ifdef UNITY_UV_STARTS_AT_TOP
+				float2 staticSwitch100 = texCoord7;
+				#else
+				float2 staticSwitch100 = appendResult103;
+				#endif
+				float4 unityObjectToClipPos38 = UnityObjectToClipPos( v.vertex.xyz );
+				float4 appendResult8 = (float4(staticSwitch100 , (unityObjectToClipPos38).zw));
+				
+				float2 vertexToFrag32 = ( (unityObjectToClipPos38).xy + float2( 0.5,0.5 ) );
+				o.ase_texcoord1.xy = vertexToFrag32;
+				float3 ase_worldNormal = UnityObjectToWorldNormal(v.ase_normal);
+				float3 normalizedWorldNormal = normalize( ase_worldNormal );
+				float3 ase_worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+				float3 ase_worldViewDir = UnityWorldSpaceViewDir(ase_worldPos);
+				ase_worldViewDir = normalize(ase_worldViewDir);
+				float dotResult43 = dot( normalizedWorldNormal , ase_worldViewDir );
+				float vertexToFrag49 = saturate( sign( dotResult43 ) );
+				o.ase_texcoord1.z = vertexToFrag49;
+				
+				
+				//setting value to unused interpolator channels and avoid initialization warnings
+				o.ase_texcoord1.w = 0;
 				float3 vertexValue = float3(0, 0, 0);
 				#if ASE_ABSOLUTE_VERTEX_POS
 				vertexValue = v.vertex.xyz;
 				#endif
-				vertexValue = /*ase_vert_out:Vertex Offset;Float3*/vertexValue/*end*/;
+				vertexValue = ( ( appendResult8 * float4( 2,-2,1,0 ) ) + float4( -1,1,0,0 ) ).xyz;
 				o.vertex = float4(vertexValue.xyz,1);
 
 #ifdef ASE_NEEDS_FRAG_WORLD_POSITION
@@ -196,22 +227,37 @@ Shader "Naelstrof/DecalProjector"
 				return o;
 			}
 			
-			fixed4 frag (v2f i /*ase_frag_input*/) : SV_Target
+			fixed4 frag (v2f i ) : SV_Target
 			{
 				fixed4 finalColor;
 #ifdef ASE_NEEDS_FRAG_WORLD_POSITION
 				float3 WorldPosition = i.worldPos;
 #endif
-				/*ase_frag_code:i=v2f*/
+				float2 vertexToFrag32 = i.ase_texcoord1.xy;
+				float2 break96 = vertexToFrag32;
+				float2 appendResult98 = (float2(break96.x , ( 1.0 - break96.y )));
+				#ifdef UNITY_UV_STARTS_AT_TOP
+				float2 staticSwitch99 = vertexToFrag32;
+				#else
+				float2 staticSwitch99 = appendResult98;
+				#endif
+				float4 temp_output_40_0 = ( _BaseColor * tex2Dlod( _Decal, float4( staticSwitch99, 0, 0.0) ) );
+				float vertexToFrag49 = i.ase_texcoord1.z;
+				float4 appendResult87 = (float4(1.0 , 1.0 , 1.0 , vertexToFrag49));
+				#ifdef _BACKFACECULLING
+				float4 staticSwitch86 = ( temp_output_40_0 * appendResult87 );
+				#else
+				float4 staticSwitch86 = temp_output_40_0;
+				#endif
 				
-				finalColor = /*ase_frag_out:Frag Color;Float4*/fixed4(1,1,1,1)/*end*/;
+				
+				finalColor = saturate( staticSwitch86 );
 				return finalColor;
 			}
 			ENDCG
 		}
 	}
 	CustomEditor "ASEMaterialInspector"
-	
 	
 }
 /*ASEBEGIN
