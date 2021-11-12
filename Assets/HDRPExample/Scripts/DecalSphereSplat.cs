@@ -17,7 +17,7 @@ public class DecalSphereSplat : MonoBehaviour {
         for(int i=0;i<hits;i++) {
             Collider c = colliders[i];
             foreach(Renderer r in c.transform.root.GetComponentsInChildren<Renderer>()) {
-                PaintDecal.instance.RenderDecal(r, projector, transform.position-Vector3.forward*scale*0.5f, Quaternion.identity, color, Vector2.one*scale*0.5f, scale);
+                PaintDecal.instance.RenderDecal(r, projector, transform.position-Vector3.forward*scale*0.5f, Quaternion.identity, Vector2.one*scale*0.5f, scale);
             }
         }
     }
