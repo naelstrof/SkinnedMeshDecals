@@ -158,7 +158,7 @@ public class PaintDecal : MonoBehaviour {
         return null;
     }
 
-    public RenderTexture RenderDecal(Renderer r, Material projector, Vector3 position, Quaternion rotation, Color color, Vector2 size, float depth = 0.5f) {
+    public RenderTexture RenderDecal(Renderer r, Material projector, Vector3 position, Quaternion rotation, Vector2 size, float depth = 0.5f) {
         RenderTexture target = null;
         PackedRenderer packed = GetPackedRenderer(r);
         if (packed == null) {
