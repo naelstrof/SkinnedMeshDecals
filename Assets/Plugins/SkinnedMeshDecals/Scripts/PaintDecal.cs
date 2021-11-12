@@ -38,10 +38,6 @@ public class PaintDecal : MonoBehaviour {
         public List<Material> decalableMaterials;
         public float lastUse;
     }
-    [Tooltip("The material used to actually project decals onto meshes. This generally should be the one included-- though custom ones with custom blend modes could be used instead.")]
-    public Material decalProjector;
-    [Tooltip("Same as the decal projector, but this time with a subtractive mode enabled.")]
-    public Material subtractiveProjector;
 
     [Range(32,1024)]
     [Tooltip("Memory usage in megabytes before old textures get removed.")]
@@ -162,29 +158,23 @@ public class PaintDecal : MonoBehaviour {
         return null;
     }
 
-    public RenderTexture RenderDecal(Renderer r, Texture decal, Vector3 position, Quaternion rotation, Color color, Vector2 size, float depth = 0.5f, bool addPadding = false, bool cullBack = true, bool subtract = false) {
+    public RenderTexture RenderDecal(Renderer r, Material projector, Vector3 position, Quaternion rotation, Color color, Vector2 size, float depth = 0.5f) {
         RenderTexture target = null;
         PackedRenderer packed = GetPackedRenderer(r);
         if (packed == null) {
             return null;
         }
         target = packed.texture;
-        Material projector = subtract ? subtractiveProjector : decalProjector;
 
         // With a valid target, generate a material list with the decal projector on the right submesh, with all other submeshes set to an invisible material.
-        projector.SetTexture("_Decal", decal);
-
-        // FIXME: This is specifically for semi-transparent decals which need padding. So we ignore full alpha decals. Though this isn't verifyable with just the alpha, but it works for me.
-        if (addPadding && color.a != 1f) {
-            color.a *= 0.25f;
-        }
-        projector.SetColor("_BaseColor", color);
-
-        if (cullBack) {
-            projector.EnableKeyword("_BACKFACECULLING");
-        } else {
-            projector.DisableKeyword("_BACKFACECULLING");
-        }
+        //projector.SetTexture("_Decal", decal);
+        //projector.SetColor("_BaseColor", color);
+//
+        //if (cullBack) {
+            //projector.EnableKeyword("_BACKFACECULLING");
+        //} else {
+            //projector.DisableKeyword("_BACKFACECULLING");
+        //}
 
         // Could use a Matrix4x4.Perspective instead! depends on use case.
         Matrix4x4 projection = Matrix4x4.Ortho(-size.x, size.x, -size.y, size.y, 0f, depth);
@@ -211,12 +201,6 @@ public class PaintDecal : MonoBehaviour {
             if (r.materials.Length == 0 || r.materials.Length <= i || !IsDecalable(r.materials[i])) {
                 continue;
             }
-            // For padding we just render the same thing repeatedly with diagonal offsets.
-            // This makes it more blurry, though for really opaque decals it should help with hiding seams.
-            //if (addPadding && SystemInfo.supportsConservativeRaster) {
-                //buffer
-                //UnityEngine.Rendering.RasterState = 
-            //}
             buffer.DrawRenderer(r, projector, i);
         }
         Graphics.ExecuteCommandBuffer(buffer);
