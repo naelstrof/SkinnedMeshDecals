@@ -29,7 +29,7 @@ public class DecalSphereSplat : MonoBehaviour {
             staticRenderers.Clear();
             GetComponentsInChildrenNoAlloc<Renderer>(c.transform.root, staticTempRenderers, staticRenderers);
             foreach(Renderer r in staticRenderers) {
-                SkinnedMeshDecals.PaintDecal.instance.RenderDecal(r, projector, transform.position-Vector3.forward*scale*0.5f, Quaternion.identity, Vector2.one*scale*0.5f, scale);
+                SkinnedMeshDecals.PaintDecal.RenderDecal(r, projector, transform.position-Vector3.forward*scale*0.5f, Quaternion.identity, Vector2.one*scale*0.5f, scale);
             }
         }
     }
