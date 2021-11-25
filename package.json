@@ -1,7 +1,7 @@
 {
     "name": "com.naelstrof.skinnedmeshdecals",
     "displayName": "Skinned Mesh Decals",
-    "version": "3.6.7",
+    "version": "4.6.7",
     "unity": "2018.3",
     "description": "Renders decals on arbitrary meshes, for any pipeline."
 }
