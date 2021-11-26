@@ -10,15 +10,12 @@ public class DecalShooter : MonoBehaviour {
     public float size;
     void Start() {
         projector = Material.Instantiate(projector);
-        projector.color = color;
     }
     void FixedUpdate() {
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.forward, out hit, 10f, hitMask, QueryTriggerInteraction.Ignore)) {
-            Renderer r = hit.collider.transform.root.GetComponentInChildren<Renderer>();
-            if (r != null) {
-                SkinnedMeshDecals.PaintDecal.RenderDecal(r, projector, hit.point + hit.normal * 0.15f, Quaternion.FromToRotation(Vector3.forward,-hit.normal), Vector2.one * size, 0.3f);
-            }
+            projector.color = color;
+            SkinnedMeshDecals.PaintDecal.RenderDecalForCollision(hit.collider, projector, hit.point, hit.normal, UnityEngine.Random.Range(0f,360f), Vector2.one * size, 0.6f);
         }
     }
 }

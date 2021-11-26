@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace SkinnedMeshDecals {
+public class MonobehaviourHider {
 public class DecalableInfo : MonoBehaviour {
     private Material[] materials;
     private class TextureTarget {
@@ -24,6 +25,7 @@ public class DecalableInfo : MonoBehaviour {
                     drawIndices.Add(i);
                 }
             }
+            PaintDecal.OnMemoryChanged();
         }
         public RenderTexture texture;
         public List<int> drawIndices;
@@ -83,7 +85,7 @@ public class DecalableInfo : MonoBehaviour {
     void OnDestroy() {
         PaintDecal.RemoveDecalableInfo(this);
         foreach(var pair in textureTargets) {
-            foreach(Material mat in materials) {
+            foreach(Material mat in pair.Value.decalableMaterials) {
                 mat.SetTexture(pair.Key, null);
             }
             pair.Value.texture.Release();
@@ -91,4 +93,5 @@ public class DecalableInfo : MonoBehaviour {
     }
 }
 
+}
 }
