@@ -31,7 +31,7 @@ public class DecalableInfo : MonoBehaviour {
         public List<int> drawIndices;
         public List<Material> decalableMaterials;
     }
-    private Dictionary<string, TextureTarget> textureTargets;
+    private Dictionary<string, TextureTarget> textureTargets = new Dictionary<string, TextureTarget>();
     private new Renderer renderer;
     public float lastUse;
     public float memorySizeMB {
@@ -54,7 +54,6 @@ public class DecalableInfo : MonoBehaviour {
         return v;
     }
     void Awake() {
-        textureTargets = new Dictionary<string, TextureTarget>();
         renderer = GetComponent<Renderer>();
         materials = renderer.materials;
         lastUse = Time.time;
