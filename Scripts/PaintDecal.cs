@@ -105,6 +105,10 @@ public static class PaintDecal {
         SkinnedMeshDecals.PaintDecal.RenderDecalForCollider(c, projector, position+normal*halfDepth, Quaternion.AngleAxis(rotationAboutNormal, normal)*Quaternion.FromToRotation(Vector3.forward, -normal), size, halfDepth*2f, textureName);
     }
     public static void RenderDecal(Renderer r, Material projector, Vector3 position, Quaternion rotation, Vector2 size, float depth = 0.5f, string textureName = defaultTextureName) {
+        // Only can draw on meshes.
+        if (!(r is SkinnedMeshRenderer) && !(r is MeshRenderer)) {
+            return;
+        }
         MonobehaviourHider.DecalableInfo info = r.GetComponent<MonobehaviourHider.DecalableInfo>();
         if (info == null) {
             info = r.gameObject.AddComponent<MonobehaviourHider.DecalableInfo>();
