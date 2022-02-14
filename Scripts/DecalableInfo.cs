@@ -60,6 +60,10 @@ public class DecalableInfo : MonoBehaviour {
         PaintDecal.AddDecalableInfo(this);
     }
     public void Render(CommandBuffer buffer, Material projector, string textureName) {
+        if (renderer == null) {
+            Destroy(this);
+            return;
+        }
         // Create the texture if we don't have it.
         if (!textureTargets.ContainsKey(textureName)) {
             int worldScale = Mathf.RoundToInt(renderer.bounds.extents.magnitude*PaintDecal.texelsPerMeter);
