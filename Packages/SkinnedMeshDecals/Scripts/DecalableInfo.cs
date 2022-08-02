@@ -7,6 +7,7 @@ namespace SkinnedMeshDecals {
 public class MonobehaviourHider {
 public class DecalableInfo : MonoBehaviour {
     private Material[] materials;
+    private Material dilationBlitter;
     private class TextureTarget {
         private static void ClearRenderTexture(RenderTexture target) {
             var rt = UnityEngine.RenderTexture.active;
@@ -17,8 +18,10 @@ public class DecalableInfo : MonoBehaviour {
         public TextureTarget(string textureName, int textureScale, Renderer renderer, Material[] materials) {
             drawIndices = new List<int>();
             decalableMaterials = new List<Material>();
-            texture = new RenderTexture(textureScale, textureScale, 0);
-            ClearRenderTexture(texture);
+            baseTexture = new RenderTexture(textureScale, textureScale, 0);
+            outputTexture = new RenderTexture(textureScale, textureScale, 0);
+            ClearRenderTexture(outputTexture);
+            ClearRenderTexture(baseTexture);
             for (int i=0;i<materials.Length;i++) {
                 if (materials[i].HasProperty(textureName)) {
                     decalableMaterials.Add(materials[i]);
@@ -27,7 +30,8 @@ public class DecalableInfo : MonoBehaviour {
             }
             PaintDecal.OnMemoryChanged();
         }
-        public RenderTexture texture;
+        public RenderTexture baseTexture;
+        public RenderTexture outputTexture;
         public List<int> drawIndices;
         public List<Material> decalableMaterials;
     }
@@ -38,7 +42,8 @@ public class DecalableInfo : MonoBehaviour {
         get {
             float size = 0f;
             foreach(var pair in textureTargets) {
-                size += (pair.Value.texture.width*pair.Value.texture.height*4f)/(float)(1e+6f);
+                size += (pair.Value.baseTexture.width*pair.Value.baseTexture.height*4f)/(float)(1e+6f);
+                size += (pair.Value.outputTexture.width*pair.Value.outputTexture.height*4f)/(float)(1e+6f);
             }
             return size;
         }
@@ -54,6 +59,7 @@ public class DecalableInfo : MonoBehaviour {
         return v;
     }
     void Awake() {
+        dilationBlitter = new Material(Shader.Find("Hidden/Naelstrof/DilationShader"));
         renderer = GetComponent<Renderer>();
         materials = renderer.materials;
         lastUse = Time.time;
@@ -67,22 +73,23 @@ public class DecalableInfo : MonoBehaviour {
         // Create the texture if we don't have it.
         if (!textureTargets.ContainsKey(textureName)) {
             int worldScale = Mathf.RoundToInt(renderer.bounds.extents.magnitude*PaintDecal.texelsPerMeter);
-            int textureScale = Mathf.Clamp(CeilPowerOfTwo(worldScale), 16, 4096);
+            int textureScale = Mathf.Clamp(CeilPowerOfTwo(worldScale), 16, 2048);
 
             textureTargets[textureName] = new TextureTarget(textureName, textureScale, renderer, materials);
             foreach(Material mat in materials) {
                 if (mat.HasProperty(textureName)) {
-                    mat.SetTexture(textureName, textureTargets[textureName].texture);
+                    mat.SetTexture(textureName, textureTargets[textureName].outputTexture);
                 }
             }
         }
         TextureTarget target = textureTargets[textureName];
-        buffer.SetRenderTarget(target.texture);
-        Vector2 pixelRect = new Vector2(target.texture.width, target.texture.height);
+        buffer.SetRenderTarget(target.baseTexture);
+        Vector2 pixelRect = new Vector2(target.baseTexture.width, target.baseTexture.height);
         buffer.SetViewport(new Rect(Vector2.zero, pixelRect));
         foreach(int drawIndex in target.drawIndices) {
             buffer.DrawRenderer(renderer, projector, drawIndex);
         }
+        buffer.Blit(target.baseTexture, target.outputTexture, dilationBlitter);
         lastUse = Time.time;
     }
     void OnDestroy() {
@@ -91,7 +98,8 @@ public class DecalableInfo : MonoBehaviour {
             foreach(Material mat in pair.Value.decalableMaterials) {
                 mat.SetTexture(pair.Key, null);
             }
-            pair.Value.texture.Release();
+            pair.Value.baseTexture.Release();
+            pair.Value.outputTexture.Release();
         }
     }
 }

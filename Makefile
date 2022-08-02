@@ -1,2 +1,2 @@
 deploy:
-	git subtree push --prefix Assets/Plugins/SkinnedMeshDecals origin upm
+	git subtree push --prefix Packages/SkinnedMeshDecals origin upm

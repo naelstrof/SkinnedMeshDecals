@@ -20,7 +20,7 @@ public static class PaintDecal {
     // TODO: Probably should be in graphics settings somewhere for defaults.
     // Maybe generate a scriptable object asset for settings.
     // TODO: Actually should be a PaintDecalConfiguration monobehavior singleton.
-    [Range(32,1024)]
+    [Range(32,2048)]
     [Tooltip("Memory usage in megabytes before old textures get removed.")]
     public static float memoryBudget = 512;
     public static float memoryInUsage {
@@ -94,7 +94,7 @@ public static class PaintDecal {
             SkinnedMeshDecals.PaintDecal.RenderDecalForCollider(c, projector, position-rotation*Vector3.forward*radius, rotation, Vector2.one*radius, radius*2f, textureName);
         }
     }
-    public static void RenderDecalInBox(Vector3 boxHalfExtents, Vector3 position, float radius, Material projector, Quaternion boxOrientation, LayerMask hitMask, string textureName = defaultTextureName) {
+    public static void RenderDecalInBox(Vector3 boxHalfExtents, Vector3 position, Material projector, Quaternion boxOrientation, LayerMask hitMask, string textureName = defaultTextureName) {
         int hits = Physics.OverlapBoxNonAlloc(position, boxHalfExtents, colliders, boxOrientation, hitMask, QueryTriggerInteraction.UseGlobal);
         for(int i=0;i<hits;i++) {
             Collider c = colliders[i];

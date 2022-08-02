@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c3fd23f6-8870-4804-9326-90eb8b457653" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Settings/HDRenderPipelineAsset.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/HDRPExample/Settings/HDRenderPipelineAsset.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Shaders/HDRP/DecalableLit.shader" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/HDRPExample/Shaders/HDRP/DecalableLit.shader" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Addons.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Addons/AmplifyClipSpaceTemplates.unitypackage" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Addons/AmplifyClipSpaceTemplates.unitypackage.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/ExampleProjectors.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/ExampleProjectors/SphereErase.mat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/ExampleProjectors/SphereErase.mat.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/ExampleProjectors/SphereSplat.mat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/ExampleProjectors/SphereSplat.mat.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/ExampleProjectors/Splat.mat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/ExampleProjectors/Splat.mat.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/ExampleProjectors/SplatErase.mat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/ExampleProjectors/SplatErase.mat.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Naelstrof.SkinnedMeshDecals.asmdef" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Naelstrof.SkinnedMeshDecals.asmdef.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/README.md.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Scripts.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Scripts/DecalableInfo.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Scripts/DecalableInfo.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Scripts/PaintDecal.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Scripts/PaintDecal.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Scripts/SkinnedMeshDecalsConfiguration.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Scripts/SkinnedMeshDecalsConfiguration.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/AlphaBlend.shader" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/AlphaBlend.shader.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/DecalProjector.shader" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/DecalProjector.shader.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/DecalProjectorSubtractive.shader" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/DecalProjectorSubtractive.shader.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/HDRP_Shaders10.3.2.unitypackage" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/HDRP_Shaders10.3.2.unitypackage.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/SphereProjector.shader" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/SphereProjector.shader.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/SphereProjectorSubtractive.shader" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/SphereProjectorSubtractive.shader.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/StandardRP_Shaders.unitypackage" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/StandardRP_Shaders.unitypackage.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/URP_Shaders10.3.2.unitypackage" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/URP_Shaders10.3.2.unitypackage.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/URP_Shaders7.3.1.unitypackage" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/URP_Shaders7.3.1.unitypackage.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/package.json.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2Bakw2kJox3FpODloy82aD1L3JY" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Discover.Launch.Via.Unity&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;rider.run.widget.enabled.cache&quot;: &quot;false&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
+    <configuration name="UnitTests (batch mode)" type="RunUnityExe" factoryName="Unity Executable">
+      <option name="EXE_PATH" value="C:\Program Files\Unity\Hub\Editor\2020.3.36f1\Editor\Unity.exe" />
+      <option name="PROGRAM_PARAMETERS" value="-runTests -batchmode -projectPath C:\SkinnedMeshDecals -testResults Logs/results.xml -testPlatform EditMode -debugCodeOptimization" />
+      <option name="WORKING_DIRECTORY" value="C:\SkinnedMeshDecals" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Attach to Unity Editor &amp; Play" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="UNITY_ATTACH_AND_PLAY" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <option name="projectPathOnTarget" />
+      <option name="selectedOptions">
+        <list />
+      </option>
+      <method v="2" />
+    </configuration>
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <option name="projectPathOnTarget" />
+      <option name="selectedOptions">
+        <list />
+      </option>
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c3fd23f6-8870-4804-9326-90eb8b457653" name="Changes" comment="" />
+      <created>1657151817842</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1657151817842</updated>
+      <workItem from="1657151829190" duration="149000" />
+      <workItem from="1659481980617" duration="2242000" />
+      <workItem from="1659484549527" duration="5000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
+  <component name="UnityProjectConfiguration" hasMinimizedUI="true" />
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="EditMode" />
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+</project>
