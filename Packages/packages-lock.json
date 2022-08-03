@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.naelstrof.skinnedmeshdecals": {
-      "version": "file:SkinnedMeshDecals",
+      "version": "file:com.naelstrof.skinnedmeshdecals",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}

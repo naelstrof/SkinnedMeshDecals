@@ -5,58 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c3fd23f6-8870-4804-9326-90eb8b457653" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Settings/HDRenderPipelineAsset.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/HDRPExample/Settings/HDRenderPipelineAsset.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Shaders/HDRP/DecalableLit.shader" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/HDRPExample/Shaders/HDRP/DecalableLit.shader" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Addons.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Addons/AmplifyClipSpaceTemplates.unitypackage" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Addons/AmplifyClipSpaceTemplates.unitypackage.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/ExampleProjectors.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/ExampleProjectors/SphereErase.mat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/ExampleProjectors/SphereErase.mat.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/ExampleProjectors/SphereSplat.mat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/ExampleProjectors/SphereSplat.mat.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/ExampleProjectors/Splat.mat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/ExampleProjectors/Splat.mat.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/ExampleProjectors/SplatErase.mat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/ExampleProjectors/SplatErase.mat.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Naelstrof.SkinnedMeshDecals.asmdef" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Naelstrof.SkinnedMeshDecals.asmdef.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/README.md.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Scripts.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Scripts/DecalableInfo.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Scripts/DecalableInfo.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Scripts/PaintDecal.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Scripts/PaintDecal.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Scripts/SkinnedMeshDecalsConfiguration.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Scripts/SkinnedMeshDecalsConfiguration.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/AlphaBlend.shader" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/AlphaBlend.shader.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/DecalProjector.shader" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/DecalProjector.shader.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/DecalProjectorSubtractive.shader" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/DecalProjectorSubtractive.shader.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/HDRP_Shaders10.3.2.unitypackage" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/HDRP_Shaders10.3.2.unitypackage.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/SphereProjector.shader" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/SphereProjector.shader.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/SphereProjectorSubtractive.shader" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/SphereProjectorSubtractive.shader.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/StandardRP_Shaders.unitypackage" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/StandardRP_Shaders.unitypackage.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/URP_Shaders10.3.2.unitypackage" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/URP_Shaders10.3.2.unitypackage.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/URP_Shaders7.3.1.unitypackage" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/Shaders/URP_Shaders7.3.1.unitypackage.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/SkinnedMeshDecals/package.json.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/HDRPProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/HDRPProjectSettings.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -126,7 +75,7 @@
       <updated>1657151817842</updated>
       <workItem from="1657151829190" duration="149000" />
       <workItem from="1659481980617" duration="2242000" />
-      <workItem from="1659484549527" duration="5000" />
+      <workItem from="1659484549527" duration="782000" />
     </task>
     <servers />
   </component>
