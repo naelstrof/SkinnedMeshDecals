@@ -89,7 +89,7 @@ public class DecalableInfo : MonoBehaviour {
         v++;
         return v;
     }
-    void Awake() {
+    public void Initialize() {
         propertyBlock = new MaterialPropertyBlock();
         textureTargets = new Dictionary<string, TextureTarget>();
         renderer = GetComponent<Renderer>();

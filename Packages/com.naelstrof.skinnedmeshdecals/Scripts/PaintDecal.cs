@@ -168,6 +168,7 @@ namespace SkinnedMeshDecals {
 
             if (!r.TryGetComponent(out MonoBehaviourHider.DecalableInfo info)) {
                 info = r.gameObject.AddComponent<MonoBehaviourHider.DecalableInfo>();
+                info.Initialize();
             }
             // Could use a Matrix4x4.Perspective instead! depends on use case.
             Matrix4x4 projection = Matrix4x4.Ortho(-size.x, size.x, -size.y, size.y, 0f, depth);
