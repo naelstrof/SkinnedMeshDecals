@@ -6,8 +6,8 @@ namespace SkinnedMeshDecals {
 public class MonoBehaviourHider {
 public class DecalableInfo : MonoBehaviour {
     private class TextureTarget {
-        private readonly RenderTexture baseTexture;
-        private readonly RenderTexture outputTexture;
+        private RenderTexture baseTexture;
+        private RenderTexture outputTexture;
         private readonly List<int> drawIndices;
         private bool dilationEnabled;
         private static void ClearRenderTexture(RenderTexture target) {
@@ -32,9 +32,13 @@ public class DecalableInfo : MonoBehaviour {
         }
 
         public void Release() {
-            baseTexture.Release();
-            if (dilationEnabled) {
+            if (baseTexture != null) {
+                baseTexture.Release();
+                baseTexture = null;
+            }
+            if (dilationEnabled && outputTexture != null) {
                 outputTexture.Release();
+                outputTexture = null;
             }
         }
 
@@ -133,10 +137,10 @@ public class DecalableInfo : MonoBehaviour {
     void OnDestroy() {
         PaintDecal.RemoveDecalableInfo(this);
         foreach (var pair in textureTargets) {
-            pair.Value.Release();
+            pair.Value?.Release();
         }
 
-        if (renderer == null) {
+        if (renderer == null || propertyBlock == null) {
             return;
         }
 
