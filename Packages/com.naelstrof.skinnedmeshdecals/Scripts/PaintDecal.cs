@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.Rendering;
 using UnityEngine;
 #if UNITY_EDITOR
@@ -85,13 +86,13 @@ namespace SkinnedMeshDecals {
 
         public static void SetMemoryBudgetMB(float mb) {
             instance.memoryBudgetMB = mb;
-            while (GetMemoryInUse() > instance.memoryBudget) {
+            while (GetMemoryInUse() > instance.memoryBudget && instance.rendererCache.Count > 0) {
                 instance.RemoveOldest();
             }
         }
 
         public static bool TryReserveMemory(int amount) {
-            while (amount < GetMemoryBudget() && GetMemoryBudget()-GetMemoryInUse() < amount) {
+            while (amount < GetMemoryBudget() && GetMemoryBudget()-GetMemoryInUse() < amount && amount < GetMemoryBudget() && instance.rendererCache.Count > 0) {
                 instance.RemoveOldest();
             }
             return amount < GetMemoryBudget() - GetMemoryInUse();
@@ -198,7 +199,7 @@ namespace SkinnedMeshDecals {
 
         private void OnValidate() {
             if (Application.isPlaying) {
-                while (InternalMemoryInUse() > memoryBudget) {
+                while (InternalMemoryInUse() > memoryBudget && instance.rendererCache.Count > 0) {
                     RemoveOldest();
                 }
             }
