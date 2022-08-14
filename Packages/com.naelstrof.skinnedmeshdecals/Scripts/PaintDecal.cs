@@ -87,40 +87,50 @@ namespace SkinnedMeshDecals {
         public static void SetMemoryBudgetMB(float mb) {
             instance.memoryBudgetMB = mb;
             while (GetMemoryInUse() > instance.memoryBudget && instance.rendererCache.Count > 0) {
-                instance.RemoveOldest();
+                if (!instance.RemoveOldest()) {
+                    break;
+                }
             }
         }
 
         public static bool TryReserveMemory(int amount) {
             while (amount < GetMemoryBudget() && GetMemoryBudget()-GetMemoryInUse() < amount && amount < GetMemoryBudget() && instance.rendererCache.Count > 0) {
-                instance.RemoveOldest();
+                if (!instance.RemoveOldest()) {
+                    break;
+                }
             }
             return amount < GetMemoryBudget() - GetMemoryInUse();
         }
 
         private readonly List<MonoBehaviourHider.DecalableInfo> rendererCache = new List<MonoBehaviourHider.DecalableInfo>();
-        private void RemoveOldest() {
+        private bool RemoveOldest() {
             MonoBehaviourHider.DecalableInfo oldestInfo = null;
             float oldestTime = float.MaxValue;
             foreach(var info in rendererCache) {
-                if (info.GetLastUseTime() < oldestTime) {
-                    oldestInfo = info;
-                    oldestTime = info.GetLastUseTime();
-                }
+                if (!(info.GetLastUseTime() < oldestTime)) continue;
+                oldestInfo = info;
+                oldestTime = info.GetLastUseTime();
             }
-            if (oldestInfo != null) {
-                RemoveDecalableInfo(oldestInfo);
-                Destroy(oldestInfo);
+            if (oldestInfo == null && rendererCache.Count > 0) {
+                oldestInfo = rendererCache[0];
             }
+            if (oldestInfo == null) return false;
+            RemoveDecalableInfo(oldestInfo);
+            Destroy(oldestInfo);
+            return true;
         }
         public static bool IsDecalable(Material m, string textureTarget = defaultTextureName) {
             return m.HasProperty(textureTarget);
         }
         public static void AddDecalableInfo(MonoBehaviourHider.DecalableInfo info) {
-            instance.rendererCache.Add(info);
+            if (!instance.rendererCache.Contains(info)) {
+                instance.rendererCache.Add(info);
+            }
         }
         public static void RemoveDecalableInfo(MonoBehaviourHider.DecalableInfo info) {
-            instance.rendererCache.Remove(info);
+            if (instance.rendererCache.Contains(info)) {
+                instance.rendererCache.Remove(info);
+            }
         }
 
         public static void RenderDecalForCollider(Collider c, Material projector, Vector3 position, Quaternion rotation, Vector2 size, float depth = 0.5f, string textureName = defaultTextureName) {
@@ -200,7 +210,9 @@ namespace SkinnedMeshDecals {
         private void OnValidate() {
             if (Application.isPlaying) {
                 while (InternalMemoryInUse() > memoryBudget && instance.rendererCache.Count > 0) {
-                    RemoveOldest();
+                    if (!RemoveOldest()) {
+                        break;
+                    }
                 }
             }
         }

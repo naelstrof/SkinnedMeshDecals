@@ -136,6 +136,9 @@ public class DecalableInfo : MonoBehaviour {
     
     void OnDestroy() {
         PaintDecal.RemoveDecalableInfo(this);
+        if (textureTargets == null) {
+            return;
+        }
         foreach (var pair in textureTargets) {
             pair.Value?.Release();
         }
