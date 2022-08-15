@@ -7,7 +7,7 @@
     <list default="true" id="c3fd23f6-8870-4804-9326-90eb8b457653" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SkinnedMeshDecals/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SkinnedMeshDecals/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalableInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalableInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/PaintDecal.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/PaintDecal.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,7 +79,13 @@
       <workItem from="1659481980617" duration="2242000" />
       <workItem from="1659484549527" duration="1240000" />
       <workItem from="1659512232279" duration="5833000" />
-      <workItem from="1659518649156" duration="50000" />
+      <workItem from="1659518649156" duration="373000" />
+      <workItem from="1660270726017" duration="358000" />
+      <workItem from="1660271315748" duration="1140000" />
+      <workItem from="1660275129973" duration="597000" />
+      <workItem from="1660277093836" duration="638000" />
+      <workItem from="1660506403999" duration="567000" />
+      <workItem from="1660547433192" duration="65000" />
     </task>
     <servers />
   </component>
