@@ -23,7 +23,7 @@ namespace SkinnedMeshDecals {
 #endif
 
     public class PaintDecal : MonoBehaviour {
-        [SerializeField] [Range(32f,2048f)]
+        [SerializeField] [Range(16f,2048f)]
         [Tooltip("Memory usage in megabytes before old textures get removed.")]
         private float memoryBudgetMB = 512f;
         
@@ -47,6 +47,12 @@ namespace SkinnedMeshDecals {
         private int memoryBudget => Mathf.RoundToInt(memoryBudgetMB * 1000000f);
         public static int GetMemoryBudget() => instance.memoryBudget;
         public static bool IsDilateEnabled() => instance.dilate;
+        public static void SetDilation(bool dilation) {
+            instance.dilate = dilation;
+        }
+        public static void SetTexelsPerMeter(float newTexelsPerMeter) {
+            instance.texelsPerMeter = Mathf.Max(newTexelsPerMeter,1);
+        }
 
 
         private const string defaultTextureName = "_DecalColorMap";
