@@ -109,7 +109,10 @@ public class DecalableInfo : MonoBehaviour {
 
         // Create the texture if we don't have it.
         if (!textureTargets.ContainsKey(textureName)) {
-            int worldScale = Mathf.RoundToInt(renderer.bounds.extents.magnitude*PaintDecal.GetTexelsPerMeter());
+            var bounds = renderer.bounds;
+            float maxA = Mathf.Max(bounds.extents.x*bounds.extents.y, bounds.extents.x*bounds.extents.z);
+            float maxBounds = Mathf.Max(maxA, bounds.extents.y*bounds.extents.z);
+            int worldScale = Mathf.RoundToInt(maxBounds*PaintDecal.GetTexelsPerMeter());
             int textureScale = Mathf.Clamp(CeilPowerOfTwo(worldScale), 16, 2048);
             if (!PaintDecal.TryReserveMemory(dilationEnabled ? 2*textureScale*textureScale*4 : textureScale*textureScale*4)) {
                 return;
