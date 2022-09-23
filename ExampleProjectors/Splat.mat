@@ -2,14 +2,18 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Splat
   m_Shader: {fileID: 4800000, guid: 01fbbcdc080ae1f408f4d363f8bcc20d, type: 3}
-  m_ShaderKeywords: _BACKFACECULLING_ON _DISABLE_SSR_TRANSPARENT _NORMALMAP_TANGENT_SPACE
+  m_ValidKeywords:
+  - _BACKFACECULLING_ON
+  m_InvalidKeywords:
+  - _DISABLE_SSR_TRANSPARENT
+  - _NORMALMAP_TANGENT_SPACE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -125,6 +129,7 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _AORemapMax: 1
     - _AORemapMin: 0
@@ -269,6 +274,8 @@ Material:
     - _UVDetailsMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
+    - _Vector0: {r: 2, g: -2, b: 1, a: 0}
+    - _Vector1: {r: -1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &5448608158274631724
 MonoBehaviour:
@@ -283,3 +290,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 11
+  hdPluginSubTargetMaterialVersions:
+    m_Keys: []
+    m_Values: 
