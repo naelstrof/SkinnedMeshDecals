@@ -114,7 +114,12 @@ public class DecalableInfo : MonoBehaviour {
             float maxBounds = Mathf.Max(maxA, bounds.extents.y*bounds.extents.z);
             int worldScale = Mathf.RoundToInt(maxBounds*PaintDecal.GetTexelsPerMeter());
             int textureScale = Mathf.Clamp(CeilPowerOfTwo(worldScale), 16, 2048);
-            if (!PaintDecal.TryReserveMemory(dilationEnabled ? 2*textureScale*textureScale*4 : textureScale*textureScale*4)) {
+            if (float.IsNaN(textureScale) || float.IsInfinity(textureScale)) {
+                textureScale = 1024;
+            }
+            int reserveMemory = dilationEnabled ? 2 * textureScale * textureScale * 4 : textureScale * textureScale * 4;
+            reserveMemory = Mathf.Clamp(reserveMemory, 0, 2 * 2048 * 2048 * 4);
+            if (!PaintDecal.TryReserveMemory(reserveMemory)) {
                 return;
             }
 

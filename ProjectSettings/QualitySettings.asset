@@ -21,7 +21,7 @@ QualitySettings:
     skinWeights: 255
     textureQuality: 0
     anisotropicTextures: 1
-    antiAliasing: 0
+    antiAliasing: 4
     softParticles: 0
     softVegetation: 1
     realtimeReflectionProbes: 1
@@ -40,6 +40,8 @@ QualitySettings:
     asyncUploadBufferSize: 16
     asyncUploadPersistentBuffer: 1
     resolutionScalingFixedDPIFactor: 1
+    customRenderPipeline: {fileID: 11400000, guid: 3e418cc42c98b0a44a6f9675529f58fd,
+      type: 2}
     excludedTargetPlatforms: []
   m_PerPlatformDefaultQuality:
     Android: 0
@@ -47,6 +49,7 @@ QualitySettings:
     Nintendo Switch: 0
     PS4: 0
     PSP2: 0
+    Server: 0
     Stadia: 0
     Standalone: 0
     Tizen: 0
