@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 2560
     height: 1397
   m_ShowMode: 4
-  m_Title: Scene
+  m_Title: Project
   m_RootView: {fileID: 6}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -348,22 +348,22 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors
+    - Packages/com.naelstrof.skinnedmeshdecals
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors
+  - Packages/com.naelstrof.skinnedmeshdecals
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\SkinnedMeshDecals
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 33}
-    m_SelectedIDs: fe600000
-    m_LastClickedID: 24830
-    m_ExpandedIDs: 00000000b8600000ba600000bc600000be600000c0600000c2600000ec60000000ca9a3bffffff7f
+    m_SelectedIDs: 4c620000
+    m_LastClickedID: 25164
+    m_ExpandedIDs: 00000000b8600000ba600000bc600000be600000c0600000c26000004c62000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -422,18 +422,18 @@ MonoBehaviour:
     m_ExpandedInstanceIDs: c6230000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: DecalProjector
-      m_OriginalName: DecalProjector
+      m_Name: 
+      m_OriginalName: 
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 950
+      m_UserData: 0
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 0
+      m_OriginalEventType: 11
       m_IsRenamingFilename: 1
       m_ClientGUIView: {fileID: 5}
     m_CreateAssetUtility:
@@ -521,9 +521,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 485e0000
-      m_LastClickedID: 24136
-      m_ExpandedIDs: 34fbffff485e0000
+      m_SelectedIDs: c0620000
+      m_LastClickedID: 0
+      m_ExpandedIDs: 34fbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -824,7 +824,7 @@ MonoBehaviour:
   m_Rotation:
     m_Target: {x: -0.07625844, y: 0.8310296, z: -0.5383159, w: -0.11768671}
     speed: 2
-    m_Value: {x: -0.076432586, y: 0.83019644, z: -0.5395457, w: -0.1175687}
+    m_Value: {x: -0.07625617, y: 0.8310048, z: -0.53829986, w: -0.1176832}
   m_Size:
     m_Target: 11.49127
     speed: 2

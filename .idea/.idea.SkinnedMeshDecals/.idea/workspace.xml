@@ -6,125 +6,23 @@
   <component name="ChangeListManager">
     <list default="true" id="c3fd23f6-8870-4804-9326-90eb8b457653" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SkinnedMeshDecals/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SkinnedMeshDecals/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPDefaultResources.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPDefaultResources/DefaultLookDevProfile.asset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPDefaultResources/DefaultLookDevProfile.asset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/HDRPExample.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Animations.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Animations/FlyAround.anim" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Animations/FlyAround.anim.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Animations/Sphere.controller" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Animations/Sphere.controller.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/DefaultHDRISky.exr" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/DefaultHDRISky.exr.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/HDRPDefaultResources.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/HDRPDefaultResources/DefaultSceneRoot.prefab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/HDRPDefaultResources/DefaultSceneRoot.prefab.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/HDRPDefaultResources/HDRPDefaultSettings.asset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/HDRPDefaultResources/HDRPDefaultSettings.asset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/HDRPDefaultResources/Sky and Fog Settings Profile.asset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/HDRPDefaultResources/Sky and Fog Settings Profile.asset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Materials.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Materials/Black.mat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Materials/Black.mat.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Materials/Blue.mat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Materials/Blue.mat.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Materials/Gray.mat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Materials/Gray.mat.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Materials/Green.mat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Materials/Green.mat.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Materials/Red.mat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Materials/Red.mat.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/New Render Texture.renderTexture" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/New Render Texture.renderTexture.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/New VFX.vfx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/New VFX.vfx.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets/AudioCompressedInMemory.preset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets/AudioCompressedInMemory.preset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets/AudioStreaming.preset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets/AudioStreaming.preset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets/Defaults.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets/Defaults/AlbedoTexture_Default.preset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets/Defaults/AlbedoTexture_Default.preset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets/Defaults/AudioDecompressOnLoad_Default.preset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets/Defaults/AudioDecompressOnLoad_Default.preset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets/Defaults/DirectionalLight_Default.preset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets/Defaults/DirectionalLight_Default.preset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets/Defaults/SSSSettings_Default.preset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets/Defaults/SSSSettings_Default.preset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets/HDRTexture.preset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets/HDRTexture.preset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets/NormalTexture.preset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets/NormalTexture.preset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets/UtilityTexture.preset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Presets/UtilityTexture.preset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle/Materials.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle/Materials/FloorMaterial.mat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle/Materials/FloorMaterial.mat.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle/Materials/Robot_Color.mat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle/Materials/Robot_Color.mat.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle/Model.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle/Model/Dancing.controller" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle/Model/Dancing.controller.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle/Model/Robot Kyle.fbx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle/Model/Robot Kyle.fbx.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle/Model/Salsa Dancing.fbx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle/Model/Salsa Dancing.fbx.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle/Robot Kyle.prefab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle/Robot Kyle.prefab.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle/Textures.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle/Textures/Robot_Color.tga" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle/Textures/Robot_Color.tga.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle/Textures/Robot_Normal.tga" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Robot Kyle/Textures/Robot_Normal.tga.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Scripts.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Scripts/DecalShooter.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Scripts/DecalShooter.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Scripts/DecalSphereSplat.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Scripts/DecalSphereSplat.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Scripts/SimpleCameraController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Scripts/SimpleCameraController.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Settings.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Settings/Foliage.asset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Settings/Foliage.asset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Settings/HDRenderPipelineAsset.asset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Settings/HDRenderPipelineAsset.asset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Settings/SampleScenePostProcessingSettings.asset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Settings/SampleScenePostProcessingSettings.asset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Settings/SampleSceneSkyandFogSettings.asset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Settings/SampleSceneSkyandFogSettings.asset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Settings/Skin.asset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Settings/Skin.asset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Shaders.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Shaders/HDRP.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Shaders/HDRP/DecalableExample.shadergraph" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Shaders/HDRP/DecalableExample.shadergraph.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Shaders/HDRP/DecalableLit.shader" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Shaders/HDRP/DecalableLit.shader.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/SkinnedMeshDecalExample.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/HDRPExample/SkinnedMeshDecalExample.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/SkinnedMeshDecalExample.unity.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/HDRPExample/SkinnedMeshDecalExample.unity.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Textures.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Textures/Splat_Splat_basecolor.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/HDRPExample/Textures/Splat_Splat_basecolor.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/Splat.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/Splat.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Naelstrof/Plugins/DecalTech/Shaders/URP/DecalableLit.shader" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Naelstrof/Plugins/DecalTech/Shaders/URP/DecalableLit.shader" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/URPExample/Robot Kyle/Robot Kyle.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/URPExample/Robot Kyle/Robot Kyle.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/URPExample/Scripts/DecalShooter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/URPExample/Scripts/DecalShooter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/URPExample/Scripts/DecalSphereSplat.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/URPExample/Scripts/DecalSphereSplat.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/URPExample/SkinnedMeshDecalExample.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/URPExample/SkinnedMeshDecalExample.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalableInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalableInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DecalProjector.shader" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DecalProjector.shader" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/EditorSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/EditorSettings.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/GraphicsSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/GraphicsSettings.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/HDRPProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/HDRPProjectSettings.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/QualitySettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/QualitySettings.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/VFXManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/VFXManager.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserSettings/EditorUserSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/EditorUserSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/PaintDecal.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/PaintDecal.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserSettings/Layouts/default-2021.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/Layouts/default-2021.dwlt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Assets/URPExample/Scripts/DecalableCollider.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -203,7 +101,8 @@
       <workItem from="1662881955980" duration="609000" />
       <workItem from="1663399824144" duration="646000" />
       <workItem from="1663551455240" duration="3332000" />
-      <workItem from="1663911085476" duration="165000" />
+      <workItem from="1663911085476" duration="407000" />
+      <workItem from="1672976693970" duration="4885000" />
     </task>
     <servers />
   </component>
@@ -213,6 +112,17 @@
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="true" />
   <component name="UnityUnitTestConfiguration" currentTestLauncher="EditMode" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
   </component>
