@@ -58,13 +58,6 @@ namespace SkinnedMeshDecals {
         private const string defaultTextureName = "_DecalColorMap";
         public static Material GetDilationMaterial() => instance.dilationMaterial;
         public static float GetTexelsPerMeter() => instance.texelsPerMeter;
-        private static void GetComponentsInChildrenNoAlloc<T>(Transform t, List<T> temp, List<T> result) {
-            t.GetComponents<T>(temp);
-            result.AddRange(temp);
-            for(int i=0;i<t.childCount;i++) {
-                GetComponentsInChildrenNoAlloc<T>(t.GetChild(i), temp, result);
-            }
-        }
 
         private int InternalMemoryInUse() {
             int memoryInUse = 0;
@@ -139,49 +132,18 @@ namespace SkinnedMeshDecals {
             }
         }
 
-        public static void RenderDecalForCollider(Collider c, Material projector, Vector3 position, Quaternion rotation, Vector2 size, float depth = 0.5f, string textureName = defaultTextureName) {
-            LODGroup group = c.GetComponentInParent<LODGroup>();
-            if (group != null) {
-                instance.staticRenderers.Clear();
-                GetComponentsInChildrenNoAlloc<Renderer>(group.transform, instance.staticTempRenderers, instance.staticRenderers);
-                foreach(Renderer renderer in instance.staticRenderers) {
-                    RenderDecal(renderer, projector, position, rotation, size, depth, textureName);
-                }
-                return;
-            }
-            Renderer parentRenderer = c.GetComponentInParent<Renderer>();
-            if (parentRenderer != null) {
-                RenderDecal(parentRenderer, projector, position, rotation, size, depth, textureName);
-            }
-
-            instance.staticRenderers.Clear();
-            GetComponentsInChildrenNoAlloc<Renderer>(c.transform, instance.staticTempRenderers, instance.staticRenderers);
-            foreach(Renderer renderer in instance.staticRenderers) {
-                RenderDecal(renderer, projector, position, rotation, size, depth, textureName);
-            }
-        }
-        public static void RenderDecalInSphere(Vector3 position, float radius, Material projector, Quaternion rotation, LayerMask hitMask, string textureName = defaultTextureName) {
-            int hits = Physics.OverlapSphereNonAlloc(position, radius, instance.colliders, hitMask, QueryTriggerInteraction.UseGlobal);
-            for(int i=0;i<hits;i++) {
-                Collider c = instance.colliders[i];
-                RenderDecalForCollider(c, projector, position-rotation*Vector3.forward*radius, rotation, Vector2.one*radius, radius*2f, textureName);
-            }
-        }
-        public static void RenderDecalInBox(Vector3 boxHalfExtents, Vector3 position, Material projector, Quaternion boxOrientation, LayerMask hitMask, string textureName = defaultTextureName) {
-            int hits = Physics.OverlapBoxNonAlloc(position, boxHalfExtents, instance.colliders, boxOrientation, hitMask, QueryTriggerInteraction.UseGlobal);
-            for(int i=0;i<hits;i++) {
-                Collider c = instance.colliders[i];
-                RenderDecalForCollider(c, projector, position-boxOrientation*Vector3.forward*boxHalfExtents.z, boxOrientation, new Vector2(boxHalfExtents.x, boxHalfExtents.y)*2f, boxHalfExtents.z*2f, textureName);
-            }
-        }
-        public static void RenderDecalForCollision(Collider c, Material projector, Vector3 position, Vector3 normal, float rotationAboutNormal, Vector2 size, float halfDepth = 0.5f, string textureName = defaultTextureName) {
-            RenderDecalForCollider(c, projector, position+normal*halfDepth, Quaternion.AngleAxis(rotationAboutNormal, normal)*Quaternion.FromToRotation(Vector3.forward, -normal), size, halfDepth*2f, textureName);
-        }
-        public static void RenderDecal(Renderer r, Material projector, Vector3 position, Quaternion rotation, Vector2 size, float depth = 0.5f, string textureName = defaultTextureName) {
+        public static void RenderDecal(Renderer r, Material projector, Vector3 position, Quaternion rotation, Vector2 size, float depth = 0.5f, string textureName = defaultTextureName, RenderTextureFormat renderTextureFormat = RenderTextureFormat.Default, RenderTextureReadWrite renderTextureReadWrite = RenderTextureReadWrite.Default) {
             // Only can draw on meshes.
             if (!(r is SkinnedMeshRenderer) && !(r is MeshRenderer)) {
                 return;
             }
+            
+#if UNITY_EDITOR
+            if (r.localToWorldMatrix.determinant < 0f) {
+                Debug.LogError(
+                    "Tried to render a decal on an inside-out object, this isn't supported! Make sure scales aren't negative.", r.gameObject);
+            }
+#endif
 
             if (!r.TryGetComponent(out MonoBehaviourHider.DecalableInfo info)) {
                 info = r.gameObject.AddComponent<MonoBehaviourHider.DecalableInfo>();
@@ -194,7 +156,7 @@ namespace SkinnedMeshDecals {
             // We just queue up the commands, paintdecal will send them all together when its ready.
             instance.commandBuffer.Clear();
             instance.commandBuffer.SetViewProjectionMatrices(view, projection);
-            info.Render(instance.commandBuffer, projector, textureName);
+            info.Render(instance.commandBuffer, projector, textureName, renderTextureFormat, renderTextureReadWrite);
             Graphics.ExecuteCommandBuffer(instance.commandBuffer);
         }
 

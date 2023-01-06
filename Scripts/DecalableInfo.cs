@@ -42,17 +42,17 @@ public class DecalableInfo : MonoBehaviour {
             }
         }
 
-        public TextureTarget(string textureName, int textureScale, Material[] materials, bool dilationEnabled) {
+        public TextureTarget(string textureName, int textureScale, Material[] materials, bool dilationEnabled,RenderTextureFormat renderTextureFormat, RenderTextureReadWrite renderTextureReadWrite) {
             this.dilationEnabled = dilationEnabled;
             drawIndices = new List<int>();
-            baseTexture = new RenderTexture(textureScale, textureScale, 0) {
+            baseTexture = new RenderTexture(textureScale, textureScale, 0, renderTextureFormat, renderTextureReadWrite) {
                 antiAliasing = 1,
                 useMipMap = !this.dilationEnabled,
                 autoGenerateMips = false,
             };
             ClearRenderTexture(baseTexture);
             if (this.dilationEnabled) {
-                outputTexture = new RenderTexture(textureScale, textureScale, 0) {
+                outputTexture = new RenderTexture(textureScale, textureScale, 0, renderTextureFormat, renderTextureReadWrite) {
                     antiAliasing = 1,
                     useMipMap = true,
                     autoGenerateMips = false,
@@ -101,7 +101,7 @@ public class DecalableInfo : MonoBehaviour {
         dilationEnabled = PaintDecal.IsDilateEnabled();
         PaintDecal.AddDecalableInfo(this);
     }
-    public void Render(CommandBuffer buffer, Material projector, string textureName) {
+    public void Render(CommandBuffer buffer, Material projector, string textureName, RenderTextureFormat renderTextureFormat, RenderTextureReadWrite renderTextureReadWrite) {
         if (textureTargets == null) {
             Destroy(this);
             return;
@@ -123,7 +123,7 @@ public class DecalableInfo : MonoBehaviour {
                 return;
             }
 
-            TextureTarget texTarget = new TextureTarget(textureName, textureScale, renderer.materials, dilationEnabled);
+            TextureTarget texTarget = new TextureTarget(textureName, textureScale, renderer.materials, dilationEnabled, renderTextureFormat, renderTextureReadWrite);
             textureTargets.Add(textureName, texTarget);
             renderer.GetPropertyBlock(propertyBlock);
             propertyBlock.SetTexture(textureName, dilationEnabled ? texTarget.GetOutputTexture() : texTarget.GetBaseTexture());
