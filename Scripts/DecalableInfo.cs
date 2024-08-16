@@ -10,6 +10,7 @@ public class DecalableInfo : MonoBehaviour {
         private RenderTexture outputTexture;
         private readonly List<int> drawIndices;
         private bool dilationEnabled;
+        private bool overridden = false;
         private static void ClearRenderTexture(RenderTexture target) {
             var rt = RenderTexture.active;
             RenderTexture.active = target;
@@ -32,7 +33,7 @@ public class DecalableInfo : MonoBehaviour {
         }
 
         public void Release() {
-            if (baseTexture != null) {
+            if (baseTexture != null && !overridden) {
                 baseTexture.Release();
                 baseTexture = null;
             }
@@ -43,10 +44,10 @@ public class DecalableInfo : MonoBehaviour {
         }
 
         public void OverrideTexture(RenderTexture texture) {
-            Destroy(baseTexture);
+            Release();
+            overridden = true;
             baseTexture = texture;
             if (dilationEnabled) {
-                Destroy(outputTexture);
                 outputTexture = new RenderTexture(texture);
                 CommandBuffer buffer = new CommandBuffer();
                 buffer.Blit(texture, outputTexture, PaintDecal.GetDilationMaterial());
@@ -56,6 +57,7 @@ public class DecalableInfo : MonoBehaviour {
         }
         
         public TextureTarget(string textureName, RenderTexture texture, Material[] materials, bool dilationEnabled) {
+            overridden = true;
             this.dilationEnabled = dilationEnabled;
             drawIndices = new List<int>();
             baseTexture = texture;
@@ -74,6 +76,7 @@ public class DecalableInfo : MonoBehaviour {
         }
 
         public TextureTarget(string textureName, int textureScale, Material[] materials, bool dilationEnabled,RenderTextureFormat renderTextureFormat, RenderTextureReadWrite renderTextureReadWrite) {
+            overridden = false;
             this.dilationEnabled = dilationEnabled;
             drawIndices = new List<int>();
             baseTexture = new RenderTexture(textureScale, textureScale, 0, renderTextureFormat, renderTextureReadWrite) {
