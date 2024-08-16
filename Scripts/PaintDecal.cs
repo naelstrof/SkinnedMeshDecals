@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.Rendering;
 using UnityEngine;
@@ -130,6 +131,43 @@ namespace SkinnedMeshDecals {
             if (instance.rendererCache.Contains(info)) {
                 instance.rendererCache.Remove(info);
             }
+        }
+
+        public static RenderTexture GetDecalTexture(Renderer r, string textureName = defaultTextureName) {
+            if (!(r is SkinnedMeshRenderer) && !(r is MeshRenderer)) {
+                return null;
+            }
+            if (!r.TryGetComponent(out MonoBehaviourHider.DecalableInfo info)) {
+                info = r.gameObject.AddComponent<MonoBehaviourHider.DecalableInfo>();
+                info.Initialize();
+            }
+            // The render texture is ephemeral, so we copy it!
+            var texture = info.GetRenderTexture(textureName);
+            RenderTexture copy = new RenderTexture(texture);
+            CommandBuffer buffer = new CommandBuffer();
+            buffer.Blit(texture, copy);
+            buffer.GenerateMips(copy);
+            Graphics.ExecuteCommandBuffer(buffer);
+            return copy;
+        }
+        public static void OverrideDecalTexture(Renderer r, RenderTexture customDecalRenderTexture, string textureName = defaultTextureName) {
+            if (customDecalRenderTexture.useMipMap == false) {
+                throw new UnityException("Can't set RenderTexture of decalable because it has mipmaps disabled!");
+            }
+#if UNITY_EDITOR
+            if (customDecalRenderTexture.autoGenerateMips) {
+                Debug.LogWarning( "Using a custom decal RenderTexture with autoGenerateMips enabled, this will cause performance problems if you draw lots of decals per frame.");
+            }
+#endif
+            
+            if (!(r is SkinnedMeshRenderer) && !(r is MeshRenderer)) {
+                return;
+            }
+            if (!r.TryGetComponent(out MonoBehaviourHider.DecalableInfo info)) {
+                info = r.gameObject.AddComponent<MonoBehaviourHider.DecalableInfo>();
+                info.Initialize();
+            }
+            info.OverrideTexture(customDecalRenderTexture, textureName);
         }
 
         public static void RenderDecal(Renderer r, Material projector, Vector3 position, Quaternion rotation, Vector2 size, float depth = 0.5f, string textureName = defaultTextureName, RenderTextureFormat renderTextureFormat = RenderTextureFormat.Default, RenderTextureReadWrite renderTextureReadWrite = RenderTextureReadWrite.Default) {

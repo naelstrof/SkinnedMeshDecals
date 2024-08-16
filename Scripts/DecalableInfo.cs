@@ -42,6 +42,37 @@ public class DecalableInfo : MonoBehaviour {
             }
         }
 
+        public void OverrideTexture(RenderTexture texture) {
+            Destroy(baseTexture);
+            baseTexture = texture;
+            if (dilationEnabled) {
+                Destroy(outputTexture);
+                outputTexture = new RenderTexture(texture);
+                CommandBuffer buffer = new CommandBuffer();
+                buffer.Blit(texture, outputTexture, PaintDecal.GetDilationMaterial());
+                buffer.GenerateMips(outputTexture);
+                Graphics.ExecuteCommandBuffer(buffer);
+            }
+        }
+        
+        public TextureTarget(string textureName, RenderTexture texture, Material[] materials, bool dilationEnabled) {
+            this.dilationEnabled = dilationEnabled;
+            drawIndices = new List<int>();
+            baseTexture = texture;
+            if (this.dilationEnabled) {
+                outputTexture = new RenderTexture(texture);
+                CommandBuffer buffer = new CommandBuffer();
+                buffer.Blit(texture, outputTexture, PaintDecal.GetDilationMaterial());
+                buffer.GenerateMips(outputTexture);
+                Graphics.ExecuteCommandBuffer(buffer);
+            }
+            for (int i=0;i<materials.Length;i++) {
+                if (materials[i].HasProperty(textureName)) {
+                    drawIndices.Add(i);
+                }
+            }
+        }
+
         public TextureTarget(string textureName, int textureScale, Material[] materials, bool dilationEnabled,RenderTextureFormat renderTextureFormat, RenderTextureReadWrite renderTextureReadWrite) {
             this.dilationEnabled = dilationEnabled;
             drawIndices = new List<int>();
@@ -76,6 +107,13 @@ public class DecalableInfo : MonoBehaviour {
         return lastUse;
     }
 
+    public RenderTexture GetRenderTexture(string textureName) {
+        if (textureTargets.ContainsKey(textureName)) {
+            return textureTargets[textureName].GetBaseTexture();
+        }
+        return null;
+    }
+
     public int GetSize() {
         int size = 0;
         foreach(var pair in textureTargets) {
@@ -100,6 +138,18 @@ public class DecalableInfo : MonoBehaviour {
         lastUse = Time.time;
         dilationEnabled = PaintDecal.IsDilateEnabled();
         PaintDecal.AddDecalableInfo(this);
+    }
+
+    public void OverrideTexture(RenderTexture texture, string textureName) {
+        if (!textureTargets.ContainsKey(textureName)) {
+            TextureTarget texTarget = new TextureTarget(textureName, texture, renderer.materials, dilationEnabled);
+            textureTargets.Add(textureName, texTarget);
+        } else {
+            textureTargets[textureName].OverrideTexture(texture);
+        }
+        renderer.GetPropertyBlock(propertyBlock);
+        propertyBlock.SetTexture(textureName, dilationEnabled ? textureTargets[textureName].GetOutputTexture() : textureTargets[textureName].GetBaseTexture());
+        renderer.SetPropertyBlock(propertyBlock);
     }
     public void Render(CommandBuffer buffer, Material projector, string textureName, RenderTextureFormat renderTextureFormat, RenderTextureReadWrite renderTextureReadWrite) {
         if (textureTargets == null) {
