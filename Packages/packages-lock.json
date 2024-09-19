@@ -4,7 +4,9 @@
       "version": "file:com.naelstrof.skinnedmeshdecals",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {}
+      "dependencies": {
+        "com.unity.addressables": "1.19.19"
+      }
     },
     "com.unity.addressables": {
       "version": "1.19.19",
