@@ -43,7 +43,7 @@ Shader "Naelstrof/DecalProjectorSubtractiveBlend"
 			#pragma fragment frag
 			#include "UnityCG.cginc"
 			#define ASE_NEEDS_VERT_POSITION
-			#pragma shader_feature_local _BACKFACECULLING_ON
+			#pragma multi_compile_local __ _BACKFACECULLING_ON
 
 
 			struct appdata
@@ -83,13 +83,14 @@ Shader "Naelstrof/DecalProjectorSubtractiveBlend"
 				
 				float2 vertexToFrag5_g2 = ( ( (objectToClip33_g2).xy * float2( 0.5,0.5 ) ) + float2( 0.5,0.5 ) );
 				o.ase_texcoord1.xy = vertexToFrag5_g2;
-				float3 ase_worldNormal = UnityObjectToWorldNormal(v.ase_normal);
-				float3 normalizedWorldNormal = normalize( ase_worldNormal );
-				float3 ase_worldPos = mul(unity_ObjectToWorld, float4( (v.vertex).xyz, 1 )).xyz;
-				float3 ase_worldViewDir = UnityWorldSpaceViewDir(ase_worldPos);
-				ase_worldViewDir = normalize(ase_worldViewDir);
-				float dotResult9_g2 = dot( normalizedWorldNormal , ase_worldViewDir );
-				float vertexToFrag18_g2 = saturate( sign( dotResult9_g2 ) );
+				float3 objectToClipDir39_g2 = normalize( mul(UNITY_MATRIX_VP, mul(unity_ObjectToWorld, float4(v.ase_normal, 0.0))) );
+				float dotResult9_g2 = dot( objectToClipDir39_g2 , float3(0,0,1) );
+				#ifdef UNITY_UV_STARTS_AT_TOP
+				float staticSwitch42_g2 = dotResult9_g2;
+				#else
+				float staticSwitch42_g2 = -dotResult9_g2;
+				#endif
+				float vertexToFrag18_g2 = saturate( sign( staticSwitch42_g2 ) );
 				o.ase_texcoord1.z = vertexToFrag18_g2;
 				
 				
@@ -148,11 +149,11 @@ Node;AmplifyShaderEditor.TexturePropertyNode;104;256,-64;Inherit;True;Property;_
 Node;AmplifyShaderEditor.FunctionNode;101;544,-64;Inherit;False;ProjectDecal;0;;2;66b18916e8faf2e499cabbb30e9dd724;0;1;34;SAMPLER2D;0;False;2;COLOR;0;FLOAT3;32
 Node;AmplifyShaderEditor.ColorNode;103;448,-304;Inherit;False;Property;_Color;Color;3;1;[HDR];Create;True;0;0;0;False;0;False;1,1,1,1;1,1,1,1;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;102;832,-224;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;42;1027.263,-90.47208;Float;False;True;-1;2;ASEMaterialInspector;100;17;Naelstrof/DecalProjectorSubtractiveBlend;928f6a5fbd2e6444ea9bb91fa46f1aa9;True;Unlit;0;0;Unlit;2;False;True;2;5;False;;10;False;;4;1;False;;1;False;;True;0;False;;3;False;;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;2;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;255;False;;255;False;;255;False;;7;False;;1;False;;1;False;;1;False;;7;False;;1;False;;1;False;;1;False;;False;True;2;False;;True;7;False;;True;False;0;False;;0;False;;True;1;RenderType=Opaque=RenderType;True;2;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=ForwardBase;False;False;0;;0;0;Standard;1;Vertex Position,InvertActionOnDeselection;0;0;0;1;True;False;;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;42;1027.263,-90.47208;Float;False;True;-1;2;ASEMaterialInspector;100;16;Naelstrof/DecalProjectorSubtractiveBlend;928f6a5fbd2e6444ea9bb91fa46f1aa9;True;Unlit;0;0;Unlit;2;False;True;2;5;False;;10;False;;4;1;False;;1;False;;True;0;False;;3;False;;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;2;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;255;False;;255;False;;255;False;;7;False;;1;False;;1;False;;1;False;;7;False;;1;False;;1;False;;1;False;;False;True;2;False;;True;7;False;;True;False;0;False;;0;False;;True;1;RenderType=Opaque=RenderType;True;2;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=ForwardBase;False;False;0;;0;0;Standard;1;Vertex Position,InvertActionOnDeselection;0;0;0;1;True;False;;False;0
 WireConnection;101;34;104;0
 WireConnection;102;0;103;0
 WireConnection;102;1;101;0
 WireConnection;42;0;102;0
 WireConnection;42;1;101;32
 ASEEND*/
-//CHKSM=346D61F783231742584B606873E815A7F4A9A777
+//CHKSM=F06C9D44A0FDA7797259A9379B85DFBBE6C2B54B
