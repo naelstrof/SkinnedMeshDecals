@@ -43,7 +43,7 @@ public struct DecalProjection : IEquatable<DecalProjection> {
     }
     public DecalProjection(Vector3 center, float radius) {
         m_ProjectionType = DecalProjectionType.Sphere;
-        m_Projection = Matrix4x4.Ortho(-radius, radius, -radius, radius, -radius*2f, radius*2f);
+        m_Projection = Matrix4x4.Ortho(-radius, radius, -radius, radius, -radius, radius);
         m_View = Matrix4x4.Inverse(Matrix4x4.TRS(center, Quaternion.identity, new Vector3(1, 1, -1)));
     }
     
