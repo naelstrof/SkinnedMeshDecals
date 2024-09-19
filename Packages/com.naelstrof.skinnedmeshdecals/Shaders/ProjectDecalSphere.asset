@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 78b2425a2284af743826c689403a4924, type: 3}
-  m_Name: ProjectSphere
+  m_Name: ProjectDecalSphere
   m_EditorClassIdentifier: 
   m_functionInfo: "// Made with Amplify Shader Editor v1.9.3.3\n// Available at the
     Unity Asset Store - http://u3d.as/y3X \n/*ASEBEGIN\nVersion=19303\nNode;AmplifyShaderEditor.SaturateNode;1;-320,128;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0\nNode;AmplifyShaderEditor.Vector3Node;4;-3088,112;Inherit;False;Constant;_Vector0;Vector

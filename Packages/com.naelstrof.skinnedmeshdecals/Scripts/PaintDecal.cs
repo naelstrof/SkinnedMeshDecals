@@ -1,28 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine.Rendering;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using Object = UnityEngine.Object;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 namespace SkinnedMeshDecals {
-#if UNITY_EDITOR
-    [CustomEditor(typeof(PaintDecal))]
-    public class PaintDecalEditor : Editor {
-        public override void OnInspectorGUI() {
-            DrawDefaultInspector();
-            if (Application.isPlaying) {
-                float progress = (float)PaintDecal.GetMemoryInUse() / (float)PaintDecal.GetMemoryBudget();
-                EditorGUI.ProgressBar(EditorGUILayout.GetControlRect(true), progress, "Memory in use");
-            } else {
-                EditorGUI.ProgressBar(EditorGUILayout.GetControlRect(true), 0, "Memory in use");
-            }
-        }
-    }
-#endif
-
     public static class PaintDecal {
         [Range(16f,2048f)]
         [Tooltip("Memory usage in megabytes before old textures get removed.")]
@@ -72,11 +53,9 @@ namespace SkinnedMeshDecals {
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void Initialize() {
-            var handle = Addressables.LoadAssetAsync<Shader>( "Packages/com.naelstrof.skinnedmeshdecals/Shaders/DilationShader.shader");
             commandBuffer = new CommandBuffer();
-            dilationShader = handle.WaitForCompletion();
+            dilationShader = Shader.Find("Hidden/Naelstrof/DilationShader");
             dilationMaterial = new Material(dilationShader);
-            Addressables.Release(handle);
         }
 
         internal static bool TryReserveMemory(int amount) {

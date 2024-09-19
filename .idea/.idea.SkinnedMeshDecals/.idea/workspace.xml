@@ -5,7 +5,75 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c3fd23f6-8870-4804-9326-90eb8b457653" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/UserSettings/Layouts/default-2021.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/Layouts/default-2021.dwlt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.SkinnedMeshDecals/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SkinnedMeshDecals/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/AddressableAssetSettings.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/AddressableAssetSettings.asset.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/AssetGroupTemplates.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/AssetGroupTemplates/Packed Assets.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/AssetGroupTemplates/Packed Assets.asset.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/AssetGroups.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/AssetGroups/Built In Data.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/AssetGroups/Built In Data.asset.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/AssetGroups/Default Local Group.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/AssetGroups/Default Local Group.asset.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/AssetGroups/Schemas.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/AssetGroups/Schemas/Built In Data_PlayerDataGroupSchema.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/AssetGroups/Schemas/Built In Data_PlayerDataGroupSchema.asset.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/AssetGroups/Schemas/Default Local Group_BundledAssetGroupSchema.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/AssetGroups/Schemas/Default Local Group_BundledAssetGroupSchema.asset.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/AssetGroups/Schemas/Default Local Group_ContentUpdateGroupSchema.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/AssetGroups/Schemas/Default Local Group_ContentUpdateGroupSchema.asset.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/DataBuilders.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/DataBuilders/BuildScriptFastMode.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/DataBuilders/BuildScriptFastMode.asset.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/DataBuilders/BuildScriptPackedMode.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/DataBuilders/BuildScriptPackedMode.asset.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/DataBuilders/BuildScriptPackedPlayMode.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/DataBuilders/BuildScriptPackedPlayMode.asset.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/DataBuilders/BuildScriptVirtualMode.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/DataBuilders/BuildScriptVirtualMode.asset.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/DefaultObject.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AddressableAssetsData/DefaultObject.asset.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/AddressableAssetsData.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/AddressableAssetsData/AssetGroups.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/AddressableAssetsData/AssetGroups/Schemas.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/AddressableAssetsData/AssetGroups/Schemas/SkinnedMeshDecals_BundledAssetGroupSchema.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/AddressableAssetsData/AssetGroups/Schemas/SkinnedMeshDecals_BundledAssetGroupSchema.asset.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/AddressableAssetsData/AssetGroups/Schemas/SkinnedMeshDecals_ContentUpdateGroupSchema.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/AddressableAssetsData/AssetGroups/Schemas/SkinnedMeshDecals_ContentUpdateGroupSchema.asset.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/AddressableAssetsData/AssetGroups/SkinnedMeshDecals.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/AddressableAssetsData/AssetGroups/SkinnedMeshDecals.asset.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SphereErase.mat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SphereErase.mat.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SphereSplat.mat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SphereSplat.mat.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/Splat.mat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/Splat.mat.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SplatErase.mat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SplatErase.mat.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalProjector.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalProjector.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/PaintDecal.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/PaintDecal.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/HDRP_Shaders10.3.2.unitypackage" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/HDRP_Shaders10.3.2.unitypackage.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/ProjectSphere.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/ProjectSphere.asset.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/SphereProjectorAlphaBlend.shader" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/SphereProjectorAlphaBlend.shader" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/SphereProjectorSubtractiveBlend.shader" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/SphereProjectorSubtractiveBlend.shader" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/StandardRP_Shaders.unitypackage" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/StandardRP_Shaders.unitypackage.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/URP_Shaders10.3.2.unitypackage" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/URP_Shaders10.3.2.unitypackage.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/URP_Shaders7.3.1.unitypackage" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/URP_Shaders7.3.1.unitypackage.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Textures.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Textures/Splat_Splat_basecolor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Textures/Splat_Splat_basecolor.png.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/GraphicsSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/GraphicsSettings.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,6 +88,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7096c6494db14f0c807ca461735e58a8129e00/dd/be7d6ac8/StyleKeyword.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/URPExample/Scripts/DecalStamp.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/URPExample/Scripts/DecalableCollider.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Editor/VerifyAddressables.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalProjection.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalProjector.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalResolution.cs" root0="FORCE_HIGHLIGHTING" />
@@ -36,30 +105,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Discover.Launch.Via.Unity": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "rider.run.widget.enabled.cache": "false",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Discover.Launch.Via.Unity&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;rider.run.widget.enabled.cache&quot;: &quot;false&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "rider.external.source.directories": [
-      "C:\\Users\\naelstrof\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
-      "C:\\Users\\naelstrof\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
-      "C:\\Users\\naelstrof\\AppData\\Local\\Symbols\\src"
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\naelstrof\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\naelstrof\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\naelstrof\\AppData\\Local\\Symbols\\src&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
     <configuration name="Start Unity" type="RunUnityExe" factoryName="Unity Executable">
       <option name="EXE_PATH" value="C:\Program Files\Unity\Hub\Editor\2021.3.6f1\Editor\Unity.exe" />
@@ -139,6 +208,7 @@
       <workItem from="1726719656453" duration="5000" />
       <workItem from="1726719672597" duration="25000" />
       <workItem from="1726719703764" duration="10707000" />
+      <workItem from="1726783759020" duration="3998000" />
     </task>
     <servers />
   </component>

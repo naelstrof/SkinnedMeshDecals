@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using UnityEngine.Assertions;
 using Object = UnityEngine.Object;
 
@@ -23,27 +22,37 @@ public struct DecalProjector : IEquatable<DecalProjector> {
     private static Material textureSubtractive;
     private static Material sphereAlpha;
     private static Material sphereSubtractive;
-    private static Texture defaultTexture;
+    private static Texture2D defaultTexture;
     private static readonly int Power = Shader.PropertyToID("_Power");
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void Initialize() {
-        var textureAlphaHandle = Addressables.LoadAssetAsync<Material>( "Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/Splat.mat");
-        var textureSubtractiveHandle = Addressables.LoadAssetAsync<Material>( "Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SplatErase.mat");
-        var sphereAlphaHandle = Addressables.LoadAssetAsync<Material>( "Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SphereSplat.mat");
-        var sphereSubtractiveHandle = Addressables.LoadAssetAsync<Material>( "Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SphereErase.mat");
-        var textureHandle = Addressables.LoadAssetAsync<Texture>("Packages/com.naelstrof.skinnedmeshdecals/Textures/Splat_Splat_basecolor.png");
-        textureAlpha = Object.Instantiate(textureAlphaHandle.WaitForCompletion());
-        textureSubtractive = Object.Instantiate(textureSubtractiveHandle.WaitForCompletion());
-        sphereAlpha = Object.Instantiate(sphereAlphaHandle.WaitForCompletion());
-        sphereSubtractive = Object.Instantiate(sphereSubtractiveHandle.WaitForCompletion());
-        defaultTexture = textureHandle.WaitForCompletion();
+        textureAlpha = new Material(Shader.Find("Naelstrof/DecalProjectorAlphaBlend"));
+        textureAlpha.EnableKeyword("_BACKFACECULLING_ON");
         
-        Addressables.Release(textureAlphaHandle);
-        Addressables.Release(textureSubtractiveHandle);
-        Addressables.Release(sphereAlphaHandle);
-        Addressables.Release(sphereSubtractiveHandle);
-        Addressables.Release(textureHandle);
+        textureSubtractive = new Material(Shader.Find("Naelstrof/DecalProjectorSubtractiveBlend")) {
+            color = Color.black
+        };
+        textureSubtractive.EnableKeyword("_BACKFACECULLING_ON");
+        
+        sphereAlpha = new Material(Shader.Find("Naelstrof/SphereProjectorAlphaBlend"));
+        sphereSubtractive = new Material(Shader.Find("Naelstrof/SphereProjectorSubtractiveBlend")) {
+            color = Color.black
+        };
+        
+        // Create a box texture as an example.
+        defaultTexture = Object.Instantiate(Texture2D.whiteTexture);
+        var pixels = defaultTexture.GetPixels();
+        for (int x = 0; x < defaultTexture.width; x++) {
+            for (int y = 0; y < defaultTexture.height; y++) {
+                if (x == 0 || y == 0 || x == defaultTexture.width - 1 || y == defaultTexture.height - 1) {
+                    pixels[x + y * defaultTexture.width] = Color.clear;
+                }
+            }
+        }
+        defaultTexture.SetPixels(pixels, 0);
+        defaultTexture.wrapMode = TextureWrapMode.Clamp;
+        defaultTexture.Apply();
     }
 
     public Material material {
