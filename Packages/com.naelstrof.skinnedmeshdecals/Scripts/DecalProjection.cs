@@ -36,32 +36,26 @@ public struct DecalProjection : IEquatable<DecalProjection> {
         set => m_ProjectionType = value;
     }
 
-    public DecalProjection(Vector3 center, Vector3 forward, float radius) {
-        m_ProjectionType = DecalProjectionType.Cube;
-        m_Projection = Matrix4x4.Ortho(-radius, radius, -radius, radius, -radius, radius);
-        m_View = Matrix4x4.Inverse(Matrix4x4.TRS(center, Quaternion.FromToRotation(Vector3.forward, forward), new Vector3(1, 1, -1)));
-    }
-    public DecalProjection(Vector3 center, float radius) {
-        m_ProjectionType = DecalProjectionType.Sphere;
-        m_Projection = Matrix4x4.Ortho(-radius, radius, -radius, radius, -radius, radius);
-        m_View = Matrix4x4.Inverse(Matrix4x4.TRS(center, Quaternion.identity, new Vector3(1, 1, -1)));
-    }
-    
-    public DecalProjection(Vector3 center, Vector3 forward, float radius, float depthRadius) {
+    public DecalProjection(Vector3 center, Quaternion lookRotation, float radius, float depthRadius) {
         m_ProjectionType = DecalProjectionType.Orthographic;
         m_Projection = Matrix4x4.Ortho(-radius, radius, -radius, radius, -depthRadius, depthRadius);
-        m_View = Matrix4x4.Inverse(Matrix4x4.TRS(center, Quaternion.FromToRotation(Vector3.forward, forward), new Vector3(1, 1, -1)));
+        m_View = Matrix4x4.Inverse(Matrix4x4.TRS(center, lookRotation, new Vector3(1, 1, -1)));
+    }
+    
+    public DecalProjection(Vector3 center, Vector3 lookDirection, float radius) : this(center, Quaternion.LookRotation(lookDirection), radius, radius) {
+        m_ProjectionType = DecalProjectionType.Cube;
+    }
+    
+    public DecalProjection(Vector3 center, Vector3 lookDirection, float radius, float depthRadius) : this(center, Quaternion.LookRotation(lookDirection), radius, depthRadius) { }
+    public DecalProjection(Vector3 center, Vector3 forwardDirection, Vector3 upDirection, float radius) : this(center, Quaternion.LookRotation(forwardDirection, upDirection), radius, radius) { }
+
+    public DecalProjection(Vector3 center, float radius) : this(center, Quaternion.identity, radius, radius) {
+        m_ProjectionType = DecalProjectionType.Sphere;
     }
     public DecalProjection(Vector3 startPosition, Quaternion rotation, float fieldOfView, float aspect, float nearClip, float farClip) {
         m_ProjectionType = DecalProjectionType.Perspective;
         m_Projection = Matrix4x4.Perspective(fieldOfView, aspect, nearClip, farClip);
         m_View = Matrix4x4.Inverse(Matrix4x4.TRS(startPosition, rotation, new Vector3(1, 1, -1)));
-    }
-    
-    public DecalProjection(Vector3 center, Vector3 forward, Vector3 extents) {
-        m_ProjectionType = DecalProjectionType.Orthographic;
-        m_Projection = Matrix4x4.Ortho(-extents.x, extents.x, -extents.y, extents.y, -extents.z, extents.z);
-        m_View = Matrix4x4.Inverse(Matrix4x4.TRS(center, Quaternion.FromToRotation(Vector3.forward, forward), new Vector3(1, 1, -1)));
     }
     
     public DecalProjection(Vector3 center, Quaternion rotation, Vector3 extents) {

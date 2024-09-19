@@ -64,64 +64,52 @@ public struct DecalProjector : IEquatable<DecalProjector> {
     /// </summary>
     /// <param name="v">A material that projects decals onto meshes. In order to create your own, simply use one of the provided projector shaders,
     /// or use the included Amplify Template (within Addons) to generate your own projection shader.</param>
-    public DecalProjector(Material v) : this(v, null, null, DecalProjectorType.Custom) {
-    }
-
-    /// <summary>
-    /// Gets a shared material with the specified projector type, set with a default texture and a white color.
-    /// </summary>
-    /// <param name="projectorType">
-    /// TextureAdditive: A texture-based projector that adds color to the decal map.
-    /// TextureSubtractive: A texture-based projector that removes alpha from the decal map based on the alpha of the texture.
-    /// SphereAdditive: A pure shader that adds color based on the distance from the "center" of the DecalProjection.
-    /// SphereSubtractive: A pure shader that removes alpha based on the distance from the "center" of the DecalProjection.</param>
-    public DecalProjector(DecalProjectorType projectorType) : this(null, defaultTexture, Color.white, projectorType) {
-    }
-
-    /// <summary>
-    /// Gets a shared material with the specified projector type, set with a specific texture.
-    /// </summary>
-    /// <param name="projectorType">
-    /// TextureAdditive: A texture-based projector that adds color to the decal map.
-    /// TextureSubtractive: A texture-based projector that removes alpha from the decal map based on the alpha of the texture.
-    /// SphereAdditive: A pure shader that adds color based on the distance from the "center" of the DecalProjection.
-    /// SphereSubtractive: A pure shader that removes alpha based on the distance from the "center" of the DecalProjection.</param>
-    /// <param name="texture">The texture to use for Texture based projectors</param>
-    public DecalProjector(DecalProjectorType projectorType, Texture texture) :
-        this(null, texture, Color.white, projectorType) {
+    public DecalProjector(Material v) : this(v, null, null, DecalProjectorType.Custom, false) {
     }
 
     /// <summary>
     /// Gets a shared material with the specified projector type, set with a specific texture and color.
     /// </summary>
     /// <param name="projectorType">
-    /// TextureAdditive: A texture-based projector that adds color to the decal map.
+    /// TextureAlpha: A texture-based projector that adds color to the decal map.
     /// TextureSubtractive: A texture-based projector that removes alpha from the decal map based on the alpha of the texture.
-    /// SphereAdditive: A pure shader that adds color based on the distance from the "center" of the DecalProjection.
+    /// SphereAlpha: A pure shader that adds color based on the distance from the "center" of the DecalProjection.
     /// SphereSubtractive: A pure shader that removes alpha based on the distance from the "center" of the DecalProjection.</param>
     /// <param name="texture">The texture to use for Texture based projectors</param>
     /// <param name="color">The color of the projector.</param>
-    public DecalProjector(DecalProjectorType projectorType, Texture texture, Color color) : this(null, texture, color, projectorType) {
+    /// <param name="backfaceCulling">If backfaces should be ignored during painting.</param>
+    public DecalProjector(DecalProjectorType projectorType, Texture texture, Color? color = null, bool backfaceCulling = false) : this(null, texture, color, projectorType, backfaceCulling) {
     }
 
     /// <summary>
     /// Gets a shared material with the specified projector type, set with a specific color.
     /// </summary>
     /// <param name="projectorType">
-    /// TextureAdditive: A texture-based projector that adds color to the decal map.
+    /// TextureAlpha: A texture-based projector that adds color to the decal map.
     /// TextureSubtractive: A texture-based projector that removes alpha from the decal map based on the alpha of the texture.
-    /// SphereAdditive: A pure shader that adds color based on the distance from the "center" of the DecalProjection.
+    /// SphereAlpha: A pure shader that adds color based on the distance from the "center" of the DecalProjection.
     /// SphereSubtractive: A pure shader that removes alpha based on the distance from the "center" of the DecalProjection.</param>
     /// <param name="color">The color of the projector.</param>
-    public DecalProjector(DecalProjectorType projectorType, Color color) : this(null, defaultTexture, color, projectorType) {
+    /// <param name="backfaceCulling">If backfaces should be ignored during painting.</param>
+    public DecalProjector(DecalProjectorType projectorType, Color? color = null, bool backfaceCulling = false) : this(null, defaultTexture, color, projectorType, backfaceCulling) {
     }
     
-    public DecalProjector(DecalProjectorType projectorType, Color color, float power) : this(null, defaultTexture, color, projectorType) {
+    /// <summary>
+    /// Gets a sphere projector with a specific power setting.
+    /// </summary>
+    /// <param name="projectorType">Must be one of the following:
+    /// SphereAlpha: A pure shader that adds color based on the distance from the "center" of the DecalProjection.
+    /// SphereSubtractive: A pure shader that removes alpha based on the distance from the "center" of the DecalProjection.
+    /// </param>
+    /// <param name="power">How strong the sphere projection edge is.</param>
+    /// <param name="color">The color to blit.</param>
+    /// <param name="backfaceCulling">If backfaces should be ignored during painting.</param>
+    public DecalProjector(DecalProjectorType projectorType, float power, Color? color, bool backfaceCulling = false) : this(null, defaultTexture, color, projectorType, backfaceCulling) {
         Assert.IsTrue(projectorType is DecalProjectorType.SphereAlpha or DecalProjectorType.SphereSubtractive);
         m_Material.SetFloat(Power, power);
     }
 
-    internal DecalProjector(Material v, Texture texture, Color? color, DecalProjectorType projectorType) {
+    internal DecalProjector(Material v, Texture texture, Color? color, DecalProjectorType projectorType, bool backfaceCulling) {
         m_ProjectorType = projectorType;
         
         m_Material = m_ProjectorType switch {
@@ -139,6 +127,12 @@ public struct DecalProjector : IEquatable<DecalProjector> {
 
         if (color != null) {
             m_Material.color = color.Value;
+        }
+
+        if (backfaceCulling) {
+            m_Material.EnableKeyword("_BACKFACECULLING_ON");
+        } else {
+            m_Material.DisableKeyword("_BACKFACECULLING_ON");
         }
     }
 

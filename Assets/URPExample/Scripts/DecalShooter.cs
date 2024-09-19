@@ -12,7 +12,7 @@ public class DecalShooter : MonoBehaviour {
                 return;
             }
             foreach (var decalableRenderer in decalableCollider.GetDecalableRenderers()) {
-                PaintDecal.RenderDecal(decalableRenderer, new DecalProjector(DecalProjectorType.TextureAlpha, color), new DecalProjection(hit.point, transform.forward, size));
+                PaintDecal.RenderDecal(decalableRenderer, new DecalProjector(DecalProjectorType.TextureAlpha, color, true), new DecalProjection(hit.point, transform.forward, size));
             }
         }
     }
