@@ -16,11 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: 3bbaf8c7e567b604ba447b03e5185a99
-  m_SerializeEntries:
-  - m_GUID: be8eeac16840c39419b8ad7576a9f20e
-    m_Address: Packages/com.naelstrof.skinnedmeshdecals/Shaders/SphereProjectorSubtractiveBlend.shader
-    m_ReadOnly: 0
-    m_SerializedLabels: []
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: dfe7fce754235dd4aa9b8ec2932cd717, type: 2}
   m_SchemaSet:

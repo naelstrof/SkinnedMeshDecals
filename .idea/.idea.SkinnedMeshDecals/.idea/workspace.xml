@@ -6,15 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="c3fd23f6-8870-4804-9326-90eb8b457653" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SkinnedMeshDecals/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SkinnedMeshDecals/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/URPExample/Scripts/DecalShooter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/URPExample/Scripts/DecalShooter.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalProjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalProjection.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalProjector.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalProjector.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DecalProjectorAlphaBlend.shader" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DecalProjectorAlphaBlend.shader" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DecalProjectorSubtractiveBlend.shader" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DecalProjectorSubtractiveBlend.shader" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/ProjectDecal.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/ProjectDecal.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/ProjectSphere.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/ProjectSphere.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/SphereProjectorAlphaBlend.shader" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/SphereProjectorAlphaBlend.shader" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/SphereProjectorSubtractiveBlend.shader" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/SphereProjectorSubtractiveBlend.shader" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -147,7 +140,7 @@
       <workItem from="1726689335884" duration="26689000" />
       <workItem from="1726719656453" duration="5000" />
       <workItem from="1726719672597" duration="25000" />
-      <workItem from="1726719703764" duration="9842000" />
+      <workItem from="1726719703764" duration="10024000" />
     </task>
     <servers />
   </component>
