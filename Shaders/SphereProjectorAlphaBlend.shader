@@ -147,7 +147,7 @@ Shader "Naelstrof/SphereProjectorAlphaBlend"
 Version=19303
 Node;AmplifyShaderEditor.ColorNode;145;464,-320;Inherit;False;Property;_Color;Color;3;1;[HDR];Create;True;0;0;0;False;0;False;1,1,1,1;1,1,1,1;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.DynamicAppendNode;149;720,-336;Inherit;False;FLOAT4;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT4;0
-Node;AmplifyShaderEditor.FunctionNode;153;688,-80;Inherit;False;ProjectSphere;0;;1;0210e53a33ec5d2438280b488af95eff;0;0;2;FLOAT;0;FLOAT3;38
+Node;AmplifyShaderEditor.FunctionNode;153;688,-80;Inherit;False;ProjectDecalSphere;0;;1;0210e53a33ec5d2438280b488af95eff;0;0;2;FLOAT;0;FLOAT3;38
 Node;AmplifyShaderEditor.LerpOp;148;912,-272;Inherit;False;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;42;1097.151,-111.8234;Float;False;True;-1;2;ASEMaterialInspector;100;16;Naelstrof/SphereProjectorAlphaBlend;928f6a5fbd2e6444ea9bb91fa46f1aa9;True;Unlit;0;0;Unlit;2;False;True;2;5;False;;10;False;;3;1;False;;10;False;;True;0;False;;0;False;;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;2;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;255;False;;255;False;;255;False;;7;False;;1;False;;1;False;;1;False;;7;False;;1;False;;1;False;;1;False;;False;True;2;False;;True;7;False;;True;False;0;False;;0;False;;True;1;RenderType=Opaque=RenderType;True;2;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=ForwardBase;False;False;0;;0;0;Standard;1;Vertex Position,InvertActionOnDeselection;0;0;0;1;True;False;;False;0
 WireConnection;149;0;145;1
@@ -159,4 +159,4 @@ WireConnection;148;2;153;0
 WireConnection;42;0;148;0
 WireConnection;42;1;153;38
 ASEEND*/
-//CHKSM=843E9EE5235EBEEC358E9F29ABA6359E64D1DEC0
+//CHKSM=AF762396DDCCBA7CD5CE934E0BF45A6CEDDC5A33
