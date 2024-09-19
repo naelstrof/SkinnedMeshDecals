@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Assertions;
 using Object = UnityEngine.Object;
 
 namespace SkinnedMeshDecals {
@@ -23,32 +24,24 @@ public struct DecalProjector : IEquatable<DecalProjector> {
     private static Material sphereAlpha;
     private static Material sphereSubtractive;
     private static Texture defaultTexture;
+    private static readonly int Power = Shader.PropertyToID("_Power");
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void Initialize() {
-        var textureAdditiveHandle =
-            Addressables.LoadAssetAsync<Material>(
-                "Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/Splat.mat");
-        var textureSubtractiveHandle =
-            Addressables.LoadAssetAsync<Material>(
-                "Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SplatErase.mat");
-        var sphereAdditiveHandle =
-            Addressables.LoadAssetAsync<Material>(
-                "Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SphereSplat.mat");
-        var sphereSubtractiveHandle =
-            Addressables.LoadAssetAsync<Material>(
-                "Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SphereErase.mat");
-        var textureHandle =
-            Addressables.LoadAssetAsync<Texture>("Packages/com.naelstrof.skinnedmeshdecals/Textures/Splat_Splat_basecolor.png");
-        textureAlpha = Object.Instantiate(textureAdditiveHandle.WaitForCompletion());
+        var textureAlphaHandle = Addressables.LoadAssetAsync<Material>( "Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/Splat.mat");
+        var textureSubtractiveHandle = Addressables.LoadAssetAsync<Material>( "Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SplatErase.mat");
+        var sphereAlphaHandle = Addressables.LoadAssetAsync<Material>( "Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SphereSplat.mat");
+        var sphereSubtractiveHandle = Addressables.LoadAssetAsync<Material>( "Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SphereErase.mat");
+        var textureHandle = Addressables.LoadAssetAsync<Texture>("Packages/com.naelstrof.skinnedmeshdecals/Textures/Splat_Splat_basecolor.png");
+        textureAlpha = Object.Instantiate(textureAlphaHandle.WaitForCompletion());
         textureSubtractive = Object.Instantiate(textureSubtractiveHandle.WaitForCompletion());
-        sphereAlpha = Object.Instantiate(sphereAdditiveHandle.WaitForCompletion());
+        sphereAlpha = Object.Instantiate(sphereAlphaHandle.WaitForCompletion());
         sphereSubtractive = Object.Instantiate(sphereSubtractiveHandle.WaitForCompletion());
         defaultTexture = textureHandle.WaitForCompletion();
         
-        Addressables.Release(textureAdditiveHandle);
+        Addressables.Release(textureAlphaHandle);
         Addressables.Release(textureSubtractiveHandle);
-        Addressables.Release(sphereAdditiveHandle);
+        Addressables.Release(sphereAlphaHandle);
         Addressables.Release(sphereSubtractiveHandle);
         Addressables.Release(textureHandle);
     }
@@ -121,6 +114,11 @@ public struct DecalProjector : IEquatable<DecalProjector> {
     /// SphereSubtractive: A pure shader that removes alpha based on the distance from the "center" of the DecalProjection.</param>
     /// <param name="color">The color of the projector.</param>
     public DecalProjector(DecalProjectorType projectorType, Color color) : this(null, defaultTexture, color, projectorType) {
+    }
+    
+    public DecalProjector(DecalProjectorType projectorType, Color color, float power) : this(null, defaultTexture, color, projectorType) {
+        Assert.IsTrue(projectorType is DecalProjectorType.SphereAlpha or DecalProjectorType.SphereSubtractive);
+        m_Material.SetFloat(Power, power);
     }
 
     internal DecalProjector(Material v, Texture texture, Color? color, DecalProjectorType projectorType) {

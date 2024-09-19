@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using SkinnedMeshDecals;
 using UnityEngine;
 
-public class DecalSphereSplat : MonoBehaviour {
+public class DecalStamp : MonoBehaviour {
     public LayerMask hitMask;
     public bool subtract;
     public Color color;
@@ -14,7 +14,7 @@ public class DecalSphereSplat : MonoBehaviour {
         for (int i = 0; i < hits; i++) {
             if (staticColliders[i].TryGetComponent(out DecalableCollider decalableCollider)) {
                 foreach (var decalableRenderer in decalableCollider.GetDecalableRenderers()) {
-                    PaintDecal.RenderDecal(decalableRenderer, new DecalProjector(subtract ? DecalProjectorType.SphereSubtractive : DecalProjectorType.SphereAlpha, color), new DecalProjection(transform.position, radius));
+                    PaintDecal.RenderDecal(decalableRenderer, new DecalProjector(subtract ? DecalProjectorType.TextureSubtractive : DecalProjectorType.TextureAlpha, color), new DecalProjection(transform.position, transform.forward, radius));
                 }
             }
         }

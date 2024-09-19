@@ -6,34 +6,17 @@
   <component name="ChangeListManager">
     <list default="true" id="c3fd23f6-8870-4804-9326-90eb8b457653" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SkinnedMeshDecals/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SkinnedMeshDecals/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/URPExample/Scripts/DecalShooter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/URPExample/Scripts/DecalShooter.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/URPExample/Scripts/DecalSphereSplat.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/URPExample/Scripts/DecalSphereSplat.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/URPExample/SkinnedMeshDecalExample.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/URPExample/SkinnedMeshDecalExample.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/URPExample/Textures.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/URPExample/Textures/Splat_Splat_basecolor.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/URPExample/Textures/Splat_Splat_basecolor.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SphereErase.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SphereErase.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SphereSplat.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SphereSplat.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/Splat.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/Splat.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SplatErase.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/ExampleProjectors/SplatErase.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Naelstrof.SkinnedMeshDecals.asmdef" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Naelstrof.SkinnedMeshDecals.asmdef" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalableInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalableInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/PaintDecal.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/PaintDecal.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/AlphaBlend.shader" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/AlphaBlend.shader.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DecalProjector.shader" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DecalProjector.shader.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DecalProjectorSubtractive.shader" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DecalProjectorSubtractive.shader.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DecalProjectorTest.shader" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DecalProjectorTest.shader.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/SphereProjector.shader" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/SphereProjector.shader.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/SphereProjectorSubtractive.shader" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/SphereProjectorSubtractive.shader.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalProjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalProjection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalProjector.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalProjector.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DecalProjectorAlphaBlend.shader" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DecalProjectorAlphaBlend.shader" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DecalProjectorSubtractiveBlend.shader" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DecalProjectorSubtractiveBlend.shader" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DilationShader.shader" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DilationShader.shader" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/ProjectDecal.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/ProjectDecal.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/ProjectSphere.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/ProjectSphere.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/SphereProjectorAlphaBlend.shader" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/SphereProjectorAlphaBlend.shader" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/SphereProjectorSubtractiveBlend.shader" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/SphereProjectorSubtractiveBlend.shader" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UserSettings/Layouts/default-2021.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/Layouts/default-2021.dwlt" afterDir="false" />
     </list>
@@ -48,6 +31,7 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/4a31731933e0419ca5a995305014ad37157a00/9d/80cfb8bb/RenderTextureReadWrite.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7096c6494db14f0c807ca461735e58a8129e00/dd/be7d6ac8/StyleKeyword.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/URPExample/Scripts/DecalStamp.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/URPExample/Scripts/DecalableCollider.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalProjection.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalProjector.cs" root0="FORCE_HIGHLIGHTING" />
@@ -167,7 +151,7 @@
       <workItem from="1726689335884" duration="26689000" />
       <workItem from="1726719656453" duration="5000" />
       <workItem from="1726719672597" duration="25000" />
-      <workItem from="1726719703764" duration="6296000" />
+      <workItem from="1726719703764" duration="7998000" />
     </task>
     <servers />
   </component>

@@ -71,26 +71,27 @@ Shader "Naelstrof/SphereProjectorSubtractiveBlend"
 			v2f vert ( appdata v )
 			{
 				v2f o;
-				float2 texCoord14_g4 = v.ase_texcoord1.xy * float2( 1,1 ) + float2( 0,0 );
-				float2 break17_g4 = texCoord14_g4;
-				float2 appendResult24_g4 = (float2(break17_g4.x , ( 1.0 - break17_g4.y )));
+				float2 texCoord14_g1 = v.ase_texcoord1.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 break17_g1 = texCoord14_g1;
+				float2 appendResult24_g1 = (float2(break17_g1.x , ( 1.0 - break17_g1.y )));
 				#ifdef UNITY_UV_STARTS_AT_TOP
-				float2 staticSwitch30_g4 = texCoord14_g4;
+				float2 staticSwitch30_g1 = texCoord14_g1;
 				#else
-				float2 staticSwitch30_g4 = appendResult24_g4;
+				float2 staticSwitch30_g1 = appendResult24_g1;
 				#endif
-				float4 objectToClip2_g4 = UnityObjectToClipPos(v.vertex.xyz);
-				float3 objectToClip2_g4NDC = objectToClip2_g4.xyz/objectToClip2_g4.w;
-				float3 appendResult32_g4 = (float3(staticSwitch30_g4 , objectToClip2_g4NDC.z));
+				float4 objectToClip2_g1 = UnityObjectToClipPos(v.vertex.xyz);
+				float3 objectToClip2_g1NDC = objectToClip2_g1.xyz/objectToClip2_g1.w;
+				float3 appendResult32_g1 = (float3(staticSwitch30_g1 , objectToClip2_g1NDC.z));
 				
-				float3 ase_worldNormal = UnityObjectToWorldNormal(v.ase_normal);
-				float3 normalizedWorldNormal = normalize( ase_worldNormal );
-				float3 ase_worldPos = mul(unity_ObjectToWorld, float4( (v.vertex).xyz, 1 )).xyz;
-				float3 ase_worldViewDir = UnityWorldSpaceViewDir(ase_worldPos);
-				ase_worldViewDir = normalize(ase_worldViewDir);
-				float dotResult13_g4 = dot( normalizedWorldNormal , ase_worldViewDir );
-				float vertexToFrag26_g4 = saturate( sign( dotResult13_g4 ) );
-				o.ase_texcoord2.x = vertexToFrag26_g4;
+				float3 objectToClipDir41_g1 = normalize( mul(UNITY_MATRIX_VP, mul(unity_ObjectToWorld, float4(v.ase_normal, 0.0))) );
+				float dotResult44_g1 = dot( objectToClipDir41_g1 , float3(0,0,1) );
+				#ifdef UNITY_UV_STARTS_AT_TOP
+				float staticSwitch43_g1 = dotResult44_g1;
+				#else
+				float staticSwitch43_g1 = -dotResult44_g1;
+				#endif
+				float vertexToFrag26_g1 = saturate( sign( staticSwitch43_g1 ) );
+				o.ase_texcoord2.x = vertexToFrag26_g1;
 				
 				o.ase_texcoord1 = v.vertex;
 				
@@ -100,7 +101,7 @@ Shader "Naelstrof/SphereProjectorSubtractiveBlend"
 				#if ASE_ABSOLUTE_VERTEX_POS
 				vertexValue = v.vertex.xyz;
 				#endif
-				vertexValue = ( ( appendResult32_g4 * float3( 2,-2,1 ) ) + float3( -1,1,0 ) );
+				vertexValue = ( ( appendResult32_g1 * float3( 2,-2,1 ) ) + float3( -1,1,0 ) );
 				o.vertex = float4(vertexValue.xyz,1);
 
 #ifdef ASE_NEEDS_FRAG_WORLD_POSITION
@@ -116,21 +117,21 @@ Shader "Naelstrof/SphereProjectorSubtractiveBlend"
 				float3 WorldPosition = i.worldPos;
 #endif
 				float4 appendResult146 = (float4(_Color.r , _Color.g , _Color.b , 0.0));
-				float4 objectToClip2_g4 = UnityObjectToClipPos(i.ase_texcoord1.xyz);
-				float3 objectToClip2_g4NDC = objectToClip2_g4.xyz/objectToClip2_g4.w;
+				float4 objectToClip2_g1 = UnityObjectToClipPos(i.ase_texcoord1.xyz);
+				float3 objectToClip2_g1NDC = objectToClip2_g1.xyz/objectToClip2_g1.w;
 				#ifdef UNITY_UV_STARTS_AT_TOP
-				float3 staticSwitch9_g4 = ( ( objectToClip2_g4NDC - float3( 0,0,0.5 ) ) * float3(0.5,0.5,2) );
+				float3 staticSwitch9_g1 = ( ( objectToClip2_g1NDC - float3( 0,0,0.5 ) ) * float3(1,1,2) );
 				#else
-				float3 staticSwitch9_g4 = ( objectToClip2_g4NDC * float3(0.5,0.5,1) );
+				float3 staticSwitch9_g1 = objectToClip2_g1NDC;
 				#endif
-				float temp_output_27_0_g4 = saturate( pow( saturate( ( 1.0 - distance( float3(0,0,0) , staticSwitch9_g4 ) ) ) , _Power ) );
-				float vertexToFrag26_g4 = i.ase_texcoord2.x;
+				float temp_output_27_0_g1 = saturate( pow( saturate( ( 1.0 - distance( float3(0,0,0) , staticSwitch9_g1 ) ) ) , _Power ) );
+				float vertexToFrag26_g1 = i.ase_texcoord2.x;
 				#ifdef _BACKFACECULLING_ON
-				float staticSwitch33_g4 = ( temp_output_27_0_g4 * vertexToFrag26_g4 );
+				float staticSwitch33_g1 = ( temp_output_27_0_g1 * vertexToFrag26_g1 );
 				#else
-				float staticSwitch33_g4 = temp_output_27_0_g4;
+				float staticSwitch33_g1 = temp_output_27_0_g1;
 				#endif
-				float4 lerpResult147 = lerp( appendResult146 , _Color , saturate( staticSwitch33_g4 ));
+				float4 lerpResult147 = lerp( appendResult146 , _Color , saturate( staticSwitch33_g1 ));
 				
 				
 				finalColor = lerpResult147;
@@ -146,17 +147,17 @@ Shader "Naelstrof/SphereProjectorSubtractiveBlend"
 /*ASEBEGIN
 Version=19303
 Node;AmplifyShaderEditor.ColorNode;144;464,-288;Inherit;False;Property;_Color;Color;3;1;[HDR];Create;True;0;0;0;False;0;False;1,1,1,1;1,1,1,1;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.FunctionNode;145;672,-32;Inherit;False;ProjectSphere;0;;4;0210e53a33ec5d2438280b488af95eff;0;0;2;FLOAT;0;FLOAT3;38
 Node;AmplifyShaderEditor.DynamicAppendNode;146;704,-256;Inherit;False;FLOAT4;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT4;0
+Node;AmplifyShaderEditor.FunctionNode;150;672,-32;Inherit;False;ProjectSphere;0;;1;0210e53a33ec5d2438280b488af95eff;0;0;2;FLOAT;0;FLOAT3;38
 Node;AmplifyShaderEditor.LerpOp;147;912,-224;Inherit;False;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;42;1097.151,-111.8234;Float;False;True;-1;2;ASEMaterialInspector;100;16;Naelstrof/SphereProjectorSubtractiveBlend;928f6a5fbd2e6444ea9bb91fa46f1aa9;True;Unlit;0;0;Unlit;2;True;True;2;5;False;;10;False;;4;1;False;;1;False;;True;0;False;;3;False;;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;2;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;255;False;;255;False;;255;False;;7;False;;1;False;;1;False;;1;False;;7;False;;1;False;;1;False;;1;False;;False;True;2;False;;True;7;False;;True;False;0;False;;0;False;;True;1;RenderType=Opaque=RenderType;True;2;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=ForwardBase;False;False;0;;0;0;Standard;1;Vertex Position,InvertActionOnDeselection;0;0;0;1;True;False;;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;42;1097.151,-111.8234;Float;False;True;-1;2;ASEMaterialInspector;100;17;Naelstrof/SphereProjectorSubtractiveBlend;928f6a5fbd2e6444ea9bb91fa46f1aa9;True;Unlit;0;0;Unlit;2;True;True;2;5;False;;10;False;;4;1;False;;1;False;;True;0;False;;3;False;;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;2;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;255;False;;255;False;;255;False;;7;False;;1;False;;1;False;;1;False;;7;False;;1;False;;1;False;;1;False;;False;True;2;False;;True;7;False;;True;False;0;False;;0;False;;True;1;RenderType=Opaque=RenderType;True;2;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=ForwardBase;False;False;0;;0;0;Standard;1;Vertex Position,InvertActionOnDeselection;0;0;0;1;True;False;;False;0
 WireConnection;146;0;144;1
 WireConnection;146;1;144;2
 WireConnection;146;2;144;3
 WireConnection;147;0;146;0
 WireConnection;147;1;144;0
-WireConnection;147;2;145;0
+WireConnection;147;2;150;0
 WireConnection;42;0;147;0
-WireConnection;42;1;145;38
+WireConnection;42;1;150;38
 ASEEND*/
-//CHKSM=C79A82564EDDD50CE9ED037CEC9F2F85BDFCF8B4
+//CHKSM=15DD9BF3E42959B79F54F50AA1C1AE2C9ABE4E0B
