@@ -11,7 +11,7 @@ public class DecalShooter : MonoBehaviour {
             if (!hit.collider.TryGetComponent(out DecalableCollider decalableCollider)) {
                 return;
             }
-            foreach (var decalableRenderer in decalableCollider.GetDecalableRenderers()) {
+            foreach (var decalableRenderer in decalableCollider.decalableRenderers) {
                 PaintDecal.RenderDecal(decalableRenderer, new DecalProjector(DecalProjectorType.TextureAlpha, color, true), new DecalProjection(hit.point, transform.forward, size));
             }
         }
