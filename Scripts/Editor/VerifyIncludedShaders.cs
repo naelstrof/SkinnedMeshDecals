@@ -10,20 +10,30 @@ public static class VerifyIncludedShaders {
 #if UNITY_EDITOR
     [InitializeOnLoadMethod]
     private static void Initialize() {
-        AddAlwaysIncludedShader("Naelstrof/DecalProjectorAlphaBlend");
-        AddAlwaysIncludedShader("Naelstrof/DecalProjectorSubtractiveBlend");
-        AddAlwaysIncludedShader("Hidden/Naelstrof/DilationShader");
-        AddAlwaysIncludedShader("Naelstrof/SphereProjectorAlphaBlend");
-        AddAlwaysIncludedShader("Naelstrof/SphereProjectorSubtractiveBlend");
+        TryAddAlwaysIncludedShader("Naelstrof/DecalProjectorAlphaBlend");
+        TryAddAlwaysIncludedShader("Naelstrof/DecalProjectorSubtractiveBlend");
+        TryAddAlwaysIncludedShader("Hidden/Naelstrof/DilationShader");
+        TryAddAlwaysIncludedShader("Naelstrof/SphereProjectorAlphaBlend");
+        TryAddAlwaysIncludedShader("Naelstrof/SphereProjectorSubtractiveBlend");
     }
-    private static void AddAlwaysIncludedShader(string shaderName) {
+    private static bool TryAddAlwaysIncludedShader(string shaderName) {
         var shader = Shader.Find(shaderName);
-        if (shader == null)
-            throw new UnityException($"Couldn't find shader {shaderName}");
+        if (shader == null) {
+            Debug.LogError($"SkinnedMeshDecals: Couldn't find shader {shaderName}... Try reimporting?");
+            return false;
+        }
 
         var graphicsSettingsObj = AssetDatabase.LoadAssetAtPath<GraphicsSettings>("ProjectSettings/GraphicsSettings.asset");
+        if (graphicsSettingsObj == null) {
+            Debug.LogError($"SkinnedMeshDecals: Couldn't load graphics settings from path ProjectSettings/GraphicsSettings.asset. It was missing!");
+            return false;
+        }
         var serializedObject = new SerializedObject(graphicsSettingsObj);
         var arrayProp = serializedObject.FindProperty("m_AlwaysIncludedShaders");
+        if (arrayProp == null) {
+            Debug.LogError($"SkinnedMeshDecals: Couldn't add shaders to the AlwaysIncludedShaders list, property was missing... Try reimporting?");
+            return false;
+        }
         bool hasShader = false;
         for (int i = 0; i < arrayProp.arraySize; ++i) {
             var arrayElem = arrayProp.GetArrayElementAtIndex(i);
@@ -39,9 +49,13 @@ public static class VerifyIncludedShaders {
             arrayElem.objectReferenceValue = shader;
             serializedObject.ApplyModifiedProperties();
             AssetDatabase.SaveAssets();
+            return true;
         }
+        return false;
     }
 #endif
 }
+
+
 
 }
