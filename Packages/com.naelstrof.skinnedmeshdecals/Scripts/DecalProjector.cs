@@ -27,16 +27,33 @@ public struct DecalProjector : IEquatable<DecalProjector> {
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void Initialize() {
-        textureAlpha = new Material(Shader.Find("Naelstrof/DecalProjectorAlphaBlend"));
-        textureAlpha.EnableKeyword("_BACKFACECULLING_ON");
+        var alphaShader = Shader.Find("Naelstrof/DecalProjectorAlphaBlend");
+        if (alphaShader == null) {
+            throw new UnityException( "SkinnedMeshDecals: Failed to find shader Naelstrof/DecalProjectorAlphaBlend, ensure SMD is imported correctly.");
+        }
+        textureAlpha = new Material(alphaShader);
         
-        textureSubtractive = new Material(Shader.Find("Naelstrof/DecalProjectorSubtractiveBlend")) {
+        textureAlpha.EnableKeyword("_BACKFACECULLING_ON");
+
+        var subtractiveShader = Shader.Find("Naelstrof/DecalProjectorSubtractiveBlend");
+        if (subtractiveShader == null) {
+            throw new UnityException( "SkinnedMeshDecals: Failed to find shader Naelstrof/DecalProjectorSubtractiveBlend, ensure SMD is imported correctly.");
+        }
+        textureSubtractive = new Material(subtractiveShader) {
             color = Color.black
         };
         textureSubtractive.EnableKeyword("_BACKFACECULLING_ON");
         
-        sphereAlpha = new Material(Shader.Find("Naelstrof/SphereProjectorAlphaBlend"));
-        sphereSubtractive = new Material(Shader.Find("Naelstrof/SphereProjectorSubtractiveBlend")) {
+        var sphereShader = Shader.Find("Naelstrof/SphereProjectorAlphaBlend");
+        if (sphereShader == null) {
+            throw new UnityException( "SkinnedMeshDecals: Failed to find shader Naelstrof/SphereProjectorAlphaBlend, ensure SMD is imported correctly.");
+        }
+        sphereAlpha = new Material(sphereShader);
+        var sphereSubtractiveShader = Shader.Find("Naelstrof/SphereProjectorSubtractiveBlend");
+        if (sphereSubtractiveShader == null) {
+            throw new UnityException( "SkinnedMeshDecals: Failed to find shader Naelstrof/SphereProjectorSubtractiveBlend, ensure SMD is imported correctly.");
+        }
+        sphereSubtractive = new Material(sphereSubtractiveShader) {
             color = Color.black
         };
         

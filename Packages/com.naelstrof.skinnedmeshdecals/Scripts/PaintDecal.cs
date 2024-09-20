@@ -55,6 +55,9 @@ namespace SkinnedMeshDecals {
         private static void Initialize() {
             commandBuffer = new CommandBuffer();
             dilationShader = Shader.Find("Hidden/Naelstrof/DilationShader");
+            if (dilationShader == null) {
+                throw new UnityException("SkinnedMeshDecals: Failed to find shader Hidden/Naelstrof/DilationShader, check if SMD is imported correctly.");
+            }
             dilationMaterial = new Material(dilationShader);
         }
 
