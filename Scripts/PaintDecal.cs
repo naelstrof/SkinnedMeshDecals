@@ -46,6 +46,17 @@ namespace SkinnedMeshDecals {
         }
 
         /// <summary>
+        /// Returns all render textures used by the decal system. This includes overridden textures. For use in command buffers or similar.
+        /// </summary>
+        /// <param name="textures">The list where to store the textures</param>
+        /// <param name="textureId">The parameter name hash of the textures you're interested in. It defaults to _DecalColorMap if null.</param>
+        public static void GetDecalTextures(List<RenderTexture> textures, int? textureId = null) {
+            foreach (var decalInfo in rendererCache) {
+                textures.Add(decalInfo.GetRenderTexture(textureId ?? DecalSettings.Default.textureID));
+            }
+        }
+
+        /// <summary>
         /// Gets an estimation on how much memory is being used by decal textures.
         /// </summary>
         /// <returns>The memory use in bytes.</returns>

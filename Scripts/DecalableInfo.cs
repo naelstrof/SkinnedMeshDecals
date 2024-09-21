@@ -11,6 +11,8 @@ internal class DecalableInfo : MonoBehaviour {
         private readonly List<int> drawIndices;
         public readonly bool dilationEnabled;
         private bool overridden = false;
+        
+        public int textureId { get; private set; }
         private static void ClearRenderTexture(RenderTexture target) {
             CommandBuffer buffer = new CommandBuffer();
             buffer.SetRenderTarget(target);
@@ -63,6 +65,7 @@ internal class DecalableInfo : MonoBehaviour {
         public TextureTarget(int textureID, RenderTexture texture, Material[] materials, bool dilationEnabled) {
             overridden = true;
             this.dilationEnabled = dilationEnabled;
+            this.textureId = textureID;
             drawIndices = new List<int>();
             baseTexture = texture;
             if (this.dilationEnabled) {
