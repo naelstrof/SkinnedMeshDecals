@@ -167,9 +167,11 @@ internal class DecalableInfo : MonoBehaviour {
             Vector2Int textureSize = Vector2Int.one * 16;
             if (decalSettings.resolution.resolutionType == DecalResolutionType.Auto) {
                 var bounds = renderer.bounds;
-                float maxA = Mathf.Max(bounds.extents.x * bounds.extents.y, bounds.extents.x * bounds.extents.z);
-                float maxBounds = Mathf.Max(maxA, bounds.extents.y * bounds.extents.z);
-                int worldScale = Mathf.RoundToInt(maxBounds * decalSettings.resolution.texelsPerMeter);
+                float surfaceArea = 2f*bounds.size.z*bounds.size.x + 2f*bounds.size.z * bounds.size.y + 2f*bounds.size.x*bounds.size.y;
+                if (renderer is SkinnedMeshRenderer) {
+                    surfaceArea *= 2f;
+                }
+                int worldScale = Mathf.RoundToInt(surfaceArea * decalSettings.resolution.texelsPerMeter);
                 int textureScale = Mathf.Clamp(CeilPowerOfTwo(worldScale), 16, 2048);
                 if (float.IsNaN(textureScale) || float.IsInfinity(textureScale)) {
                     textureScale = 1024;
