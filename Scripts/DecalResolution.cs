@@ -13,7 +13,7 @@ public enum DecalResolutionType {
 public struct DecalResolution : IEquatable<DecalResolution> {
     private const int minimumRenderTextureSizeAllowedByUnity = 16;
 
-    private const float defaultTexelsPerMeter = 512f;
+    private const float defaultTexelsPerMeter = 64f;
     [SerializeField] private DecalResolutionType m_ResolutionType;
 
     [SerializeField]
