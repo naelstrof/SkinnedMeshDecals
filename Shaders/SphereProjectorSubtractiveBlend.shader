@@ -80,7 +80,7 @@ Shader "Naelstrof/SphereProjectorSubtractiveBlend"
 				float2 staticSwitch30_g1 = appendResult24_g1;
 				#endif
 				float4 objectToClip2_g1 = UnityObjectToClipPos(v.vertex.xyz);
-				float4 objectToClip2_g1NDC = objectToClip2_g1.xyz/objectToClip2_g1.w;
+				float3 objectToClip2_g1NDC = objectToClip2_g1.xyz/objectToClip2_g1.w;
 				float3 appendResult32_g1 = (float3(staticSwitch30_g1 , objectToClip2_g1NDC.z));
 				
 				float3 objectToClipDir41_g1 = normalize( mul(UNITY_MATRIX_VP, mul(unity_ObjectToWorld, float4(v.ase_normal, 0.0))) );
@@ -118,13 +118,13 @@ Shader "Naelstrof/SphereProjectorSubtractiveBlend"
 #endif
 				float4 appendResult146 = (float4(_Color.r , _Color.g , _Color.b , 0.0));
 				float4 objectToClip2_g1 = UnityObjectToClipPos(i.ase_texcoord1.xyz);
-				float4 objectToClip2_g1NDC = objectToClip2_g1.xyz/objectToClip2_g1.w;
+				float3 objectToClip2_g1NDC = objectToClip2_g1.xyz/objectToClip2_g1.w;
 				#ifdef UNITY_UV_STARTS_AT_TOP
-				float4 staticSwitch9_g1 = ( ( objectToClip2_g1NDC - float4( 0,0,0.5,0 ) ) * float4( float3(1,1,2) , 0.0 ) );
+				float3 staticSwitch9_g1 = ( ( objectToClip2_g1NDC - float3( 0,0,0.5 ) ) * float3(1,1,2) );
 				#else
-				float4 staticSwitch9_g1 = objectToClip2_g1NDC;
+				float3 staticSwitch9_g1 = objectToClip2_g1NDC;
 				#endif
-				float temp_output_27_0_g1 = saturate( pow( saturate( ( 1.0 - distance( float4( float3(0,0,0) , 0.0 ) , staticSwitch9_g1 ) ) ) , _Power ) );
+				float temp_output_27_0_g1 = saturate( pow( saturate( ( 1.0 - distance( float3(0,0,0) , staticSwitch9_g1 ) ) ) , _Power ) );
 				float vertexToFrag26_g1 = i.ase_texcoord2.x;
 				#ifdef _BACKFACECULLING_ON
 				float staticSwitch33_g1 = ( temp_output_27_0_g1 * vertexToFrag26_g1 );
@@ -150,7 +150,7 @@ Node;AmplifyShaderEditor.ColorNode;144;464,-288;Inherit;False;Property;_Color;Co
 Node;AmplifyShaderEditor.DynamicAppendNode;146;704,-256;Inherit;False;FLOAT4;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT4;0
 Node;AmplifyShaderEditor.FunctionNode;150;672,-32;Inherit;False;ProjectDecalSphere;0;;1;0210e53a33ec5d2438280b488af95eff;0;0;2;FLOAT;0;FLOAT3;38
 Node;AmplifyShaderEditor.LerpOp;147;912,-224;Inherit;False;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;42;1097.151,-111.8234;Float;False;True;-1;2;ASEMaterialInspector;100;16;Naelstrof/SphereProjectorSubtractiveBlend;928f6a5fbd2e6444ea9bb91fa46f1aa9;True;Unlit;0;0;Unlit;2;True;True;2;5;False;;10;False;;4;1;False;;1;False;;True;0;False;;3;False;;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;2;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;255;False;;255;False;;255;False;;7;False;;1;False;;1;False;;1;False;;7;False;;1;False;;1;False;;1;False;;False;True;2;False;;True;7;False;;True;False;0;False;;0;False;;True;1;RenderType=Opaque=RenderType;True;2;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=ForwardBase;False;False;0;;0;0;Standard;1;Vertex Position,InvertActionOnDeselection;0;0;0;1;True;False;;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;42;1097.151,-111.8234;Float;False;True;-1;2;ASEMaterialInspector;100;17;Naelstrof/SphereProjectorSubtractiveBlend;928f6a5fbd2e6444ea9bb91fa46f1aa9;True;Unlit;0;0;Unlit;2;True;True;2;5;False;;10;False;;4;1;False;;1;False;;True;0;False;;3;False;;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;2;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;255;False;;255;False;;255;False;;7;False;;1;False;;1;False;;1;False;;7;False;;1;False;;1;False;;1;False;;False;True;2;False;;True;7;False;;True;False;0;False;;0;False;;True;1;RenderType=Opaque=RenderType;True;2;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=ForwardBase;False;False;0;;0;0;Standard;1;Vertex Position,InvertActionOnDeselection;0;0;0;1;True;False;;False;0
 WireConnection;146;0;144;1
 WireConnection;146;1;144;2
 WireConnection;146;2;144;3
@@ -160,4 +160,4 @@ WireConnection;147;2;150;0
 WireConnection;42;0;147;0
 WireConnection;42;1;150;38
 ASEEND*/
-//CHKSM=7C383C6472D3A04DF0A8E540FAA08312500F551D
+//CHKSM=B9C86FF754FC079250F222738CED5FF08831713F
