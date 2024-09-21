@@ -80,7 +80,7 @@ Shader "Naelstrof/SphereProjectorSubtractiveBlend"
 				float2 staticSwitch30_g1 = appendResult24_g1;
 				#endif
 				float4 objectToClip2_g1 = UnityObjectToClipPos(v.vertex.xyz);
-				float3 objectToClip2_g1NDC = objectToClip2_g1.xyz/objectToClip2_g1.w;
+				float4 objectToClip2_g1NDC = objectToClip2_g1.xyz/objectToClip2_g1.w;
 				float3 appendResult32_g1 = (float3(staticSwitch30_g1 , objectToClip2_g1NDC.z));
 				
 				float3 objectToClipDir41_g1 = normalize( mul(UNITY_MATRIX_VP, mul(unity_ObjectToWorld, float4(v.ase_normal, 0.0))) );
@@ -118,13 +118,13 @@ Shader "Naelstrof/SphereProjectorSubtractiveBlend"
 #endif
 				float4 appendResult146 = (float4(_Color.r , _Color.g , _Color.b , 0.0));
 				float4 objectToClip2_g1 = UnityObjectToClipPos(i.ase_texcoord1.xyz);
-				float3 objectToClip2_g1NDC = objectToClip2_g1.xyz/objectToClip2_g1.w;
+				float4 objectToClip2_g1NDC = objectToClip2_g1.xyz/objectToClip2_g1.w;
 				#ifdef UNITY_UV_STARTS_AT_TOP
-				float3 staticSwitch9_g1 = ( ( objectToClip2_g1NDC - float3( 0,0,0.5 ) ) * float3(1,1,2) );
+				float4 staticSwitch9_g1 = ( ( objectToClip2_g1NDC - float4( 0,0,0.5,0 ) ) * float4( float3(1,1,2) , 0.0 ) );
 				#else
-				float3 staticSwitch9_g1 = objectToClip2_g1NDC;
+				float4 staticSwitch9_g1 = objectToClip2_g1NDC;
 				#endif
-				float temp_output_27_0_g1 = saturate( pow( saturate( ( 1.0 - distance( float3(0,0,0) , staticSwitch9_g1 ) ) ) , _Power ) );
+				float temp_output_27_0_g1 = saturate( pow( saturate( ( 1.0 - distance( float4( float3(0,0,0) , 0.0 ) , staticSwitch9_g1 ) ) ) , _Power ) );
 				float vertexToFrag26_g1 = i.ase_texcoord2.x;
 				#ifdef _BACKFACECULLING_ON
 				float staticSwitch33_g1 = ( temp_output_27_0_g1 * vertexToFrag26_g1 );
@@ -160,4 +160,4 @@ WireConnection;147;2;150;0
 WireConnection;42;0;147;0
 WireConnection;42;1;150;38
 ASEEND*/
-//CHKSM=1FFDC5E25A0608992D6B0A3B53EDAE82B66DF50A
+//CHKSM=7C383C6472D3A04DF0A8E540FAA08312500F551D
