@@ -2861,6 +2861,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2147483647
   subtract: 0
+  texture: {fileID: 2800000, guid: 5f0de798a19f93e48b6caf75731ffa58, type: 3}
   color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!65 &1446141529
 BoxCollider:
@@ -2933,7 +2934,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1446141527}
   m_LocalRotation: {x: 0.7071065, y: -0, z: -0, w: 0.7071072}
-  m_LocalPosition: {x: 5.268, y: 1.737, z: 3.761}
+  m_LocalPosition: {x: 0.69, y: 1.74, z: 4.76}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4685,8 +4686,8 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 5500
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 4.1011402e+9, y: 3.0481281e+32, z: 1.7077777e+19,
-    w: 3.0262464e+29}
+  m_BoundingSphereOverride: {x: 2.7951202e+20, y: 1.909444e-19, z: 1.06464274e+24,
+    w: 7.555077e+31}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0

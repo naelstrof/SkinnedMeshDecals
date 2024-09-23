@@ -6,6 +6,7 @@ using UnityEngine;
 public class DecalStamp : MonoBehaviour {
     public LayerMask hitMask;
     public bool subtract;
+    public Texture2D texture;
     public Color color;
     private static Collider[] staticColliders = new Collider[32];
     void Update() {
@@ -14,7 +15,7 @@ public class DecalStamp : MonoBehaviour {
         for (int i = 0; i < hits; i++) {
             if (staticColliders[i].TryGetComponent(out DecalableCollider decalableCollider)) {
                 foreach (var decalableRenderer in decalableCollider.decalableRenderers) {
-                    PaintDecal.RenderDecal(decalableRenderer, new DecalProjector(subtract ? DecalProjectorType.TextureSubtractive : DecalProjectorType.TextureAlpha, color), new DecalProjection(transform.position, transform.forward, radius));
+                    PaintDecal.RenderDecal(decalableRenderer, new DecalProjector(subtract ? DecalProjectorType.TextureSubtractive : DecalProjectorType.TextureAlpha, texture, color), new DecalProjection(transform.position, transform.forward, radius));
                 }
             }
         }

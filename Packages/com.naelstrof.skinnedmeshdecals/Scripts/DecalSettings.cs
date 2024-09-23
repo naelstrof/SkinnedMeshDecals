@@ -3,6 +3,12 @@ using UnityEngine;
 
 namespace SkinnedMeshDecals {
 
+public enum DilationType {
+    None,
+    Alpha,
+    Additive,
+}
+
 [System.Serializable]
 public struct DecalSettings : IEquatable<DecalSettings> {
     private const string defaultTextureName = "_DecalColorMap";
@@ -20,13 +26,14 @@ public struct DecalSettings : IEquatable<DecalSettings> {
     private RenderTextureReadWrite m_renderTextureReadWrite;
 
     [SerializeField] private DecalResolution m_resolution;
-    [SerializeField] private bool m_dilation;
+    
+    [SerializeField] private DilationType m_dilation;
 
     public int textureID => m_textureID;
     public RenderTextureFormat renderTextureFormat => m_renderTextureFormat;
     public RenderTextureReadWrite renderTextureReadWrite => m_renderTextureReadWrite;
     public DecalResolution resolution => m_resolution;
-    public bool dilation => m_dilation;
+    public DilationType dilation => m_dilation;
 
     /// <summary>
     /// Creates a set of settings used to paint a single decal. It uses the texture name to determine if a texture
@@ -37,7 +44,7 @@ public struct DecalSettings : IEquatable<DecalSettings> {
     /// <param name="textureName">The name of the texture input on the renderer's material where the decal map will be placed.</param>
     /// <param name="renderTextureFormat">If a decal map is created from this splat, this is the format it will be created with.</param>
     /// <param name="renderTextureReadWrite">If a decal map is created from this splat, this is the read/write format it will be created with.</param>
-    public DecalSettings(DecalResolution decalResolution, bool dilation = true, string textureName = defaultTextureName,
+    public DecalSettings(DecalResolution decalResolution = default, DilationType dilation = DilationType.Alpha, string textureName = defaultTextureName,
         RenderTextureFormat renderTextureFormat = RenderTextureFormat.Default,
         RenderTextureReadWrite renderTextureReadWrite = RenderTextureReadWrite.Default) {
         m_textureID = Shader.PropertyToID(textureName);
@@ -57,7 +64,7 @@ public struct DecalSettings : IEquatable<DecalSettings> {
     public static implicit operator DecalSettings(DecalResolution resolution) => new DecalSettings(resolution);
 
     public static implicit operator DecalSettings(string texturename) =>
-        new DecalSettings(DecalResolutionType.Auto, true, texturename);
+        new DecalSettings(DecalResolutionType.Auto, DilationType.Alpha, texturename);
 
     public bool Equals(DecalSettings other) => other == this;
 

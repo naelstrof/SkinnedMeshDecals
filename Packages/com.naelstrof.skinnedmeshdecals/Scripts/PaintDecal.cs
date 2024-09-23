@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine.Rendering;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -9,8 +10,12 @@ namespace SkinnedMeshDecals {
         [Tooltip("Memory usage in megabytes before old textures get removed.")]
         private static float memoryBudgetMB = 512f;
 
-        private static Shader dilationShader;
-        private static Material dilationMaterial;
+        private static Shader dilationAlphaShader;
+        
+        private static Shader dilationAdditiveShader;
+        
+        private static Material dilationAlphaMaterial;
+        private static Material dilationAdditiveMaterial;
         
         private static CommandBuffer commandBuffer;
         private static readonly List<MonoBehaviourHider.DecalableInfo> rendererCache = new List<MonoBehaviourHider.DecalableInfo>();
@@ -35,7 +40,15 @@ namespace SkinnedMeshDecals {
             }
         }
 
-        internal static Material GetDilationMaterial() => dilationMaterial;
+        internal static Material GetDilationMaterial(DilationType dilationType) {
+            return dilationType switch {
+                DilationType.Alpha => dilationAlphaMaterial,
+                DilationType.Additive => dilationAdditiveMaterial,
+                _ => throw new ArgumentOutOfRangeException(nameof(dilationType), dilationType, "No associated dilation material for this type.")
+            };
+        }
+
+        internal static Material GetAdditiveDilationMaterial() => dilationAlphaMaterial;
 
         private static int InternalMemoryInUse() {
             int memoryInUse = 0;
@@ -65,11 +78,16 @@ namespace SkinnedMeshDecals {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void Initialize() {
             commandBuffer = new CommandBuffer();
-            dilationShader = Shader.Find("Hidden/Naelstrof/DilationShader");
-            if (dilationShader == null) {
-                throw new UnityException("SkinnedMeshDecals: Failed to find shader Hidden/Naelstrof/DilationShader, check if SMD is imported correctly.");
+            dilationAlphaShader = Shader.Find("Hidden/Naelstrof/DilationShaderAlpha");
+            dilationAdditiveShader = Shader.Find("Hidden/Naelstrof/DilationShaderAdditive");
+            if (dilationAlphaShader== null) {
+                throw new UnityException("SkinnedMeshDecals: Failed to find shader Hidden/Naelstrof/DilationShaderAlpha, check if SMD is imported correctly.");
             }
-            dilationMaterial = new Material(dilationShader);
+            if (dilationAdditiveShader == null) {
+                throw new UnityException("SkinnedMeshDecals: Failed to find shader Hidden/Naelstrof/DilationShaderAdditive, check if SMD is imported correctly.");
+            }
+            dilationAlphaMaterial = new Material(dilationAlphaShader);
+            dilationAdditiveMaterial = new Material(dilationAdditiveShader);
         }
 
         internal static bool TryReserveMemory(int amount) {
@@ -145,7 +163,7 @@ namespace SkinnedMeshDecals {
         /// <param name="textureId">The parameter name of the decal map, gotten via Shader.PropertyToID("textureName"). You can use null for the default.</param>
         /// <param name="dilationEnabled">If the texture should have dilation enabled, this should be set to true for mask maps.</param>
         /// <exception cref="UnityException">This method will throw exceptions for textures that aren't configured properly. Mipmaps need to be enabled, and autoGenerateMips should be disabled.</exception>
-        public static void OverrideDecalTexture(Renderer r, RenderTexture customDecalRenderTexture, int? textureId = null, bool dilationEnabled = false) {
+        public static void OverrideDecalTexture(Renderer r, RenderTexture customDecalRenderTexture, int? textureId = null, DilationType dilation = DilationType.None) {
             if (customDecalRenderTexture.useMipMap == false) {
                 throw new UnityException("Can't set RenderTexture of decalable because it has mipmaps disabled!");
             }
@@ -162,7 +180,7 @@ namespace SkinnedMeshDecals {
                 info = r.gameObject.AddComponent<MonoBehaviourHider.DecalableInfo>();
                 info.Initialize();
             }
-            info.OverrideTexture(customDecalRenderTexture, textureId ?? DecalSettings.Default.textureID, dilationEnabled);
+            info.OverrideTexture(customDecalRenderTexture, textureId ?? DecalSettings.Default.textureID, dilation);
         }
 
         /// <summary>

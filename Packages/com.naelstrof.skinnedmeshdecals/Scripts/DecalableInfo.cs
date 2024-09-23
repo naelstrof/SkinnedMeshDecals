@@ -9,7 +9,7 @@ internal class DecalableInfo : MonoBehaviour {
         private RenderTexture baseTexture;
         private RenderTexture outputTexture;
         private readonly List<int> drawIndices;
-        public readonly bool dilationEnabled;
+        public readonly DilationType dilation;
         private bool overridden = false;
         
         public int textureId { get; private set; }
@@ -24,7 +24,7 @@ internal class DecalableInfo : MonoBehaviour {
         public List<int> GetDrawIndices() => drawIndices;
         public RenderTexture GetBaseTexture() => baseTexture;
 
-        public RenderTexture GetOutputTexture() => dilationEnabled ? outputTexture : baseTexture;
+        public RenderTexture GetOutputTexture() => dilation != DilationType.None ? outputTexture : baseTexture;
 
         public int GetSize() {
             if (overridden) {
@@ -32,7 +32,7 @@ internal class DecalableInfo : MonoBehaviour {
             }
             int size = 0;
             size += baseTexture.width*baseTexture.height*4;
-            if (dilationEnabled) {
+            if (dilation != DilationType.None) {
                 size += outputTexture.width * outputTexture.height * 4;
             }
             return size;
@@ -43,7 +43,7 @@ internal class DecalableInfo : MonoBehaviour {
                 baseTexture.Release();
                 baseTexture = null;
             }
-            if (dilationEnabled && outputTexture != null) {
+            if (dilation != DilationType.None && outputTexture != null) {
                 outputTexture.Release();
                 outputTexture = null;
             }
@@ -53,25 +53,25 @@ internal class DecalableInfo : MonoBehaviour {
             Release();
             overridden = true;
             baseTexture = texture;
-            if (dilationEnabled) {
+            if (dilation != DilationType.None) {
                 outputTexture = new RenderTexture(texture);
                 CommandBuffer buffer = new CommandBuffer();
-                buffer.Blit(texture, outputTexture, PaintDecal.GetDilationMaterial());
+                buffer.Blit(texture, outputTexture, PaintDecal.GetDilationMaterial(dilation));
                 buffer.GenerateMips(outputTexture);
                 Graphics.ExecuteCommandBuffer(buffer);
             }
         }
         
-        public TextureTarget(int textureID, RenderTexture texture, Material[] materials, bool dilationEnabled) {
+        public TextureTarget(int textureID, RenderTexture texture, Material[] materials, DilationType dilation) {
             overridden = true;
-            this.dilationEnabled = dilationEnabled;
+            this.dilation = dilation;
             this.textureId = textureID;
             drawIndices = new List<int>();
             baseTexture = texture;
-            if (this.dilationEnabled) {
+            if (this.dilation != DilationType.None) {
                 outputTexture = new RenderTexture(texture);
                 CommandBuffer buffer = new CommandBuffer();
-                buffer.Blit(texture, outputTexture, PaintDecal.GetDilationMaterial());
+                buffer.Blit(texture, outputTexture, PaintDecal.GetDilationMaterial(this.dilation));
                 buffer.GenerateMips(outputTexture);
                 Graphics.ExecuteCommandBuffer(buffer);
             }
@@ -82,9 +82,9 @@ internal class DecalableInfo : MonoBehaviour {
             }
         }
 
-        public TextureTarget(int textureID, Vector2Int textureSize, Material[] materials, bool dilationEnabled, RenderTextureFormat renderTextureFormat, RenderTextureReadWrite renderTextureReadWrite) {
+        public TextureTarget(int textureID, Vector2Int textureSize, Material[] materials, DilationType dilation, RenderTextureFormat renderTextureFormat, RenderTextureReadWrite renderTextureReadWrite) {
             overridden = false;
-            this.dilationEnabled = dilationEnabled;
+            this.dilation = dilation;
             drawIndices = new List<int>();
             baseTexture = new RenderTexture(textureSize.x, textureSize.y, 0, renderTextureFormat, renderTextureReadWrite) {
                 antiAliasing = 1,
@@ -92,7 +92,7 @@ internal class DecalableInfo : MonoBehaviour {
                 autoGenerateMips = false,
             };
             ClearRenderTexture(baseTexture);
-            if (this.dilationEnabled) {
+            if (this.dilation != DilationType.None) {
                 outputTexture = new RenderTexture(textureSize.x, textureSize.y, 0, renderTextureFormat, renderTextureReadWrite) {
                     antiAliasing = 1,
                     useMipMap = true,
@@ -148,9 +148,9 @@ internal class DecalableInfo : MonoBehaviour {
         PaintDecal.AddDecalableInfo(this);
     }
 
-    public void OverrideTexture(RenderTexture texture, int textureId, bool dilationEnabled) {
+    public void OverrideTexture(RenderTexture texture, int textureId, DilationType dilation) {
         if (!textureTargets.ContainsKey(textureId)) {
-            TextureTarget texTarget = new TextureTarget(textureId, texture, renderer.materials, dilationEnabled);
+            TextureTarget texTarget = new TextureTarget(textureId, texture, renderer.materials, dilation);
             textureTargets.Add(textureId, texTarget);
         } else {
             textureTargets[textureId].OverrideTexture(texture);
@@ -184,7 +184,7 @@ internal class DecalableInfo : MonoBehaviour {
                 textureSize = decalSettings.resolution.size;
             }
 
-            int reserveMemory = decalSettings.dilation ? 2 * textureSize.x * textureSize.y * 4 : textureSize.x * textureSize.y * 4;
+            int reserveMemory = decalSettings.dilation != DilationType.None ? 2 * textureSize.x * textureSize.y * 4 : textureSize.x * textureSize.y * 4;
             reserveMemory = Mathf.Max(reserveMemory, 16*4);
             if (!PaintDecal.TryReserveMemory(reserveMemory)) {
                 return;
@@ -204,8 +204,8 @@ internal class DecalableInfo : MonoBehaviour {
             buffer.DrawRenderer(renderer, projector.material, drawIndex);
         }
 
-        if (textureTargets[decalSettings.textureID].dilationEnabled) {
-            buffer.Blit(target.GetBaseTexture(), target.GetOutputTexture(), PaintDecal.GetDilationMaterial());
+        if (textureTargets[decalSettings.textureID].dilation != DilationType.None) {
+            buffer.Blit(target.GetBaseTexture(), target.GetOutputTexture(), PaintDecal.GetDilationMaterial(textureTargets[decalSettings.textureID].dilation));
             buffer.GenerateMips(target.GetOutputTexture());
         } else {
             buffer.GenerateMips(target.GetBaseTexture());
