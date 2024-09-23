@@ -12,7 +12,7 @@ public enum DilationType {
 [System.Serializable]
 public struct DecalSettings : IEquatable<DecalSettings> {
     private const string defaultTextureName = "_DecalColorMap";
-    public static readonly DecalSettings Default = new DecalSettings(DecalResolutionType.Auto);
+    public static readonly DecalSettings Default = new(DecalResolutionType.Auto);
 
     [Tooltip("The texture id used in decalable shaders.")] [SerializeField]
     private int m_textureID;
@@ -44,13 +44,13 @@ public struct DecalSettings : IEquatable<DecalSettings> {
     /// <param name="textureName">The name of the texture input on the renderer's material where the decal map will be placed.</param>
     /// <param name="renderTextureFormat">If a decal map is created from this splat, this is the format it will be created with.</param>
     /// <param name="renderTextureReadWrite">If a decal map is created from this splat, this is the read/write format it will be created with.</param>
-    public DecalSettings(DecalResolution decalResolution = default, DilationType dilation = DilationType.Alpha, string textureName = defaultTextureName,
+    public DecalSettings(DecalResolution? decalResolution = null, DilationType dilation = DilationType.Alpha, string textureName = defaultTextureName,
         RenderTextureFormat renderTextureFormat = RenderTextureFormat.Default,
         RenderTextureReadWrite renderTextureReadWrite = RenderTextureReadWrite.Default) {
         m_textureID = Shader.PropertyToID(textureName);
         m_renderTextureFormat = renderTextureFormat;
         m_renderTextureReadWrite = renderTextureReadWrite;
-        m_resolution = decalResolution;
+        m_resolution = Default.resolution;
         m_dilation = dilation;
     }
 
