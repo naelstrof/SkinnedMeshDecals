@@ -28,7 +28,7 @@ public static class VerifyIncludedShaders {
 
         var graphicsSettingsObj = AssetDatabase.LoadAssetAtPath<GraphicsSettings>("ProjectSettings/GraphicsSettings.asset");
         if (graphicsSettingsObj == null) {
-            Debug.LogError($"SkinnedMeshDecals: Couldn't load graphics settings from path ProjectSettings/GraphicsSettings.asset. It was missing!");
+            Debug.LogError($"SkinnedMeshDecals: Couldn't load graphics settings from path ProjectSettings/GraphicsSettings.asset. It was missing! Make sure to press Ctrl+S, then try reimporting SkinnedMeshDecals.");
             return false;
         }
         var serializedObject = new SerializedObject(graphicsSettingsObj);
