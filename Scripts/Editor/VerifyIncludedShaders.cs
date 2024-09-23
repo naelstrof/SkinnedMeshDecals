@@ -12,9 +12,12 @@ public static class VerifyIncludedShaders {
     private static void Initialize() {
         TryAddAlwaysIncludedShader("Naelstrof/DecalProjectorAlphaBlend");
         TryAddAlwaysIncludedShader("Naelstrof/DecalProjectorSubtractiveBlend");
-        TryAddAlwaysIncludedShader("Hidden/Naelstrof/DilationShader");
+        TryAddAlwaysIncludedShader("Naelstrof/DecalProjectorAdditiveBlend");
+        TryAddAlwaysIncludedShader("Hidden/Naelstrof/DilationShaderAlpha");
+        TryAddAlwaysIncludedShader("Hidden/Naelstrof/DilationShaderAdditive");
         TryAddAlwaysIncludedShader("Naelstrof/SphereProjectorAlphaBlend");
         TryAddAlwaysIncludedShader("Naelstrof/SphereProjectorSubtractiveBlend");
+        TryAddAlwaysIncludedShader("Naelstrof/SphereProjectorAdditiveBlend");
     }
     private static bool TryAddAlwaysIncludedShader(string shaderName) {
         var shader = Shader.Find(shaderName);
