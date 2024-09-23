@@ -7,8 +7,10 @@ namespace SkinnedMeshDecals {
 
 public enum DecalProjectorType {
     TextureAlpha,
+    TextureAdditive,
     TextureSubtractive,
     SphereAlpha,
+    SphereAdditive,
     SphereSubtractive,
     Custom,
 }
@@ -19,8 +21,10 @@ public struct DecalProjector : IEquatable<DecalProjector> {
     [SerializeField] private Material m_Material;
 
     private static Material textureAlpha;
+    private static Material textureAdditive;
     private static Material textureSubtractive;
     private static Material sphereAlpha;
+    private static Material sphereAdditive;
     private static Material sphereSubtractive;
     private static Texture2D defaultTexture;
     private static readonly int Power = Shader.PropertyToID("_Power");
@@ -34,6 +38,14 @@ public struct DecalProjector : IEquatable<DecalProjector> {
         textureAlpha = new Material(alphaShader);
         
         textureAlpha.EnableKeyword("_BACKFACECULLING_ON");
+        
+        var additiveShader = Shader.Find("Naelstrof/DecalProjectorAdditiveBlend");
+        if (additiveShader == null) {
+            throw new UnityException( "SkinnedMeshDecals: Failed to find shader Naelstrof/DecalProjectorAdditiveBlend, ensure SMD is imported correctly.");
+        }
+        textureAdditive = new Material(additiveShader);
+        
+        textureAdditive.EnableKeyword("_BACKFACECULLING_ON");
 
         var subtractiveShader = Shader.Find("Naelstrof/DecalProjectorSubtractiveBlend");
         if (subtractiveShader == null) {
@@ -49,6 +61,12 @@ public struct DecalProjector : IEquatable<DecalProjector> {
             throw new UnityException( "SkinnedMeshDecals: Failed to find shader Naelstrof/SphereProjectorAlphaBlend, ensure SMD is imported correctly.");
         }
         sphereAlpha = new Material(sphereShader);
+        var sphereAdditiveShader = Shader.Find("Naelstrof/SphereProjectorAdditiveBlend");
+        if (sphereAdditiveShader == null) {
+            throw new UnityException( "SkinnedMeshDecals: Failed to find shader Naelstrof/SphereProjectorAdditiveBlend, ensure SMD is imported correctly.");
+        }
+
+        sphereAdditive = new Material(sphereAdditiveShader);
         var sphereSubtractiveShader = Shader.Find("Naelstrof/SphereProjectorSubtractiveBlend");
         if (sphereSubtractiveShader == null) {
             throw new UnityException( "SkinnedMeshDecals: Failed to find shader Naelstrof/SphereProjectorSubtractiveBlend, ensure SMD is imported correctly.");
@@ -140,8 +158,10 @@ public struct DecalProjector : IEquatable<DecalProjector> {
         
         m_Material = m_ProjectorType switch {
             DecalProjectorType.TextureAlpha => textureAlpha,
+            DecalProjectorType.TextureAdditive => textureAdditive,
             DecalProjectorType.TextureSubtractive => textureSubtractive,
             DecalProjectorType.SphereAlpha => sphereAlpha,
+            DecalProjectorType.SphereAdditive => sphereAdditive,
             DecalProjectorType.SphereSubtractive => sphereSubtractive,
             DecalProjectorType.Custom => v,
             _ => throw new ArgumentOutOfRangeException()
