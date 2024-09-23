@@ -50,7 +50,7 @@ public struct DecalSettings : IEquatable<DecalSettings> {
         m_textureID = Shader.PropertyToID(textureName);
         m_renderTextureFormat = renderTextureFormat;
         m_renderTextureReadWrite = renderTextureReadWrite;
-        m_resolution = Default.resolution;
+        m_resolution = decalResolution ?? Default.resolution;
         m_dilation = dilation;
     }
 
