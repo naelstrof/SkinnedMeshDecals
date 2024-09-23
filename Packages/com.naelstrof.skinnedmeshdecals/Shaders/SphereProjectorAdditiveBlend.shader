@@ -115,7 +115,6 @@ Shader "Naelstrof/SphereProjectorAdditiveBlend"
 #ifdef ASE_NEEDS_FRAG_WORLD_POSITION
 				float3 WorldPosition = i.worldPos;
 #endif
-				float4 appendResult149 = (float4(_Color.r , _Color.g , _Color.b , 0.0));
 				float4 objectToClip2_g1 = UnityObjectToClipPos(i.ase_texcoord1.xyz);
 				float3 objectToClip2_g1NDC = objectToClip2_g1.xyz/objectToClip2_g1.w;
 				#ifdef UNITY_UV_STARTS_AT_TOP
@@ -130,10 +129,9 @@ Shader "Naelstrof/SphereProjectorAdditiveBlend"
 				#else
 				float staticSwitch33_g1 = temp_output_27_0_g1;
 				#endif
-				float4 lerpResult148 = lerp( appendResult149 , _Color , saturate( staticSwitch33_g1 ));
 				
 				
-				finalColor = lerpResult148;
+				finalColor = ( _Color * saturate( staticSwitch33_g1 ) );
 				return finalColor;
 			}
 			ENDCG
@@ -145,18 +143,13 @@ Shader "Naelstrof/SphereProjectorAdditiveBlend"
 }
 /*ASEBEGIN
 Version=19303
-Node;AmplifyShaderEditor.ColorNode;145;464,-320;Inherit;False;Property;_Color;Color;3;1;[HDR];Create;True;0;0;0;False;0;False;1,1,1,1;1,1,1,1;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.DynamicAppendNode;149;720,-336;Inherit;False;FLOAT4;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT4;0
 Node;AmplifyShaderEditor.FunctionNode;153;688,-80;Inherit;False;ProjectDecalSphere;0;;1;0210e53a33ec5d2438280b488af95eff;0;0;2;FLOAT;0;FLOAT3;38
-Node;AmplifyShaderEditor.LerpOp;148;912,-272;Inherit;False;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
+Node;AmplifyShaderEditor.ColorNode;145;576,-304;Inherit;False;Property;_Color;Color;3;1;[HDR];Create;True;0;0;0;False;0;False;1,1,1,1;1,1,1,1;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;154;880,-304;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;FLOAT;0;False;1;COLOR;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;42;1097.151,-111.8234;Float;False;True;-1;2;ASEMaterialInspector;100;16;Naelstrof/SphereProjectorAdditiveBlend;928f6a5fbd2e6444ea9bb91fa46f1aa9;True;Unlit;0;0;Unlit;2;True;True;4;1;False;;1;False;;0;1;False;;10;False;;True;0;False;;0;False;;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;2;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;255;False;;255;False;;255;False;;7;False;;1;False;;1;False;;1;False;;7;False;;1;False;;1;False;;1;False;;False;True;2;False;;True;7;False;;True;False;0;False;;0;False;;True;1;RenderType=Opaque=RenderType;True;2;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=ForwardBase;False;False;0;;0;0;Standard;1;Vertex Position,InvertActionOnDeselection;0;0;0;1;True;False;;False;0
-WireConnection;149;0;145;1
-WireConnection;149;1;145;2
-WireConnection;149;2;145;3
-WireConnection;148;0;149;0
-WireConnection;148;1;145;0
-WireConnection;148;2;153;0
-WireConnection;42;0;148;0
+WireConnection;154;0;145;0
+WireConnection;154;1;153;0
+WireConnection;42;0;154;0
 WireConnection;42;1;153;38
 ASEEND*/
-//CHKSM=B2C62155462534070611D7639E50337B986298BE
+//CHKSM=B77B94EDD2CB76BD208366AB86373E67C46C8FA7
