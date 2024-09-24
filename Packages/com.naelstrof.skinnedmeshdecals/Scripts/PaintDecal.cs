@@ -5,6 +5,10 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace SkinnedMeshDecals {
+    public struct DecalTextureRendererPair {
+        public RenderTexture texture;
+        public Renderer renderer;
+    }
     public static class PaintDecal {
         [Range(16f,2048f)]
         [Tooltip("Memory usage in megabytes before old textures get removed.")]
@@ -58,14 +62,19 @@ namespace SkinnedMeshDecals {
             return memoryInUse;
         }
 
+
         /// <summary>
         /// Returns all render textures used by the decal system. This includes overridden textures. For use in command buffers or similar.
         /// </summary>
         /// <param name="textures">The list where to store the textures</param>
         /// <param name="textureId">The parameter name hash of the textures you're interested in. It defaults to _DecalColorMap if null.</param>
-        public static void GetDecalTextures(List<RenderTexture> textures, int? textureId = null) {
+        public static void GetDecalTextures(List<DecalTextureRendererPair> textures, int? textureId = null) {
+            textures.Clear();
             foreach (var decalInfo in rendererCache) {
-                textures.Add(decalInfo.GetRenderTexture(textureId ?? DecalSettings.Default.textureID));
+                var textureRendererPair = decalInfo.GetRenderTexture(textureId ?? DecalSettings.Default.textureID);
+                if (textureRendererPair != null) {
+                    textures.Add(textureRendererPair.Value);
+                }
             }
         }
 
@@ -145,9 +154,9 @@ namespace SkinnedMeshDecals {
             if (texture == null) {
                 return null;
             }
-            RenderTexture copy = new RenderTexture(texture);
+            RenderTexture copy = new RenderTexture(texture.Value.texture);
             CommandBuffer buffer = new CommandBuffer();
-            buffer.Blit(texture, copy);
+            buffer.Blit(texture.Value.texture, copy);
             buffer.GenerateMips(copy);
             Graphics.ExecuteCommandBuffer(buffer);
             return copy;

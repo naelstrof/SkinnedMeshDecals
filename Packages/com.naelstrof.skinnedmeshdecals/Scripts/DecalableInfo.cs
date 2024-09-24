@@ -88,6 +88,7 @@ internal class DecalableInfo : MonoBehaviour {
             drawIndices = new List<int>();
             baseTexture = new RenderTexture(textureSize.x, textureSize.y, 0, renderTextureFormat, renderTextureReadWrite) {
                 antiAliasing = 1,
+                wrapMode = TextureWrapMode.Clamp,
                 useMipMap = true,
                 autoGenerateMips = false,
             };
@@ -96,6 +97,7 @@ internal class DecalableInfo : MonoBehaviour {
                 outputTexture = new RenderTexture(textureSize.x, textureSize.y, 0, renderTextureFormat, renderTextureReadWrite) {
                     antiAliasing = 1,
                     useMipMap = true,
+                    wrapMode = TextureWrapMode.Clamp,
                     autoGenerateMips = false,
                 };
                 ClearRenderTexture(outputTexture);
@@ -116,9 +118,12 @@ internal class DecalableInfo : MonoBehaviour {
         return lastUse;
     }
 
-    public RenderTexture GetRenderTexture(int textureId) {
+    public DecalTextureRendererPair? GetRenderTexture(int textureId) {
         if (textureTargets.ContainsKey(textureId)) {
-            return textureTargets[textureId].GetBaseTexture();
+            return new DecalTextureRendererPair() {
+                texture = textureTargets[textureId].GetBaseTexture(),
+                renderer = renderer
+            };
         }
         return null;
     }
