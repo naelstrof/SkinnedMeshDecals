@@ -5,6 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c3fd23f6-8870-4804-9326-90eb8b457653" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.SkinnedMeshDecals/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SkinnedMeshDecals/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/Editor/VerifyIncludedShaders.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/Editor/VerifyIncludedShaders.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UserSettings/Layouts/default-2021.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/Layouts/default-2021.dwlt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -16,11 +18,11 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/4a31731933e0419ca5a995305014ad37157a00/94/be3e2fc1/CommandBuffer.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/4a31731933e0419ca5a995305014ad37157a00/9d/80cfb8bb/RenderTextureReadWrite.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7096c6494db14f0c807ca461735e58a8129e00/dd/be7d6ac8/StyleKeyword.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/URPExample/Scripts/DecalStamp.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/URPExample/Scripts/DecalableCollider.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Editor/VerifyAddressables.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.render-pipelines.core@12.1.7/Runtime/Textures/RTHandle.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalProjection.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalProjector.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalResolution.cs" root0="FORCE_HIGHLIGHTING" />
@@ -146,6 +148,7 @@
       <workItem from="1726963205988" duration="2945000" />
       <workItem from="1727064783660" duration="2267000" />
       <workItem from="1727067810064" duration="375000" />
+      <workItem from="1727393790664" duration="356000" />
     </task>
     <servers />
   </component>
