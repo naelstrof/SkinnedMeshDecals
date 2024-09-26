@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 #if UNITY_EDITOR
@@ -6,8 +7,12 @@ using UnityEditor;
 
 namespace SkinnedMeshDecals {
 
-public static class VerifyIncludedShaders {
+public class VerifyIncludedShaders : AssetPostprocessor {
 #if UNITY_EDITOR
+    private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths) {
+        Initialize();
+    }
+
     [InitializeOnLoadMethod]
     private static void Initialize() {
         TryAddAlwaysIncludedShader("Naelstrof/DecalProjectorAlphaBlend");
