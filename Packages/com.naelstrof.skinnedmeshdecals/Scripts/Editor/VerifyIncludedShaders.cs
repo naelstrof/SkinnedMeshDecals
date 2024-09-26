@@ -13,7 +13,6 @@ public class VerifyIncludedShaders : AssetPostprocessor {
         Initialize();
     }
 
-    [InitializeOnLoadMethod]
     private static void Initialize() {
         TryAddAlwaysIncludedShader("Naelstrof/DecalProjectorAlphaBlend");
         TryAddAlwaysIncludedShader("Naelstrof/DecalProjectorSubtractiveBlend");
