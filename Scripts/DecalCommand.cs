@@ -14,7 +14,7 @@ internal struct DecalCommand {
         age++;
         try {
             cmd.SetViewProjectionMatrices(projection.view, projection.projection);
-            return decalableRenderer.TryApply(cmd, projector, decalSettings ?? PaintDecal.GetSkinnedMeshDecalSettings().defaultDecalSettings);
+            return decalableRenderer.TryApply(cmd, projector, decalSettings ?? SkinnedMeshDecalsSettings.DefaultDecalSettings);
         } catch {
             valid = false;
             throw;

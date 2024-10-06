@@ -56,9 +56,9 @@ public struct DecalResolution : IEquatable<DecalResolution> {
     
 
     internal DecalResolution(Vector2Int? size = null, float? texelsPerMeter = null, DecalResolutionType? resolutionType = null) {
-        m_ResolutionType = resolutionType ?? DecalResolutionType.Custom;
-        m_Size = size ?? Vector2Int.one*minimumRenderTextureSizeAllowedByUnity;
-        m_TexelsPerMeter = texelsPerMeter ?? PaintDecal.GetSkinnedMeshDecalSettings().defaultTexelsPerMeter;
+        m_ResolutionType = resolutionType ?? SkinnedMeshDecalsSettings.DefaultDecalSettings.resolution.resolutionType;
+        m_Size = size ?? SkinnedMeshDecalsSettings.DefaultDecalSettings.resolution.size;
+        m_TexelsPerMeter = texelsPerMeter ?? SkinnedMeshDecalsSettings.DefaultDecalSettings.resolution.texelsPerMeter;
     }
 
     public static bool operator ==(DecalResolution lhs, DecalResolution rhs) {

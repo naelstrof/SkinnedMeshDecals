@@ -44,11 +44,11 @@ public struct DecalSettings : IEquatable<DecalSettings> {
     public DecalSettings(DecalResolution? decalResolution = null, DilationType? dilation = null, string textureName = null,
         RenderTextureFormat renderTextureFormat = RenderTextureFormat.Default,
         RenderTextureReadWrite renderTextureReadWrite = RenderTextureReadWrite.Default) {
-        m_textureID = textureName == null ? PaintDecal.GetSkinnedMeshDecalSettings().defaultDecalSettings.textureID : Shader.PropertyToID(textureName);
+        m_textureID = textureName == null ? SkinnedMeshDecalsSettings.DefaultDecalSettings.textureID : Shader.PropertyToID(textureName);
         m_renderTextureFormat = renderTextureFormat;
         m_renderTextureReadWrite = renderTextureReadWrite;
-        m_resolution = decalResolution ?? PaintDecal.GetSkinnedMeshDecalSettings().defaultDecalSettings.resolution;
-        m_dilation = dilation ?? PaintDecal.GetSkinnedMeshDecalSettings().defaultDecalSettings.dilation;
+        m_resolution = decalResolution ?? SkinnedMeshDecalsSettings.DefaultDecalSettings.resolution;
+        m_dilation = dilation ?? SkinnedMeshDecalsSettings.DefaultDecalSettings.dilation;
     }
 
     public static bool operator ==(DecalSettings lhs, DecalSettings rhs) {
