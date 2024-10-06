@@ -33,15 +33,12 @@ public class DecalCommandProcessor : MonoBehaviour {
     
     private void Update() {
         commandBuffer.Clear();
-        decalCommands[0].TryApply(commandBuffer);
-        decalCommands.RemoveAt(0);
-        //foreach (var decalCommand in decalCommands) {
-            //decalCommand.TryApply(commandBuffer);
-        //}
-
-        //decalCommands.Clear();
+        foreach (var decalCommand in decalCommands) {
+            decalCommand.TryApply(commandBuffer);
+        }
+        decalCommands.Clear();
         Graphics.ExecuteCommandBuffer(commandBuffer);
-        MonoBehaviourHider.DecalableRenderer.TryHitTargetMemory(PaintDecal.GetSkinnedMeshDecalSettings().targetMemoryBudgetBits);
+        MonoBehaviourHider.DecalableRenderer.TryHitTargetMemory(SkinnedMeshDecalsSettings.TargetMemoryBudgetBits);
     }
     
     internal static void AddDecalCommand(DecalCommand command) {

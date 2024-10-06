@@ -5,16 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c3fd23f6-8870-4804-9326-90eb8b457653" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Assets/URPExample/Scripts/AtlasPackTest.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/URPExample/Scripts/AtlasPackTest.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/AtlasPacker.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/AtlasPacker.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DecalProjectorTest.shader" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Shaders/DecalProjectorTest.shader.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.SkinnedMeshDecals/.idea/indexLayout.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/URPExample/Robot Kyle/Materials/Robot_Color.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/URPExample/Robot Kyle/Materials/Robot_Color.mat" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/URPExample/SkinnedMeshDecalExample.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/URPExample/SkinnedMeshDecalExample.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalableRenderer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalableRenderer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Naelstrof.SkinnedMeshDecals.asmdef" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Naelstrof.SkinnedMeshDecals.asmdef" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalCommandProcessor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalCommandProcessor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalResolution.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalResolution.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalSettings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/DecalSettings.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/Editor/com.naelstrof.skinned-mesh-decals.editor.asmdef" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/Editor/com.naelstrof.skinned-mesh-decals.editor.asmdef" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/PaintDecal.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/PaintDecal.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/SkinnedMeshDecalSettings.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/com.naelstrof.skinnedmeshdecals/Scripts/SkinnedMeshDecalSettings.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserSettings/Layouts/default-2021.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/Layouts/default-2021.dwlt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserSettings/Search.settings" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/Search.settings" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,30 +48,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Discover.Launch.Via.Unity": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "rider.run.widget.enabled.cache": "false",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Discover.Launch.Via.Unity&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;rider.run.widget.enabled.cache&quot;: &quot;false&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "rider.external.source.directories": [
-      "C:\\Users\\void2\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
-      "C:\\Users\\void2\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
-      "C:\\Users\\void2\\AppData\\Local\\Symbols\\src"
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\void2\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\void2\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\void2\\AppData\\Local\\Symbols\\src&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
     <configuration name="Start Unity" type="RunUnityExe" factoryName="Unity Executable">
       <option name="EXE_PATH" value="C:\Program Files\Unity\Hub\Editor\2021.3.6f1\Editor\Unity.exe" />

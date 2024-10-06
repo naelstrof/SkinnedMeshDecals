@@ -6,16 +6,10 @@ using Object = UnityEngine.Object;
 
 namespace SkinnedMeshDecals {
     public static class PaintDecal {
-        private static SkinnedMeshDecalSettings settings;
         private static Shader dilationAlphaShader;
         private static Shader dilationAdditiveShader;
         private static Material dilationAlphaMaterial;
         private static Material dilationAdditiveMaterial;
-        public static SkinnedMeshDecalSettings GetSkinnedMeshDecalSettings() => settings;
-        public static void SetSkinnedMeshDecalSettings(SkinnedMeshDecalSettings settings) {
-            PaintDecal.settings = settings;
-        }
-
         internal static Material GetDilationMaterial(DilationType dilationType) {
             return dilationType switch {
                 DilationType.Alpha => dilationAlphaMaterial,
@@ -31,12 +25,11 @@ namespace SkinnedMeshDecals {
         /// <param name="textureId">The parameter name hash of the textures you're interested in. It defaults to _DecalColorMap if null.</param>
         public static void GetDecalTextures(List<RenderTexture> textures, int? textureId = null) {
             textures.Clear();
-            MonoBehaviourHider.DecalableRenderer.GetRenderTextures(textures, textureId ?? GetSkinnedMeshDecalSettings().defaultDecalSettings.textureID);
+            MonoBehaviourHider.DecalableRenderer.GetRenderTextures(textures, textureId ?? SkinnedMeshDecalsSettings.DefaultDecalSettings.textureID);
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void Initialize() {
-            settings = new SkinnedMeshDecalSettings(targetMemoryBudgetMB: 512f, "_DecalColorMap", 64f);
             dilationAlphaShader = Shader.Find("Hidden/Naelstrof/DilationShaderAlpha");
             dilationAdditiveShader = Shader.Find("Hidden/Naelstrof/DilationShaderAdditive");
             if (dilationAlphaShader== null) {
@@ -64,7 +57,7 @@ namespace SkinnedMeshDecals {
                 info = r.gameObject.AddComponent<MonoBehaviourHider.DecalableRenderer>();
             }
             // The render texture is ephemeral, so we copy it!
-            var texture = info.GetRenderTexture(textureId ?? GetSkinnedMeshDecalSettings().defaultDecalSettings.textureID);
+            var texture = info.GetRenderTexture(textureId ?? SkinnedMeshDecalsSettings.DefaultDecalSettings.textureID);
             if (texture == null) {
                 return null;
             }
@@ -102,7 +95,7 @@ namespace SkinnedMeshDecals {
             if (!r.TryGetComponent(out MonoBehaviourHider.DecalableRenderer info)) {
                 info = r.gameObject.AddComponent<MonoBehaviourHider.DecalableRenderer>();
             }
-            info.OverrideTexture(customDecalRenderTexture, textureId ?? PaintDecal.GetSkinnedMeshDecalSettings().defaultDecalSettings.textureID, dilation);
+            info.OverrideTexture(customDecalRenderTexture, textureId ?? SkinnedMeshDecalsSettings.DefaultDecalSettings.textureID, dilation);
         }
 
         private static bool printedConfigurationWarning;
