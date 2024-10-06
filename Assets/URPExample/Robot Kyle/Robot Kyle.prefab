@@ -185,7 +185,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e89be0c10a37f64a8b026f84b9c937b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalableRenderers:
+  renderers:
   - {fileID: 2362561632912181363}
 --- !u!1 &1228122207362869398
 GameObject:
@@ -246,7 +246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e89be0c10a37f64a8b026f84b9c937b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalableRenderers:
+  renderers:
   - {fileID: 2362561632912181363}
 --- !u!1 &1545227416694718450
 GameObject:
@@ -539,7 +539,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e89be0c10a37f64a8b026f84b9c937b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalableRenderers:
+  renderers:
   - {fileID: 2362561632912181363}
 --- !u!1 &2543597184803115136
 GameObject:
@@ -634,7 +634,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e89be0c10a37f64a8b026f84b9c937b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalableRenderers:
+  renderers:
   - {fileID: 2362561632912181363}
 --- !u!1 &2744750628678837383
 GameObject:
@@ -1011,7 +1011,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e89be0c10a37f64a8b026f84b9c937b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalableRenderers:
+  renderers:
   - {fileID: 2362561632912181363}
 --- !u!1 &4008621623893560093
 GameObject:
@@ -1071,7 +1071,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e89be0c10a37f64a8b026f84b9c937b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalableRenderers:
+  renderers:
   - {fileID: 2362561632912181363}
 --- !u!1 &4248197102294346520
 GameObject:
@@ -1272,7 +1272,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e89be0c10a37f64a8b026f84b9c937b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalableRenderers:
+  renderers:
   - {fileID: 2362561632912181363}
 --- !u!1 &5069817730196198054
 GameObject:
@@ -1366,7 +1366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e89be0c10a37f64a8b026f84b9c937b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalableRenderers:
+  renderers:
   - {fileID: 2362561632912181363}
 --- !u!1 &5279652145549549476
 GameObject:
@@ -1780,7 +1780,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e89be0c10a37f64a8b026f84b9c937b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalableRenderers:
+  renderers:
   - {fileID: 2362561632912181363}
 --- !u!1 &6919846662877317454
 GameObject:
@@ -1935,7 +1935,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e89be0c10a37f64a8b026f84b9c937b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalableRenderers:
+  renderers:
   - {fileID: 2362561632912181363}
 --- !u!1 &7282288612640457767
 GameObject:
@@ -2092,5 +2092,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e89be0c10a37f64a8b026f84b9c937b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decalableRenderers:
+  renderers:
   - {fileID: 2362561632912181363}

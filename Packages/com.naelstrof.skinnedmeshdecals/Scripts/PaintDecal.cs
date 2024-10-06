@@ -6,38 +6,14 @@ using Object = UnityEngine.Object;
 
 namespace SkinnedMeshDecals {
     public static class PaintDecal {
-        [Range(16f,2048f)]
-        [Tooltip("Memory usage in megabytes before old textures get removed.")]
-        private static float memoryBudgetMB = 512f;
-
+        private static SkinnedMeshDecalSettings settings;
         private static Shader dilationAlphaShader;
-        
         private static Shader dilationAdditiveShader;
-        
         private static Material dilationAlphaMaterial;
         private static Material dilationAdditiveMaterial;
-        
-        private static CommandBuffer commandBuffer;
-        private static readonly List<MonoBehaviourHider.DecalableInfo> rendererCache = new List<MonoBehaviourHider.DecalableInfo>();
-        
-        private static int memoryBudget => Mathf.RoundToInt(memoryBudgetMB * 1000000f);
-        /// <summary>
-        /// Gets the memory budget in bytes.
-        /// </summary>
-        /// <returns>The memory budget in bytes.</returns>
-        public static int GetMemoryBudget() => memoryBudget;
-
-        /// <summary>
-        /// Sets the maximum amount of memory the decal system can consume before it starts deleting old decal maps.
-        /// </summary>
-        /// <param name="mb">The memory size in megabytes.</param>
-        public static void SetMemoryBudgetMB(float mb) {
-            memoryBudgetMB = mb;
-            while (GetMemoryInUse() > memoryBudget && rendererCache.Count > 0) {
-                if (!RemoveOldest()) {
-                    break;
-                }
-            }
+        public static SkinnedMeshDecalSettings GetSkinnedMeshDecalSettings() => settings;
+        public static void SetSkinnedMeshDecalSettings(SkinnedMeshDecalSettings settings) {
+            PaintDecal.settings = settings;
         }
 
         internal static Material GetDilationMaterial(DilationType dilationType) {
@@ -48,36 +24,19 @@ namespace SkinnedMeshDecals {
             };
         }
 
-        internal static Material GetAdditiveDilationMaterial() => dilationAlphaMaterial;
-
-        private static int InternalMemoryInUse() {
-            int memoryInUse = 0;
-            foreach(var info in rendererCache) {
-                memoryInUse += info.GetMemoryUsed();
-            }
-            return memoryInUse;
-        }
-
         /// <summary>
         /// Returns all render textures used by the decal system. This includes overridden textures. For use in command buffers or similar.
         /// </summary>
         /// <param name="textures">The list where to store the textures</param>
         /// <param name="textureId">The parameter name hash of the textures you're interested in. It defaults to _DecalColorMap if null.</param>
         public static void GetDecalTextures(List<RenderTexture> textures, int? textureId = null) {
-            foreach (var decalInfo in rendererCache) {
-                textures.Add(decalInfo.GetRenderTexture(textureId ?? DecalSettings.Default.textureID));
-            }
+            textures.Clear();
+            MonoBehaviourHider.DecalableRenderer.GetRenderTextures(textures, textureId ?? GetSkinnedMeshDecalSettings().defaultDecalSettings.textureID);
         }
-
-        /// <summary>
-        /// Gets an estimation on how much memory is being used by decal textures.
-        /// </summary>
-        /// <returns>The memory use in bytes.</returns>
-        public static int GetMemoryInUse() => InternalMemoryInUse();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void Initialize() {
-            commandBuffer = new CommandBuffer();
+            settings = new SkinnedMeshDecalSettings(targetMemoryBudgetMB: 512f, "_DecalColorMap", 64f);
             dilationAlphaShader = Shader.Find("Hidden/Naelstrof/DilationShaderAlpha");
             dilationAdditiveShader = Shader.Find("Hidden/Naelstrof/DilationShaderAdditive");
             if (dilationAlphaShader== null) {
@@ -88,42 +47,7 @@ namespace SkinnedMeshDecals {
             }
             dilationAlphaMaterial = new Material(dilationAlphaShader);
             dilationAdditiveMaterial = new Material(dilationAdditiveShader);
-        }
-
-        internal static bool TryReserveMemory(int amount) {
-            while (amount < GetMemoryBudget() && GetMemoryBudget()-GetMemoryInUse() < amount && amount < GetMemoryBudget() && rendererCache.Count > 0) {
-                if (!RemoveOldest()) {
-                    break;
-                }
-            }
-            return amount < GetMemoryBudget() - GetMemoryInUse();
-        }
-
-        private static bool RemoveOldest() {
-            MonoBehaviourHider.DecalableInfo oldestInfo = null;
-            float oldestTime = float.MaxValue;
-            foreach(var info in rendererCache) {
-                if (!(info.GetLastUseTime() < oldestTime)) continue;
-                oldestInfo = info;
-                oldestTime = info.GetLastUseTime();
-            }
-            if (oldestInfo == null && rendererCache.Count > 0) {
-                oldestInfo = rendererCache[0];
-            }
-            if (oldestInfo == null) return false;
-            RemoveDecalableInfo(oldestInfo);
-            Object.Destroy(oldestInfo);
-            return true;
-        }
-        internal static void AddDecalableInfo(MonoBehaviourHider.DecalableInfo info) {
-            if (!rendererCache.Contains(info)) {
-                rendererCache.Add(info);
-            }
-        }
-        internal static void RemoveDecalableInfo(MonoBehaviourHider.DecalableInfo info) {
-            if (rendererCache.Contains(info)) {
-                rendererCache.Remove(info);
-            }
+            printedConfigurationWarning = false;
         }
 
         /// <summary>
@@ -136,12 +60,11 @@ namespace SkinnedMeshDecals {
             if (!(r is SkinnedMeshRenderer) && !(r is MeshRenderer)) {
                 return null;
             }
-            if (!r.TryGetComponent(out MonoBehaviourHider.DecalableInfo info)) {
-                info = r.gameObject.AddComponent<MonoBehaviourHider.DecalableInfo>();
-                info.Initialize();
+            if (!r.TryGetComponent(out MonoBehaviourHider.DecalableRenderer info)) {
+                info = r.gameObject.AddComponent<MonoBehaviourHider.DecalableRenderer>();
             }
             // The render texture is ephemeral, so we copy it!
-            var texture = info.GetRenderTexture(textureId ?? DecalSettings.Default.textureID);
+            var texture = info.GetRenderTexture(textureId ?? GetSkinnedMeshDecalSettings().defaultDecalSettings.textureID);
             if (texture == null) {
                 return null;
             }
@@ -176,11 +99,38 @@ namespace SkinnedMeshDecals {
             if (!(r is SkinnedMeshRenderer) && !(r is MeshRenderer)) {
                 return;
             }
-            if (!r.TryGetComponent(out MonoBehaviourHider.DecalableInfo info)) {
-                info = r.gameObject.AddComponent<MonoBehaviourHider.DecalableInfo>();
-                info.Initialize();
+            if (!r.TryGetComponent(out MonoBehaviourHider.DecalableRenderer info)) {
+                info = r.gameObject.AddComponent<MonoBehaviourHider.DecalableRenderer>();
             }
-            info.OverrideTexture(customDecalRenderTexture, textureId ?? DecalSettings.Default.textureID, dilation);
+            info.OverrideTexture(customDecalRenderTexture, textureId ?? PaintDecal.GetSkinnedMeshDecalSettings().defaultDecalSettings.textureID, dilation);
+        }
+
+        private static bool printedConfigurationWarning;
+        /// <summary>
+        /// Finds a DecalableCollider, creates decal maps if needed, then splats the corresponding Renderers with the given parameters.
+        /// </summary>
+        /// <param name="collider">The collider we "hit" with the decal.</param>
+        /// <param name="projector">The special decal material used to unwrap the renderer to the screen and splat the decal.</param>
+        /// <param name="projection">The projection of the decal, this would be a projection and view matrix from which the decal is shot from.</param>
+        /// <param name="decalSettings">Special settings used to configure how the render texture used for splatting is generated, if it should have dilation applied, and how large the texture should be.</param>
+        public static void QueueDecal(Collider collider, DecalProjector projector, DecalProjection projection, DecalSettings? decalSettings = null) {
+            if (!collider.TryGetComponent(out DecalableCollider decalableCollider)) {
+                if (!printedConfigurationWarning) {
+                    Debug.LogWarning("Tried to render a decal on a collider which is missing a DecalableCollider component. <color=cyan>This will only print once.</color>\nThis is a misconfiguration, colliders that are meant to be decaled should have one. Or shouldn't be hit by decals in the first place", collider.gameObject);
+                    printedConfigurationWarning = true;
+                }
+                return;
+            }
+            decalableCollider.QueueDecal(projector, projection, decalSettings);
+        }
+
+        internal static void QueueDecal(MonoBehaviourHider.DecalableRenderer r, DecalProjector projector, DecalProjection projection, DecalSettings? decalSettings = null) {
+            DecalCommandProcessor.AddDecalCommand(new DecalCommand() {
+                decalableRenderer = r,
+                projector = projector,
+                projection = projection,
+                decalSettings = decalSettings,
+            });
         }
 
         /// <summary>
@@ -190,7 +140,7 @@ namespace SkinnedMeshDecals {
         /// <param name="projector">The special decal material used to unwrap the renderer to the screen and splat the decal.</param>
         /// <param name="projection">The projection of the decal, this would be a projection and view matrix from which the decal is shot from.</param>
         /// <param name="decalSettings">Special settings used to configure how the render texture used for splatting is generated, if it should have dilation applied, and how large the texture should be.</param>
-        public static void RenderDecal(Renderer r, DecalProjector projector, DecalProjection projection, DecalSettings? decalSettings = null) {
+        public static void QueueDecal(Renderer r, DecalProjector projector, DecalProjection projection, DecalSettings? decalSettings = null) {
             // Only can draw on meshes.
             if (!(r is SkinnedMeshRenderer) && !(r is MeshRenderer)) {
                 return;
@@ -202,32 +152,23 @@ namespace SkinnedMeshDecals {
             }
 #endif
 
-            if (!r.TryGetComponent(out MonoBehaviourHider.DecalableInfo info)) {
-                info = r.gameObject.AddComponent<MonoBehaviourHider.DecalableInfo>();
-                info.Initialize();
+            if (!r.TryGetComponent(out MonoBehaviourHider.DecalableRenderer info)) {
+                info = r.gameObject.AddComponent<MonoBehaviourHider.DecalableRenderer>();
             }
-            
-            commandBuffer.Clear();
-            commandBuffer.SetViewProjectionMatrices(projection.view, projection.projection);
-            info.Render(commandBuffer, projector, decalSettings ?? DecalSettings.Default);
-            Graphics.ExecuteCommandBuffer(commandBuffer);
+            QueueDecal(info, projector, projection, decalSettings);
         }
 
         /// <summary>
         /// Immediately destroys all decals everywhere. And frees up the memory associated with them.
         /// </summary>
         public static void ClearDecalMaps() {
-            while(rendererCache.Count > 0) {
-                Object.Destroy(rendererCache[0]);
-                RemoveDecalableInfo(rendererCache[0]);
-            }
+            MonoBehaviourHider.DecalableRenderer.ClearAll();
         }
         // This clears the decals and frees memory for the specified renderer.
         // If you wanted to "clean" renderers in a more believable way, you could draw decals in a subtractive mode on the renderer.
         public static void ClearDecalsForRenderer(Renderer r) {
-            if (r.TryGetComponent(out MonoBehaviourHider.DecalableInfo info)) {
-                Object.Destroy(info);
-                RemoveDecalableInfo(info);
+            if (r.TryGetComponent(out MonoBehaviourHider.DecalableRenderer info)) {
+                info.Release();
             }
         }
     }

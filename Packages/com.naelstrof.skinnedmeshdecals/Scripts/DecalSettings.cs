@@ -9,11 +9,8 @@ public enum DilationType {
     Additive,
 }
 
-[System.Serializable]
+[Serializable]
 public struct DecalSettings : IEquatable<DecalSettings> {
-    private const string defaultTextureName = "_DecalColorMap";
-    public static readonly DecalSettings Default = new(DecalResolutionType.Auto);
-
     [Tooltip("The texture id used in decalable shaders.")] [SerializeField]
     private int m_textureID;
 
@@ -44,14 +41,14 @@ public struct DecalSettings : IEquatable<DecalSettings> {
     /// <param name="textureName">The name of the texture input on the renderer's material where the decal map will be placed.</param>
     /// <param name="renderTextureFormat">If a decal map is created from this splat, this is the format it will be created with.</param>
     /// <param name="renderTextureReadWrite">If a decal map is created from this splat, this is the read/write format it will be created with.</param>
-    public DecalSettings(DecalResolution? decalResolution = null, DilationType dilation = DilationType.Alpha, string textureName = defaultTextureName,
+    public DecalSettings(DecalResolution? decalResolution = null, DilationType? dilation = null, string textureName = null,
         RenderTextureFormat renderTextureFormat = RenderTextureFormat.Default,
         RenderTextureReadWrite renderTextureReadWrite = RenderTextureReadWrite.Default) {
-        m_textureID = Shader.PropertyToID(textureName);
+        m_textureID = textureName == null ? PaintDecal.GetSkinnedMeshDecalSettings().defaultDecalSettings.textureID : Shader.PropertyToID(textureName);
         m_renderTextureFormat = renderTextureFormat;
         m_renderTextureReadWrite = renderTextureReadWrite;
-        m_resolution = decalResolution ?? Default.resolution;
-        m_dilation = dilation;
+        m_resolution = decalResolution ?? PaintDecal.GetSkinnedMeshDecalSettings().defaultDecalSettings.resolution;
+        m_dilation = dilation ?? PaintDecal.GetSkinnedMeshDecalSettings().defaultDecalSettings.dilation;
     }
 
     public static bool operator ==(DecalSettings lhs, DecalSettings rhs) {
@@ -62,9 +59,8 @@ public struct DecalSettings : IEquatable<DecalSettings> {
     public static bool operator !=(DecalSettings lhs, DecalSettings rhs) => !(lhs == rhs);
 
     public static implicit operator DecalSettings(DecalResolution resolution) => new DecalSettings(resolution);
-
-    public static implicit operator DecalSettings(string texturename) =>
-        new DecalSettings(DecalResolutionType.Auto, DilationType.Alpha, texturename);
+    public static implicit operator DecalSettings(string textureName) => new DecalSettings(textureName:textureName);
+    public static implicit operator DecalSettings(DilationType dilationType) => new DecalSettings(dilation:dilationType);
 
     public bool Equals(DecalSettings other) => other == this;
 

@@ -8,12 +8,7 @@ public class DecalShooter : MonoBehaviour {
     public float size;
     void Update() {
         if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 10f, hitMask, QueryTriggerInteraction.Ignore)) {
-            if (!hit.collider.TryGetComponent(out DecalableCollider decalableCollider)) {
-                return;
-            }
-            foreach (var decalableRenderer in decalableCollider.decalableRenderers) {
-                PaintDecal.RenderDecal(decalableRenderer, new DecalProjector(DecalProjectorType.TextureAlpha, color, true), new DecalProjection(hit.point, transform.forward, size));
-            }
+            PaintDecal.QueueDecal(hit.collider, new DecalProjector(DecalProjectorType.TextureAlpha, color, true), new DecalProjection(hit.point, transform.forward, size));
         }
     }
 }
