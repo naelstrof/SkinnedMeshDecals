@@ -1,16 +1,90 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 
 namespace SkinnedMeshDecals {
 internal class MonoBehaviourHider {
-internal class DecalableInfo : MonoBehaviour {
+    
+internal class DecalableRenderer : MonoBehaviour {
+    private static readonly List<DecalableRenderer> decalableRenderers = new();
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void StaticInitialize() {
+        decalableRenderers.Clear();
+    }
+    
+    internal static void GetRenderTextures(List<RenderTexture> textures, int textureId) {
+        foreach (var decalableRenderer in decalableRenderers) {
+            textures.Add(decalableRenderer.GetRenderTexture(textureId));
+        }
+    }
+
+    internal static void TryHitTargetMemory(ulong targetBits) {
+        while (GetTotalBitsInUse() > targetBits) {
+            foreach (var decalableRenderer in decalableRenderers) {
+                if (!decalableRenderer.initialized) continue;
+                decalableRenderer.Release();
+                break;
+            }
+        }
+    }
+    internal static void ClearAll() {
+        foreach (var decalableRenderer in decalableRenderers) {
+            decalableRenderer.Release();
+        }
+    }
+    private static void AddDecalableRenderer(DecalableRenderer renderer) {
+        if (!decalableRenderers.Contains(renderer)) {
+            decalableRenderers.Add(renderer);
+        }
+    }
+    private static void RemoveDecalableRenderer(DecalableRenderer renderer) {
+        if (decalableRenderers.Contains(renderer)) {
+            decalableRenderers.Remove(renderer);
+        }
+    }
+    private static ulong GetTotalBitsInUse() {
+        ulong bitsInUse = 0;
+        foreach (var decalableRenderer in decalableRenderers) {
+            decalableRenderer.GetBitsInUse(ref bitsInUse);
+        }
+        return bitsInUse;
+    }
+    
+
+    private static bool TryReleaseOldest() {
+        DecalableRenderer oldestRenderer = null;
+        float oldestTime = float.MaxValue;
+        foreach(var info in decalableRenderers) {
+            if (info.GetLastUseTime() >= oldestTime) continue;
+            oldestRenderer = info;
+            oldestTime = info.GetLastUseTime();
+        }
+        if (oldestRenderer == null && decalableRenderers.Count > 0) {
+            oldestRenderer = decalableRenderers[0];
+        }
+        if (oldestRenderer == null) return false;
+        oldestRenderer.Release();
+        return true;
+    }
+    
     private class TextureTarget {
         private RenderTexture baseTexture;
         private RenderTexture outputTexture;
-        private readonly List<int> drawIndices;
         public readonly DilationType dilation;
         private bool overridden = false;
+
+        public void GetBitsInUse(ref ulong bits) {
+            if (baseTexture != null) {
+                bits += baseTexture.GetTotalBitsVRAM();
+            }
+
+            if (outputTexture != null) {
+                bits += outputTexture.GetTotalBitsVRAM();
+            }
+        }
         
         public int textureId { get; private set; }
         private static void ClearRenderTexture(RenderTexture target) {
@@ -21,7 +95,6 @@ internal class DecalableInfo : MonoBehaviour {
             Graphics.ExecuteCommandBuffer(buffer);
         }
 
-        public List<int> GetDrawIndices() => drawIndices;
         public RenderTexture GetBaseTexture() => baseTexture;
 
         public RenderTexture GetOutputTexture() => dilation != DilationType.None ? outputTexture : baseTexture;
@@ -43,7 +116,7 @@ internal class DecalableInfo : MonoBehaviour {
                 baseTexture.Release();
                 baseTexture = null;
             }
-            if (dilation != DilationType.None && outputTexture != null) {
+            if (outputTexture != null) {
                 outputTexture.Release();
                 outputTexture = null;
             }
@@ -62,11 +135,10 @@ internal class DecalableInfo : MonoBehaviour {
             }
         }
         
-        public TextureTarget(int textureID, RenderTexture texture, Material[] materials, DilationType dilation) {
+        public TextureTarget(int textureId, RenderTexture texture, DilationType dilation) {
             overridden = true;
             this.dilation = dilation;
-            this.textureId = textureID;
-            drawIndices = new List<int>();
+            this.textureId = textureId;
             baseTexture = texture;
             if (this.dilation != DilationType.None) {
                 outputTexture = new RenderTexture(texture);
@@ -75,17 +147,12 @@ internal class DecalableInfo : MonoBehaviour {
                 buffer.GenerateMips(outputTexture);
                 Graphics.ExecuteCommandBuffer(buffer);
             }
-            for (int i=0;i<materials.Length;i++) {
-                if (materials[i].HasProperty(textureID)) {
-                    drawIndices.Add(i);
-                }
-            }
         }
 
-        public TextureTarget(int textureID, Vector2Int textureSize, Material[] materials, DilationType dilation, RenderTextureFormat renderTextureFormat, RenderTextureReadWrite renderTextureReadWrite) {
+        public TextureTarget(int textureId, Vector2Int textureSize, DilationType dilation, RenderTextureFormat renderTextureFormat, RenderTextureReadWrite renderTextureReadWrite) {
             overridden = false;
             this.dilation = dilation;
-            drawIndices = new List<int>();
+            this.textureId = textureId;
             baseTexture = new RenderTexture(textureSize.x, textureSize.y, 0, renderTextureFormat, renderTextureReadWrite) {
                 antiAliasing = 1,
                 useMipMap = true,
@@ -100,20 +167,22 @@ internal class DecalableInfo : MonoBehaviour {
                 };
                 ClearRenderTexture(outputTexture);
             }
-            for (int i=0;i<materials.Length;i++) {
-                if (materials[i].HasProperty(textureID)) {
-                    drawIndices.Add(i);
-                }
-            }
         }
     }
     private Dictionary<int, TextureTarget> textureTargets;
     private new Renderer renderer;
+    
     private float lastUse;
     private MaterialPropertyBlock propertyBlock;
 
     public float GetLastUseTime() {
         return lastUse;
+    }
+
+    private void Awake() {
+        renderer = GetComponent<Renderer>();
+        AddDecalableRenderer(this);
+        DecalCommandProcessor.EnsureInstanceAlive();
     }
 
     public RenderTexture GetRenderTexture(int textureId) {
@@ -123,12 +192,11 @@ internal class DecalableInfo : MonoBehaviour {
         return null;
     }
 
-    public int GetMemoryUsed() {
-        int size = 0;
-        foreach(var pair in textureTargets) {
-            size += pair.Value.GetSize();
+    private void GetBitsInUse(ref ulong memory) {
+        if (!initialized) return;
+        foreach (var textureTarget in textureTargets) {
+            textureTarget.Value.GetBitsInUse(ref memory);
         }
-        return size;
     }
     private int CeilPowerOfTwo(int v) {
         v--;
@@ -140,17 +208,19 @@ internal class DecalableInfo : MonoBehaviour {
         v++;
         return v;
     }
-    public void Initialize() {
+    private bool initialized => textureTargets != null;
+    private void Initialize() {
+        if (initialized) {
+            return;
+        }
         propertyBlock = new MaterialPropertyBlock();
         textureTargets = new Dictionary<int, TextureTarget>();
-        renderer = GetComponent<Renderer>();
         lastUse = Time.time;
-        PaintDecal.AddDecalableInfo(this);
     }
 
     public void OverrideTexture(RenderTexture texture, int textureId, DilationType dilation) {
         if (!textureTargets.ContainsKey(textureId)) {
-            TextureTarget texTarget = new TextureTarget(textureId, texture, renderer.materials, dilation);
+            TextureTarget texTarget = new TextureTarget(textureId, texture, dilation);
             textureTargets.Add(textureId, texTarget);
         } else {
             textureTargets[textureId].OverrideTexture(texture);
@@ -159,12 +229,8 @@ internal class DecalableInfo : MonoBehaviour {
         propertyBlock.SetTexture(textureId, textureTargets[textureId].GetOutputTexture());
         renderer.SetPropertyBlock(propertyBlock);
     }
-    public void Render(CommandBuffer buffer, DecalProjector projector, DecalSettings decalSettings) {
-        if (textureTargets == null) {
-            Destroy(this);
-            return;
-        }
-
+    public bool TryApply(CommandBuffer buffer, DecalProjector projector, DecalSettings decalSettings) {
+        Initialize();
         // Create the texture if we don't have it.
         if (!textureTargets.ContainsKey(decalSettings.textureID)) {
             Vector2Int textureSize = Vector2Int.one * 16;
@@ -183,14 +249,7 @@ internal class DecalableInfo : MonoBehaviour {
             } else {
                 textureSize = decalSettings.resolution.size;
             }
-
-            int reserveMemory = decalSettings.dilation != DilationType.None ? 2 * textureSize.x * textureSize.y * 4 : textureSize.x * textureSize.y * 4;
-            reserveMemory = Mathf.Max(reserveMemory, 16*4);
-            if (!PaintDecal.TryReserveMemory(reserveMemory)) {
-                return;
-            }
-
-            TextureTarget texTarget = new TextureTarget(decalSettings.textureID, textureSize, renderer.materials, decalSettings.dilation, decalSettings.renderTextureFormat, decalSettings.renderTextureReadWrite);
+            TextureTarget texTarget = new TextureTarget(decalSettings.textureID, textureSize, decalSettings.dilation, decalSettings.renderTextureFormat, decalSettings.renderTextureReadWrite);
             textureTargets.Add(decalSettings.textureID, texTarget);
             renderer.GetPropertyBlock(propertyBlock);
             propertyBlock.SetTexture(decalSettings.textureID, texTarget.GetOutputTexture());
@@ -200,9 +259,7 @@ internal class DecalableInfo : MonoBehaviour {
         buffer.SetRenderTarget(target.GetBaseTexture());
         Vector2 pixelRect = new Vector2(target.GetBaseTexture().width, target.GetBaseTexture().height);
         buffer.SetViewport(new Rect(Vector2.zero, pixelRect));
-        foreach(int drawIndex in target.GetDrawIndices()) {
-            buffer.DrawRenderer(renderer, projector.material, drawIndex);
-        }
+        buffer.DrawRenderer(renderer, projector.material);
 
         if (textureTargets[decalSettings.textureID].dilation != DilationType.None) {
             buffer.Blit(target.GetBaseTexture(), target.GetOutputTexture(), PaintDecal.GetDilationMaterial(textureTargets[decalSettings.textureID].dilation));
@@ -210,20 +267,19 @@ internal class DecalableInfo : MonoBehaviour {
         } else {
             buffer.GenerateMips(target.GetBaseTexture());
         }
-
         lastUse = Time.time;
+        return true;
     }
-    
-    void OnDestroy() {
-        PaintDecal.RemoveDecalableInfo(this);
-        if (textureTargets == null) {
+
+    public void Release() {
+        if (!initialized) {
             return;
         }
         foreach (var pair in textureTargets) {
             pair.Value?.Release();
         }
-
         if (renderer == null || propertyBlock == null) {
+            textureTargets = null;
             return;
         }
 
@@ -232,6 +288,12 @@ internal class DecalableInfo : MonoBehaviour {
             propertyBlock.SetTexture(pair.Key, Texture2D.blackTexture);
         }
         renderer.SetPropertyBlock(propertyBlock);
+        textureTargets = null;
+    }
+    
+    void OnDestroy() {
+        Release();
+        RemoveDecalableRenderer(this);
     }
 }
 

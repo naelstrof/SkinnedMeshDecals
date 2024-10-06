@@ -13,7 +13,6 @@ public enum DecalResolutionType {
 public struct DecalResolution : IEquatable<DecalResolution> {
     private const int minimumRenderTextureSizeAllowedByUnity = 16;
 
-    private const float defaultTexelsPerMeter = 64f;
     [SerializeField] private DecalResolutionType m_ResolutionType;
 
     [SerializeField]
@@ -41,33 +40,25 @@ public struct DecalResolution : IEquatable<DecalResolution> {
         get => m_ResolutionType;
         set => m_ResolutionType = value;
     }
-
-    /// <summary>
-    /// Decal resolution is used to determine how large a texture should be created if it is missing during decal splatting.
-    /// </summary>
-    /// <param name="resolutionType">The only valid input here is DecalResolutionType.Auto, use a different overload if you want more control.</param>
-    public DecalResolution(DecalResolutionType resolutionType) : this(Vector2Int.one * minimumRenderTextureSizeAllowedByUnity, defaultTexelsPerMeter, resolutionType) {
-    }
-
     /// <summary>
     /// Decal resolution is used to determine how large a texture should be created if it is missing during decal splatting.
     /// </summary>
     /// <param name="size">The resolution of the texture.</param>
-    public DecalResolution(Vector2Int size) : this(size, defaultTexelsPerMeter, DecalResolutionType.Custom) {
+    public DecalResolution(Vector2Int size) : this(size:size, resolutionType:DecalResolutionType.Custom) {
     }
     
     /// <summary>
     /// Decal resolution is used to determine how large a texture should be created if it is missing during decal splatting.
     /// </summary>
     /// <param name="texelsPerMeter">How many pixels per surface volume of the renderer's bounds in meters.</param>
-    public DecalResolution(float texelsPerMeter) : this(Vector2Int.one * minimumRenderTextureSizeAllowedByUnity, texelsPerMeter, DecalResolutionType.Auto) {
+    public DecalResolution(float texelsPerMeter) : this(texelsPerMeter:texelsPerMeter, resolutionType:DecalResolutionType.Auto) {
     }
     
 
-    internal DecalResolution(Vector2Int size, float texelsPerMeter, DecalResolutionType resolutionType) {
-        m_ResolutionType = resolutionType;
-        m_Size = size;
-        m_TexelsPerMeter = texelsPerMeter;
+    internal DecalResolution(Vector2Int? size = null, float? texelsPerMeter = null, DecalResolutionType? resolutionType = null) {
+        m_ResolutionType = resolutionType ?? DecalResolutionType.Custom;
+        m_Size = size ?? Vector2Int.one*minimumRenderTextureSizeAllowedByUnity;
+        m_TexelsPerMeter = texelsPerMeter ?? PaintDecal.GetSkinnedMeshDecalSettings().defaultTexelsPerMeter;
     }
 
     public static bool operator ==(DecalResolution lhs, DecalResolution rhs) {
@@ -76,7 +67,8 @@ public struct DecalResolution : IEquatable<DecalResolution> {
 
     public static bool operator !=(DecalResolution lhs, DecalResolution rhs) => !(lhs == rhs);
 
-    public static implicit operator DecalResolution(DecalResolutionType keyword) => new DecalResolution(keyword);
+    public static implicit operator DecalResolution(DecalResolutionType resolutionType) => new DecalResolution(resolutionType:resolutionType);
+    public static implicit operator DecalResolution(float texelsPerMeter) => new DecalResolution(texelsPerMeter);
     public static implicit operator DecalResolution(Vector2Int resolution) => new DecalResolution(resolution);
 
     public bool Equals(DecalResolution other) => other == this;
