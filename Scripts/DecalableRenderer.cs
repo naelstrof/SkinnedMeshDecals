@@ -198,7 +198,7 @@ internal class DecalableRenderer : MonoBehaviour {
             textureTarget.Value.GetBitsInUse(ref memory);
         }
     }
-    private int CeilPowerOfTwo(int v) {
+    private static int CeilPowerOfTwo(int v) {
         v--;
         v |= v >> 1;
         v |= v >> 2;
@@ -235,17 +235,7 @@ internal class DecalableRenderer : MonoBehaviour {
         if (!textureTargets.ContainsKey(decalSettings.textureID)) {
             Vector2Int textureSize = Vector2Int.one * 16;
             if (decalSettings.resolution.resolutionType == DecalResolutionType.Auto) {
-                var bounds = renderer.bounds;
-                float surfaceArea = 2f*bounds.size.z*bounds.size.x + 2f*bounds.size.z * bounds.size.y + 2f*bounds.size.x*bounds.size.y;
-                if (renderer is SkinnedMeshRenderer) {
-                    surfaceArea *= 2f;
-                }
-                int worldScale = Mathf.RoundToInt(surfaceArea * decalSettings.resolution.texelsPerMeter);
-                int textureScale = Mathf.Clamp(CeilPowerOfTwo(worldScale), 16, 2048);
-                if (float.IsNaN(textureScale) || float.IsInfinity(textureScale)) {
-                    textureScale = 1024;
-                }
-                textureSize = Vector2Int.one * textureScale;
+                textureSize = Vector2Int.one * ProcessAutoTextureScale(GetSurfaceArea(renderer), decalSettings.resolution.texelsPerMeter);
             } else {
                 textureSize = decalSettings.resolution.size;
             }
@@ -271,6 +261,24 @@ internal class DecalableRenderer : MonoBehaviour {
         return true;
     }
 
+    public static float GetSurfaceArea(Renderer renderer) {
+        var bounds = renderer.bounds;
+        float surfaceArea = 2f*bounds.size.z*bounds.size.x + 2f*bounds.size.z * bounds.size.y + 2f*bounds.size.x*bounds.size.y;
+        if (renderer is SkinnedMeshRenderer) {
+            surfaceArea *= 2f;
+        }
+        return surfaceArea;
+    }
+    
+    public static int ProcessAutoTextureScale(float surfaceArea, float texelsPerMeter) {
+        int worldTexelScale = Mathf.RoundToInt(surfaceArea * texelsPerMeter);
+        int textureScale = Mathf.Clamp(CeilPowerOfTwo(worldTexelScale), 16, 2048);
+        if (float.IsNaN(textureScale) || float.IsInfinity(textureScale)) {
+            textureScale = 1024;
+        }
+        return textureScale;
+    }
+    
     public void Release() {
         if (!initialized) {
             return;
