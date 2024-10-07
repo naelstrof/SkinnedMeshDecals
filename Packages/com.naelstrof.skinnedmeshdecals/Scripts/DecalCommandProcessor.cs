@@ -1,20 +1,20 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using SkinnedMeshDecals;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace SkinnedMeshDecals {
 
-public class DecalCommandProcessor : MonoBehaviour {
+internal partial class MonoBehaviourHider {
+internal class DecalCommandProcessor : MonoBehaviour {
     private static List<DecalCommand> decalCommands;
     private static CommandBuffer commandBuffer;
     private static DecalCommandProcessor instance;
 
     public static void EnsureInstanceAlive() {
         if (instance) return;
-        new GameObject("DecalCommandProcessor", typeof(DecalCommandProcessor));
+        var _ = new GameObject("DecalCommandProcessor", typeof(DecalCommandProcessor)) {
+            hideFlags = HideFlags.HideAndDontSave
+        };
     }
 
     private void Awake() {
@@ -22,6 +22,7 @@ public class DecalCommandProcessor : MonoBehaviour {
             Destroy(gameObject);
             return;
         }
+
         instance = this;
     }
 
@@ -30,21 +31,38 @@ public class DecalCommandProcessor : MonoBehaviour {
         commandBuffer = new CommandBuffer();
         decalCommands = new List<DecalCommand>();
     }
-    
+
     private void Update() {
         commandBuffer.Clear();
-        foreach (var decalCommand in decalCommands) {
-            decalCommand.TryApply(commandBuffer);
+        int stepSize = Mathf.Max(1, decalCommands.Count / SkinnedMeshDecalsSettings.MaxDecalsPerFrame);
+        for (int i = 0; i < decalCommands.Count; i += stepSize) {
+            commandBuffer.Clear();
+            decalCommands[i].TryApply(commandBuffer);
+            Graphics.ExecuteCommandBuffer(commandBuffer);
         }
-        decalCommands.Clear();
-        Graphics.ExecuteCommandBuffer(commandBuffer);
-        MonoBehaviourHider.DecalableRenderer.TryHitTargetMemory(SkinnedMeshDecalsSettings.TargetMemoryBudgetBits);
+
+        if (stepSize != 1) {
+            for (int i = decalCommands.Count - 1; i >= 0; i--) {
+                if (!decalCommands[i].valid) {
+                    decalCommands.RemoveAt(i);
+                }
+            }
+            if (decalCommands.Count >= 2) {
+                decalCommands.RemoveRange(decalCommands.Count / 2, decalCommands.Count / 2);
+            }
+        } else {
+            decalCommands.Clear();
+        }
+
+       
+        DecalableRenderer.TryHitTargetMemory(SkinnedMeshDecalsSettings.TargetMemoryBudgetBits);
     }
-    
+
     internal static void AddDecalCommand(DecalCommand command) {
         decalCommands.Add(command);
     }
-    
+}
+
 }
 
 }

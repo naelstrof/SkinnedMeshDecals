@@ -3,7 +3,6 @@ using UnityEngine.Rendering;
 namespace SkinnedMeshDecals {
 
 internal struct DecalCommand {
-    public int age;
     public bool valid;
     public MonoBehaviourHider.DecalableRenderer decalableRenderer;
     public DecalProjector projector;
@@ -11,14 +10,9 @@ internal struct DecalCommand {
     public DecalSettings? decalSettings;
 
     public bool TryApply(CommandBuffer cmd) {
-        age++;
-        try {
-            cmd.SetViewProjectionMatrices(projection.view, projection.projection);
-            return decalableRenderer.TryApply(cmd, projector, decalSettings ?? SkinnedMeshDecalsSettings.DefaultDecalSettings);
-        } catch {
-            valid = false;
-            throw;
-        }
+        valid = false;
+        cmd.SetViewProjectionMatrices(projection.view, projection.projection);
+        return decalableRenderer.TryApply(cmd, projector, decalSettings ?? SkinnedMeshDecalsSettings.DefaultDecalSettings);
     }
 }
 

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SkinnedMeshDecalsSettings
   m_EditorClassIdentifier: 
   defaultTargetGraphicsMemoryUsageMB: 512
+  maxDecalsPerFrame: 31
   defaultTextureName: _DecalColorMap
   defaultResolutionType: 0
   defaultResolution: {x: 512, y: 512}

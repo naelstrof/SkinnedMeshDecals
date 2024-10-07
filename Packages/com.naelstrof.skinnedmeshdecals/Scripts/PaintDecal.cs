@@ -6,6 +6,12 @@ using Object = UnityEngine.Object;
 
 namespace SkinnedMeshDecals {
     public static class PaintDecal {
+        public enum QueueType {
+            Deferred,
+            Immediate
+        }
+        
+        private static CommandBuffer commandBuffer;
         private static Shader dilationAlphaShader;
         private static Shader dilationAdditiveShader;
         private static Material dilationAlphaMaterial;
@@ -41,6 +47,7 @@ namespace SkinnedMeshDecals {
             dilationAlphaMaterial = new Material(dilationAlphaShader);
             dilationAdditiveMaterial = new Material(dilationAdditiveShader);
             printedConfigurationWarning = false;
+            commandBuffer = new CommandBuffer();
         }
 
         /// <summary>
@@ -106,7 +113,7 @@ namespace SkinnedMeshDecals {
         /// <param name="projector">The special decal material used to unwrap the renderer to the screen and splat the decal.</param>
         /// <param name="projection">The projection of the decal, this would be a projection and view matrix from which the decal is shot from.</param>
         /// <param name="decalSettings">Special settings used to configure how the render texture used for splatting is generated, if it should have dilation applied, and how large the texture should be.</param>
-        public static void QueueDecal(Collider collider, DecalProjector projector, DecalProjection projection, DecalSettings? decalSettings = null) {
+        public static void QueueDecal(Collider collider, DecalProjector projector, DecalProjection projection, DecalSettings? decalSettings = null, QueueType queueType = QueueType.Deferred) {
             if (!collider.TryGetComponent(out DecalableCollider decalableCollider)) {
                 if (!printedConfigurationWarning) {
                     Debug.LogWarning("Tried to render a decal on a collider which is missing a DecalableCollider component. <color=cyan>This will only print once.</color>\nThis is a misconfiguration, colliders that are meant to be decaled should have one. Or shouldn't be hit by decals in the first place", collider.gameObject);
@@ -114,16 +121,23 @@ namespace SkinnedMeshDecals {
                 }
                 return;
             }
-            decalableCollider.QueueDecal(projector, projection, decalSettings);
+            decalableCollider.QueueDecal(projector, projection, decalSettings, queueType);
         }
 
-        internal static void QueueDecal(MonoBehaviourHider.DecalableRenderer r, DecalProjector projector, DecalProjection projection, DecalSettings? decalSettings = null) {
-            DecalCommandProcessor.AddDecalCommand(new DecalCommand() {
+        internal static void QueueDecal(MonoBehaviourHider.DecalableRenderer r, DecalProjector projector, DecalProjection projection, DecalSettings? decalSettings = null, QueueType queueType = QueueType.Deferred) {
+            var decalCommand = new DecalCommand() {
                 decalableRenderer = r,
                 projector = projector,
                 projection = projection,
                 decalSettings = decalSettings,
-            });
+            };
+            if (queueType == QueueType.Deferred) {
+                MonoBehaviourHider.DecalCommandProcessor.AddDecalCommand(decalCommand);
+            } else {
+                commandBuffer.Clear();
+                decalCommand.TryApply(commandBuffer);
+                Graphics.ExecuteCommandBuffer(commandBuffer);
+            }
         }
 
         /// <summary>
@@ -133,7 +147,8 @@ namespace SkinnedMeshDecals {
         /// <param name="projector">The special decal material used to unwrap the renderer to the screen and splat the decal.</param>
         /// <param name="projection">The projection of the decal, this would be a projection and view matrix from which the decal is shot from.</param>
         /// <param name="decalSettings">Special settings used to configure how the render texture used for splatting is generated, if it should have dilation applied, and how large the texture should be.</param>
-        public static void QueueDecal(Renderer r, DecalProjector projector, DecalProjection projection, DecalSettings? decalSettings = null) {
+        /// <param name="queueType">If the decal should be rendered immediately or allowed to be deferred across frames for performance. Deferred decals can be dropped if there's too many!</param>
+        public static void QueueDecal(Renderer r, DecalProjector projector, DecalProjection projection, DecalSettings? decalSettings = null, QueueType queueType = QueueType.Deferred) {
             // Only can draw on meshes.
             if (!(r is SkinnedMeshRenderer) && !(r is MeshRenderer)) {
                 return;
@@ -148,7 +163,7 @@ namespace SkinnedMeshDecals {
             if (!r.TryGetComponent(out MonoBehaviourHider.DecalableRenderer info)) {
                 info = r.gameObject.AddComponent<MonoBehaviourHider.DecalableRenderer>();
             }
-            QueueDecal(info, projector, projection, decalSettings);
+            QueueDecal(info, projector, projection, decalSettings, queueType);
         }
 
         /// <summary>

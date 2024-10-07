@@ -23,10 +23,10 @@ public class DecalableCollider : MonoBehaviour {
             decalableRenderers.Add(decalableRenderer);
         }
     }
-    public void QueueDecal(DecalProjector projector, DecalProjection projection, DecalSettings? decalSettings = null) {
+    public void QueueDecal(DecalProjector projector, DecalProjection projection, DecalSettings? decalSettings = null, PaintDecal.QueueType queueType = PaintDecal.QueueType.Deferred) {
         Initialize();
         foreach (var decalableRenderer in decalableRenderers) {
-            PaintDecal.QueueDecal(decalableRenderer, projector, projection, decalSettings);
+            PaintDecal.QueueDecal(decalableRenderer, projector, projection, decalSettings, queueType);
         }
     }
 }

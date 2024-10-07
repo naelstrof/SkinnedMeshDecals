@@ -19,6 +19,9 @@ public enum DecalProjectorType {
 public struct DecalProjector : IEquatable<DecalProjector> {
     [SerializeField] private DecalProjectorType m_ProjectorType;
     [SerializeField] private Material m_Material;
+    private Color? m_Color;
+    private float? m_Power;
+    private Texture m_MainTexture;
 
     private static Material textureAlpha;
     private static Material textureAdditive;
@@ -26,8 +29,17 @@ public struct DecalProjector : IEquatable<DecalProjector> {
     private static Material sphereAlpha;
     private static Material sphereAdditive;
     private static Material sphereSubtractive;
+    
+    private static Material textureAlphaBackfaceCulling;
+    private static Material textureAdditiveBackfaceCulling;
+    private static Material textureSubtractiveBackfaceCulling;
+    private static Material sphereAlphaBackfaceCulling;
+    private static Material sphereAdditiveBackfaceCulling;
+    private static Material sphereSubtractiveBackfaceCulling;
     private static Texture2D defaultTexture;
     private static readonly int Power = Shader.PropertyToID("_Power");
+    private static readonly int ColorProperty = Shader.PropertyToID("_Color");
+    private static readonly int MainTex = Shader.PropertyToID("_MainTex");
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void Initialize() {
@@ -36,16 +48,20 @@ public struct DecalProjector : IEquatable<DecalProjector> {
             throw new UnityException( "SkinnedMeshDecals: Failed to find shader Naelstrof/DecalProjectorAlphaBlend, ensure SMD is imported correctly.");
         }
         textureAlpha = new Material(alphaShader);
+        textureAlpha.DisableKeyword("_BACKFACECULLING_ON");
         
-        textureAlpha.EnableKeyword("_BACKFACECULLING_ON");
+        textureAlphaBackfaceCulling = new Material(alphaShader);
+        textureAlphaBackfaceCulling.EnableKeyword("_BACKFACECULLING_ON");
         
         var additiveShader = Shader.Find("Naelstrof/DecalProjectorAdditiveBlend");
         if (additiveShader == null) {
             throw new UnityException( "SkinnedMeshDecals: Failed to find shader Naelstrof/DecalProjectorAdditiveBlend, ensure SMD is imported correctly.");
         }
         textureAdditive = new Material(additiveShader);
+        textureAdditive.DisableKeyword("_BACKFACECULLING_ON");
         
-        textureAdditive.EnableKeyword("_BACKFACECULLING_ON");
+        textureAdditiveBackfaceCulling = new Material(additiveShader);
+        textureAdditiveBackfaceCulling.EnableKeyword("_BACKFACECULLING_ON");
 
         var subtractiveShader = Shader.Find("Naelstrof/DecalProjectorSubtractiveBlend");
         if (subtractiveShader == null) {
@@ -54,19 +70,32 @@ public struct DecalProjector : IEquatable<DecalProjector> {
         textureSubtractive = new Material(subtractiveShader) {
             color = Color.black
         };
-        textureSubtractive.EnableKeyword("_BACKFACECULLING_ON");
+        textureSubtractive.DisableKeyword("_BACKFACECULLING_ON");
+        textureSubtractiveBackfaceCulling = new Material(subtractiveShader) {
+            color = Color.black
+        };
+        textureSubtractiveBackfaceCulling.EnableKeyword("_BACKFACECULLING_ON");
         
         var sphereShader = Shader.Find("Naelstrof/SphereProjectorAlphaBlend");
         if (sphereShader == null) {
             throw new UnityException( "SkinnedMeshDecals: Failed to find shader Naelstrof/SphereProjectorAlphaBlend, ensure SMD is imported correctly.");
         }
         sphereAlpha = new Material(sphereShader);
+        sphereAlpha.DisableKeyword("_BACKFACECULLING_ON");
+        
+        sphereAlphaBackfaceCulling = new Material(sphereShader);
+        sphereAlphaBackfaceCulling.EnableKeyword("_BACKFACECULLING_ON");
+        
         var sphereAdditiveShader = Shader.Find("Naelstrof/SphereProjectorAdditiveBlend");
         if (sphereAdditiveShader == null) {
             throw new UnityException( "SkinnedMeshDecals: Failed to find shader Naelstrof/SphereProjectorAdditiveBlend, ensure SMD is imported correctly.");
         }
 
         sphereAdditive = new Material(sphereAdditiveShader);
+        sphereAdditive.DisableKeyword("_BACKFACECULLING_ON");
+        
+        sphereAdditiveBackfaceCulling = new Material(sphereAdditiveShader);
+        sphereAdditiveBackfaceCulling.EnableKeyword("_BACKFACECULLING_ON");
         var sphereSubtractiveShader = Shader.Find("Naelstrof/SphereProjectorSubtractiveBlend");
         if (sphereSubtractiveShader == null) {
             throw new UnityException( "SkinnedMeshDecals: Failed to find shader Naelstrof/SphereProjectorSubtractiveBlend, ensure SMD is imported correctly.");
@@ -74,6 +103,11 @@ public struct DecalProjector : IEquatable<DecalProjector> {
         sphereSubtractive = new Material(sphereSubtractiveShader) {
             color = Color.black
         };
+        sphereSubtractive.DisableKeyword("_BACKFACECULLING_ON");
+        sphereSubtractiveBackfaceCulling = new Material(sphereSubtractiveShader) {
+            color = Color.black
+        };
+        sphereSubtractiveBackfaceCulling.EnableKeyword("_BACKFACECULLING_ON");
         
         // Create a box texture as an example.
         defaultTexture = Object.Instantiate(Texture2D.whiteTexture);
@@ -91,7 +125,20 @@ public struct DecalProjector : IEquatable<DecalProjector> {
     }
 
     public Material material {
-        get => m_Material;
+        get {
+            if (m_ProjectorType != DecalProjectorType.Custom) {
+                if (m_Color != null) {
+                    m_Material.SetColor(ColorProperty, m_Color.Value);
+                }
+                if (m_MainTexture) {
+                    m_Material.SetTexture(MainTex, m_MainTexture);
+                }
+                if (m_Power != null) {
+                    m_Material.SetFloat(Power, m_Power.Value);
+                }
+            }
+            return m_Material;
+        }
         set {
             m_Material = value;
             m_ProjectorType = DecalProjectorType.Custom;
@@ -150,36 +197,27 @@ public struct DecalProjector : IEquatable<DecalProjector> {
     /// <param name="backfaceCulling">If backfaces should be ignored during painting.</param>
     public DecalProjector(DecalProjectorType projectorType, float power, Color? color, bool backfaceCulling = false) : this(null, defaultTexture, color, projectorType, backfaceCulling) {
         Assert.IsTrue(projectorType is DecalProjectorType.SphereAlpha or DecalProjectorType.SphereSubtractive);
-        m_Material.SetFloat(Power, power);
+        m_Power = power;
     }
 
     internal DecalProjector(Material v, Texture texture, Color? color, DecalProjectorType projectorType, bool backfaceCulling) {
         m_ProjectorType = projectorType;
         
         m_Material = m_ProjectorType switch {
-            DecalProjectorType.TextureAlpha => textureAlpha,
-            DecalProjectorType.TextureAdditive => textureAdditive,
-            DecalProjectorType.TextureSubtractive => textureSubtractive,
-            DecalProjectorType.SphereAlpha => sphereAlpha,
-            DecalProjectorType.SphereAdditive => sphereAdditive,
-            DecalProjectorType.SphereSubtractive => sphereSubtractive,
+            DecalProjectorType.TextureAlpha => backfaceCulling ? textureAlphaBackfaceCulling : textureAlpha,
+            DecalProjectorType.TextureAdditive => backfaceCulling ? textureAdditiveBackfaceCulling : textureAdditive,
+            DecalProjectorType.TextureSubtractive => backfaceCulling ? textureSubtractiveBackfaceCulling : textureSubtractive,
+            DecalProjectorType.SphereAlpha => backfaceCulling ? sphereAlphaBackfaceCulling : sphereAlpha,
+            DecalProjectorType.SphereAdditive => backfaceCulling ? sphereAdditiveBackfaceCulling : sphereAdditive,
+            DecalProjectorType.SphereSubtractive => backfaceCulling ? sphereSubtractiveBackfaceCulling : sphereSubtractive,
             DecalProjectorType.Custom => v,
             _ => throw new ArgumentOutOfRangeException()
         };
         
-        if (texture != null) {
-            m_Material.mainTexture = texture;
-        }
+        m_MainTexture = texture;
+        m_Color = color;
+        m_Power = null;
 
-        if (color != null) {
-            m_Material.color = color.Value;
-        }
-
-        if (backfaceCulling) {
-            m_Material.EnableKeyword("_BACKFACECULLING_ON");
-        } else {
-            m_Material.DisableKeyword("_BACKFACECULLING_ON");
-        }
     }
 
     public static bool operator ==(DecalProjector lhs, DecalProjector rhs) {
@@ -188,12 +226,10 @@ public struct DecalProjector : IEquatable<DecalProjector> {
 
     public static bool operator !=(DecalProjector lhs, DecalProjector rhs) => !(lhs == rhs);
 
-    public static implicit operator DecalProjector(DecalProjectorType keyword) => new DecalProjector(keyword);
+    public static implicit operator DecalProjector(DecalProjectorType keyword) => new(keyword);
 
-    public static implicit operator DecalProjector(Texture texture) =>
-        new DecalProjector(DecalProjectorType.TextureAlpha, texture);
-
-    public static implicit operator DecalProjector(Material v) => new DecalProjector(v);
+    public static implicit operator DecalProjector(Texture texture) => new(DecalProjectorType.TextureAlpha, texture);
+    public static implicit operator DecalProjector(Material v) => new(v);
 
     public bool Equals(DecalProjector other) => other == this;
 
