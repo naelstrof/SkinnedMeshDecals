@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: cbfe36cfddfde964d9dfce63a355d5dd
+    path: Assets/URPExample/SkinnedMeshDecalExample.unity
+    guid: 32f13d94b2eb3724a844e492d5259a6c
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: b86a608e06ca8e2428e2d4713798e2ba,
       type: 2}

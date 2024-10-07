@@ -78,11 +78,11 @@ internal class DecalableRenderer : MonoBehaviour {
 
         public void GetBitsInUse(ref ulong bits) {
             if (baseTexture != null) {
-                bits += baseTexture.GetTotalBitsVRAM();
+                bits += baseTexture.GetTotalBitsGraphicsMemory();
             }
 
             if (outputTexture != null) {
-                bits += outputTexture.GetTotalBitsVRAM();
+                bits += outputTexture.GetTotalBitsGraphicsMemory();
             }
         }
         

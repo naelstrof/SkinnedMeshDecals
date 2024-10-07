@@ -5,7 +5,7 @@ using UnityEngine.Experimental.Rendering;
 namespace SkinnedMeshDecals {
 
 public static class RenderTextureExtension {
-    public static ulong GetTotalBitsVRAM(int width, int height, int depth, GraphicsFormat format) {
+    public static ulong GetTotalBitsGraphicsMemory(int width, int height, int depth, GraphicsFormat format) {
         switch (format) {
             case GraphicsFormat.None:
                 return (ulong)width * (ulong)height * (ulong)depth;
@@ -171,8 +171,8 @@ public static class RenderTextureExtension {
                 throw new ArgumentOutOfRangeException(nameof(format), format, "Not a known graphics format (Or might be obsolete)...");
         }
     }
-    public static ulong GetTotalBitsVRAM(this RenderTexture texture) {
-        return GetTotalBitsVRAM(texture.width, texture.height, texture.depth, texture.graphicsFormat);
+    public static ulong GetTotalBitsGraphicsMemory(this RenderTexture texture) {
+        return GetTotalBitsGraphicsMemory(texture.width, texture.height, texture.depth, texture.graphicsFormat);
     }
 }
 
