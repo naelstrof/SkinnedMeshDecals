@@ -67,9 +67,9 @@ public struct DecalResolution : IEquatable<DecalResolution> {
 
     public static bool operator !=(DecalResolution lhs, DecalResolution rhs) => !(lhs == rhs);
 
-    public static implicit operator DecalResolution(DecalResolutionType resolutionType) => new DecalResolution(resolutionType:resolutionType);
-    public static implicit operator DecalResolution(float texelsPerMeter) => new DecalResolution(texelsPerMeter);
-    public static implicit operator DecalResolution(Vector2Int resolution) => new DecalResolution(resolution);
+    public static implicit operator DecalResolution(DecalResolutionType resolutionType) => new (resolutionType:resolutionType);
+    public static implicit operator DecalResolution(float texelsPerMeter) => new(texelsPerMeter);
+    public static implicit operator DecalResolution(Vector2Int resolution) => new(resolution);
 
     public bool Equals(DecalResolution other) => other == this;
 

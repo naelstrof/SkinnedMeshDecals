@@ -15,6 +15,7 @@ public enum DecalProjectorType {
     Custom,
 }
 
+// TODO: Make a super cool cached library of materials that are created and reused instead of trying to reuse materials. For batching.
 [System.Serializable]
 public struct DecalProjector : IEquatable<DecalProjector> {
     [SerializeField] private DecalProjectorType m_ProjectorType;
