@@ -89,7 +89,8 @@ Shader "Naelstrof/SphereProjectorAlphaBlend"
 				#else
 				float staticSwitch43_g1 = -dotResult44_g1;
 				#endif
-				float vertexToFrag26_g1 = saturate( sign( staticSwitch43_g1 ) );
+				float smoothstepResult1_g2 = smoothstep( -0.1 , 0.1 , staticSwitch43_g1);
+				float vertexToFrag26_g1 = smoothstepResult1_g2;
 				o.ase_texcoord2.x = vertexToFrag26_g1;
 				
 				o.ase_texcoord1 = v.vertex;
@@ -159,4 +160,4 @@ WireConnection;148;2;153;0
 WireConnection;42;0;148;0
 WireConnection;42;1;153;38
 ASEEND*/
-//CHKSM=AF762396DDCCBA7CD5CE934E0BF45A6CEDDC5A33
+//CHKSM=EBD503B24947ECB4DB25FCD53B89DF09C8719813
