@@ -9,6 +9,9 @@ internal partial class MonoBehaviourHider {
     
 internal class DecalableRenderer : MonoBehaviour {
     private static readonly List<DecalableRenderer> decalableRenderers = new();
+    internal Renderer GetRenderer() => renderer;
+    internal delegate void DestroyAction(DecalableRenderer renderer);
+    internal event DestroyAction destroyed;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void StaticInitialize() {
@@ -186,7 +189,7 @@ internal class DecalableRenderer : MonoBehaviour {
         DecalCommandProcessor.EnsureInstanceAlive();
         hideFlags = HideFlags.HideAndDontSave;
     }
-
+    
     public RenderTexture GetRenderTexture(int textureId) {
         if (textureTargets.ContainsKey(textureId)) {
             return textureTargets[textureId].GetBaseTexture();
@@ -319,6 +322,7 @@ internal class DecalableRenderer : MonoBehaviour {
     void OnDestroy() {
         Release();
         RemoveDecalableRenderer(this);
+        destroyed?.Invoke(this);
     }
 }
 
