@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace SkinnedMeshDecals {
 
@@ -9,7 +8,7 @@ public enum DecalResolutionType {
     Custom,
 }
 
-[System.Serializable]
+[Serializable]
 public struct DecalResolution : IEquatable<DecalResolution> {
     private const int minimumRenderTextureSizeAllowedByUnity = 16;
 
@@ -58,6 +57,7 @@ public struct DecalResolution : IEquatable<DecalResolution> {
     internal DecalResolution(Vector2Int? size = null, float? texelsPerMeter = null, DecalResolutionType? resolutionType = null) {
         m_ResolutionType = resolutionType ?? SkinnedMeshDecalsSettings.DefaultDecalSettings.resolution.resolutionType;
         m_Size = size ?? SkinnedMeshDecalsSettings.DefaultDecalSettings.resolution.size;
+        m_Size = new Vector2Int(Mathf.Max(m_Size.x, minimumRenderTextureSizeAllowedByUnity), Mathf.Max(m_Size.y, minimumRenderTextureSizeAllowedByUnity));
         m_TexelsPerMeter = texelsPerMeter ?? SkinnedMeshDecalsSettings.DefaultDecalSettings.resolution.texelsPerMeter;
     }
 

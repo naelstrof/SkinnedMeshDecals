@@ -10,8 +10,10 @@ namespace SkinnedMeshDecals {
 public class SkinnedMeshDecalsSettings : ScriptableObject {
     private static SkinnedMeshDecalsSettings settings;
     
-    [Tooltip("The target VRAM usage in megabytes. If textures go over this, we release one of the oldest.")]
+    [Tooltip("The target VRAM usage in megabytes. If textures go over this, we release one of the oldest. 512MB allows for about 30 2048x2048 RGBA textures. Dilation being enabled halves it.")]
     [SerializeField] public float defaultTargetGraphicsMemoryUsageMB = 512f;
+    [Tooltip("How many low-priority decals can be rendered per frame.")]
+    [SerializeField] public int maxDecalsPerFrame = 31;
     [Tooltip("The default shader property name that is a texture where decals get blitted into.")]
     [SerializeField] public string defaultTextureName = "_DecalColorMap";
     [Tooltip("Default resolution type, Auto tries to estimate surface area and allocate an appropriately sized power of 2 texture.")]
@@ -36,6 +38,18 @@ public class SkinnedMeshDecalsSettings : ScriptableObject {
 
     public static ulong TargetMemoryBudgetBits => (ulong)(instance.defaultTargetGraphicsMemoryUsageMB * 8000000L);
     public static DecalSettings DefaultDecalSettings => instance.defaultSettings;
+    public static int MaxDecalsPerFrame => instance.maxDecalsPerFrame;
+    
+    public static void SetTargetMemoryBudgetMB(float targetMemoryUsageInMB) {
+        instance.defaultTargetGraphicsMemoryUsageMB = targetMemoryUsageInMB;
+    }
+
+    public static void SetMaxDecalsPerFrame(int maxDecalsPerFrame) {
+        instance.maxDecalsPerFrame = maxDecalsPerFrame;
+    }
+    public static void SetDefaultDecalSettings(DecalSettings newSettings) {
+        instance.defaultSettings = newSettings;
+    }
     private static SkinnedMeshDecalsSettings instance {
         get {
             if (settings != null) return settings;
@@ -54,6 +68,8 @@ public class SkinnedMeshDecalsSettings : ScriptableObject {
                 }
 
                 AssetDatabase.CreateAsset(settings, $"Assets/{nameof(SkinnedMeshDecals)}/Resources/{nameof(SkinnedMeshDecalsSettings)}.asset");
+#else
+                Debug.LogWarning("Failed to load SkinnedMeshDecals Settings. Make sure its contained in a Resources/ folder on build! Using Defaults...");
 #endif
             }
                 

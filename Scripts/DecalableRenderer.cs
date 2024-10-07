@@ -5,7 +5,7 @@ using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 
 namespace SkinnedMeshDecals {
-internal class MonoBehaviourHider {
+internal partial class MonoBehaviourHider {
     
 internal class DecalableRenderer : MonoBehaviour {
     private static readonly List<DecalableRenderer> decalableRenderers = new();
@@ -174,6 +174,7 @@ internal class DecalableRenderer : MonoBehaviour {
     
     private float lastUse;
     private MaterialPropertyBlock propertyBlock;
+    private MaterialPropertyBlock decalblitPropertyBlock;
 
     public float GetLastUseTime() {
         return lastUse;
@@ -183,6 +184,7 @@ internal class DecalableRenderer : MonoBehaviour {
         renderer = GetComponent<Renderer>();
         AddDecalableRenderer(this);
         DecalCommandProcessor.EnsureInstanceAlive();
+        hideFlags = HideFlags.HideAndDontSave;
     }
 
     public RenderTexture GetRenderTexture(int textureId) {
@@ -229,35 +231,50 @@ internal class DecalableRenderer : MonoBehaviour {
         propertyBlock.SetTexture(textureId, textureTargets[textureId].GetOutputTexture());
         renderer.SetPropertyBlock(propertyBlock);
     }
-    public bool TryApply(CommandBuffer buffer, DecalProjector projector, DecalSettings decalSettings) {
-        Initialize();
-        // Create the texture if we don't have it.
-        if (!textureTargets.ContainsKey(decalSettings.textureID)) {
-            Vector2Int textureSize = Vector2Int.one * 16;
-            if (decalSettings.resolution.resolutionType == DecalResolutionType.Auto) {
-                textureSize = Vector2Int.one * ProcessAutoTextureScale(GetSurfaceArea(renderer), decalSettings.resolution.texelsPerMeter);
-            } else {
-                textureSize = decalSettings.resolution.size;
-            }
-            TextureTarget texTarget = new TextureTarget(decalSettings.textureID, textureSize, decalSettings.dilation, decalSettings.renderTextureFormat, decalSettings.renderTextureReadWrite);
-            textureTargets.Add(decalSettings.textureID, texTarget);
-            renderer.GetPropertyBlock(propertyBlock);
-            propertyBlock.SetTexture(decalSettings.textureID, texTarget.GetOutputTexture());
-            renderer.SetPropertyBlock(propertyBlock);
-        }
-        TextureTarget target = textureTargets[decalSettings.textureID];
-        buffer.SetRenderTarget(target.GetBaseTexture());
-        Vector2 pixelRect = new Vector2(target.GetBaseTexture().width, target.GetBaseTexture().height);
-        buffer.SetViewport(new Rect(Vector2.zero, pixelRect));
-        buffer.DrawRenderer(renderer, projector.material);
 
-        if (textureTargets[decalSettings.textureID].dilation != DilationType.None) {
-            buffer.Blit(target.GetBaseTexture(), target.GetOutputTexture(), PaintDecal.GetDilationMaterial(textureTargets[decalSettings.textureID].dilation));
-            buffer.GenerateMips(target.GetOutputTexture());
-        } else {
-            buffer.GenerateMips(target.GetBaseTexture());
+    public bool TryApply(CommandBuffer buffer, DecalProjector projector, DecalSettings decalSettings) {
+        try {
+            Initialize();
+            // Create the texture if we don't have it.
+            if (!textureTargets.ContainsKey(decalSettings.textureID)) {
+                Vector2Int textureSize = Vector2Int.one * 16;
+                if (decalSettings.resolution.resolutionType == DecalResolutionType.Auto) {
+                    textureSize = Vector2Int.one * ProcessAutoTextureScale(GetSurfaceArea(renderer),
+                        decalSettings.resolution.texelsPerMeter);
+                } else {
+                    textureSize = decalSettings.resolution.size;
+                }
+
+                TextureTarget texTarget = new TextureTarget(decalSettings.textureID, textureSize,
+                    decalSettings.dilation, decalSettings.renderTextureFormat, decalSettings.renderTextureReadWrite);
+                textureTargets.Add(decalSettings.textureID, texTarget);
+                renderer.GetPropertyBlock(propertyBlock);
+                propertyBlock.SetTexture(decalSettings.textureID, texTarget.GetOutputTexture());
+                renderer.SetPropertyBlock(propertyBlock);
+            }
+
+            TextureTarget target = textureTargets[decalSettings.textureID];
+            buffer.SetRenderTarget(target.GetBaseTexture());
+            Vector2 pixelRect = new Vector2(target.GetBaseTexture().width, target.GetBaseTexture().height);
+            buffer.SetViewport(new Rect(Vector2.zero, pixelRect));
+            buffer.DrawRenderer(renderer, projector.material);
+
+            if (textureTargets[decalSettings.textureID].dilation != DilationType.None) {
+                buffer.Blit(target.GetBaseTexture(), target.GetOutputTexture(),
+                    PaintDecal.GetDilationMaterial(textureTargets[decalSettings.textureID].dilation));
+                buffer.GenerateMips(target.GetOutputTexture());
+            } else {
+                buffer.GenerateMips(target.GetBaseTexture());
+            }
+
+            lastUse = Time.time;
+        } catch (UnityException e) {
+//#if UNITY_EDITOR
+            Debug.LogException(e);
+//#endif
+            return false;
         }
-        lastUse = Time.time;
+
         return true;
     }
 
