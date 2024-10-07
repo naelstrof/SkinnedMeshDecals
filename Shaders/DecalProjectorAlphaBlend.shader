@@ -87,7 +87,8 @@ Shader "Naelstrof/DecalProjectorAlphaBlend"
 				#else
 				float staticSwitch42_g1 = -dotResult9_g1;
 				#endif
-				float vertexToFrag18_g1 = saturate( sign( staticSwitch42_g1 ) );
+				float smoothstepResult1_g2 = smoothstep( -0.1 , 0.1 , staticSwitch42_g1);
+				float vertexToFrag18_g1 = smoothstepResult1_g2;
 				o.ase_texcoord1.x = vertexToFrag18_g1;
 				float2 vertexToFrag5_g1 = ( ( (objectToClip33_g1).xy * float2( 0.5,0.5 ) ) + float2( 0.5,0.5 ) );
 				o.ase_texcoord1.yz = vertexToFrag5_g1;
@@ -162,4 +163,4 @@ WireConnection;110;1;112;0
 WireConnection;42;0;110;0
 WireConnection;42;1;112;32
 ASEEND*/
-//CHKSM=3C39F8AF61153599E39DF396A3894811D8AE4E55
+//CHKSM=67A75798168205566A89A1E06AFA3F9F1039A683

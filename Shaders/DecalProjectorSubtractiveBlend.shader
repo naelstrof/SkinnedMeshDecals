@@ -88,7 +88,8 @@ Shader "Naelstrof/DecalProjectorSubtractiveBlend"
 				#else
 				float staticSwitch42_g2 = -dotResult9_g2;
 				#endif
-				float vertexToFrag18_g2 = saturate( sign( staticSwitch42_g2 ) );
+				float smoothstepResult1_g3 = smoothstep( -0.1 , 0.1 , staticSwitch42_g2);
+				float vertexToFrag18_g2 = smoothstepResult1_g3;
 				o.ase_texcoord1.x = vertexToFrag18_g2;
 				float2 vertexToFrag5_g2 = ( ( (objectToClip33_g2).xy * float2( 0.5,0.5 ) ) + float2( 0.5,0.5 ) );
 				o.ase_texcoord1.yz = vertexToFrag5_g2;
@@ -150,7 +151,7 @@ Node;AmplifyShaderEditor.FunctionNode;101;240,-64;Inherit;False;ProjectDecal;0;;
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;105;544,-192;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.DynamicAppendNode;106;699.9034,-299.4532;Inherit;False;FLOAT4;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT4;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;102;880,-192;Inherit;False;2;2;0;FLOAT4;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;FLOAT4;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;42;1104,-64;Float;False;True;-1;2;ASEMaterialInspector;100;15;Naelstrof/DecalProjectorSubtractiveBlend;928f6a5fbd2e6444ea9bb91fa46f1aa9;True;Unlit;0;0;Unlit;2;False;True;2;5;False;;10;False;;4;1;False;;1;False;;True;0;False;;3;False;;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;2;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;255;False;;255;False;;255;False;;7;False;;1;False;;1;False;;1;False;;7;False;;1;False;;1;False;;1;False;;False;True;2;False;;True;7;False;;True;False;0;False;;0;False;;True;1;RenderType=Opaque=RenderType;True;2;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=ForwardBase;False;False;0;;0;0;Standard;1;Vertex Position,InvertActionOnDeselection;0;0;0;1;True;False;;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;42;1104,-64;Float;False;True;-1;2;ASEMaterialInspector;100;16;Naelstrof/DecalProjectorSubtractiveBlend;928f6a5fbd2e6444ea9bb91fa46f1aa9;True;Unlit;0;0;Unlit;2;False;True;2;5;False;;10;False;;4;1;False;;1;False;;True;0;False;;3;False;;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;2;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;255;False;;255;False;;255;False;;7;False;;1;False;;1;False;;1;False;;7;False;;1;False;;1;False;;1;False;;False;True;2;False;;True;7;False;;True;False;0;False;;0;False;;True;1;RenderType=Opaque=RenderType;True;2;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=ForwardBase;False;False;0;;0;0;Standard;1;Vertex Position,InvertActionOnDeselection;0;0;0;1;True;False;;False;0
 WireConnection;101;34;104;0
 WireConnection;105;0;103;4
 WireConnection;105;1;101;43
@@ -163,4 +164,4 @@ WireConnection;102;1;101;0
 WireConnection;42;0;102;0
 WireConnection;42;1;101;32
 ASEEND*/
-//CHKSM=6791A74C29853CD4883F28C98FF9AC9F0C81C168
+//CHKSM=B4BE8F2280E3BD4287E3E5417771641179F882FE

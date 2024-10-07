@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78b2425a2284af743826c689403a4924, type: 3}
   m_Name: BackfaceCullProjection
   m_EditorClassIdentifier: 
-  m_functionInfo: "// Made with Amplify Shader Editor v1.9.6.3\n// Available at the
-    Unity Asset Store - http://u3d.as/y3X \n/*ASEBEGIN\nVersion=19603\nNode;AmplifyShaderEditor.NegateNode;5;-480,16;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0\nNode;AmplifyShaderEditor.RangedFloatNode;3;-832,112;Inherit;False;Constant;_BackfaceCullSoftness;BackfaceCullSoftness;0;0;Create;True;0;0;0;False;0;False;0.1;0;0;1;0;1;FLOAT;0\nNode;AmplifyShaderEditor.FunctionInput;2;-480,-96;Inherit;False;normal;1;0;False;1;0;FLOAT;0;False;1;FLOAT;0\nNode;AmplifyShaderEditor.SmoothstepOpNode;1;-240,0;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;-0.1;False;2;FLOAT;0.1;False;1;FLOAT;0\nNode;AmplifyShaderEditor.FunctionOutput;0;0,0;Inherit;False;True;-1;Output;0;False;1;0;FLOAT;0;False;1;FLOAT;0\nWireConnection;5;0;3;0\nWireConnection;1;0;2;0\nWireConnection;1;1;5;0\nWireConnection;1;2;3;0\nWireConnection;0;0;1;0\nASEEND*/\n//CHKSM=35FC3BE9381795952FD02F5AFD9F690EF52EAB14"
+  m_functionInfo: "// Made with Amplify Shader Editor v1.9.3.3\n// Available at the
+    Unity Asset Store - http://u3d.as/y3X \n/*ASEBEGIN\nVersion=19303\nNode;AmplifyShaderEditor.NegateNode;5;-480,16;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0\nNode;AmplifyShaderEditor.RangedFloatNode;3;-832,112;Inherit;False;Constant;_BackfaceCullSoftness;BackfaceCullSoftness;0;0;Create;True;0;0;0;False;0;False;0.1;0;0;1;0;1;FLOAT;0\nNode;AmplifyShaderEditor.FunctionInput;2;-480,-96;Inherit;False;normal;1;0;False;1;0;FLOAT;0;False;1;FLOAT;0\nNode;AmplifyShaderEditor.SmoothstepOpNode;1;-240,0;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;-0.1;False;2;FLOAT;0.1;False;1;FLOAT;0\nNode;AmplifyShaderEditor.FunctionOutput;0;0,0;Inherit;False;True;-1;Output;0;False;1;0;FLOAT;0;False;1;FLOAT;0\nWireConnection;5;0;3;0\nWireConnection;1;0;2;0\nWireConnection;1;1;5;0\nWireConnection;1;2;3;0\nWireConnection;0;0;1;0\nASEEND*/\n//CHKSM=647E398FFDD8003AEB3001049A17E39D74F8F920"
   m_functionName: 
   m_description: 
   m_additionalIncludes:
