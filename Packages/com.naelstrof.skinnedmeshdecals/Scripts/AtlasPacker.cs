@@ -4,6 +4,8 @@ using SkinnedMeshDecals;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+namespace SkinnedMeshDecals {
+
 public static class AtlasPacker {
 
     class MeshAtlasRect {
@@ -59,7 +61,7 @@ public static class AtlasPacker {
         }
     }
     
-    public static float Remap(this float value, float from1, float to1, float from2, float to2) {
+    private static float Remap(this float value, float from1, float to1, float from2, float to2) {
         return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
     }
 
@@ -123,5 +125,7 @@ public static class AtlasPacker {
             );
         return PlaceRect(ref freeRects, ref meshAtlasRect, failsafe--);
     }
+
+}
 
 }
