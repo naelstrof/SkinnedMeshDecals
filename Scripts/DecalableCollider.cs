@@ -160,7 +160,7 @@ public class DecalableCollider : MonoBehaviour {
     }
 
     private void OnDestroy() {
-        renderers.Destroy();
+        decalableRenderers?.Destroy();
     }
 
 }
