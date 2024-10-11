@@ -54,7 +54,10 @@ internal class DecalCommandProcessor : MonoBehaviour {
             decalCommands.Clear();
         }
 
-       
+        commandBuffer.Clear();
+        DecalableRenderer.DoDilation(commandBuffer);
+        Graphics.ExecuteCommandBuffer(commandBuffer);
+        
         DecalableRenderer.TryHitTargetMemory(SkinnedMeshDecalsSettings.TargetMemoryBudgetBits);
     }
 

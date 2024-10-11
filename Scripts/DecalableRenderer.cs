@@ -13,9 +13,20 @@ internal class DecalableRenderer : MonoBehaviour {
     internal delegate void DestroyAction(DecalableRenderer renderer);
     internal event DestroyAction destroyed;
 
+    private static readonly HashSet<TextureTarget> dilationNeeded = new();
+
+    public static void DoDilation(CommandBuffer buffer) {
+        foreach (var textureTarget in dilationNeeded) {
+            textureTarget.DoDilationInternal(buffer);
+        }
+
+        dilationNeeded.Clear();
+    }
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void StaticInitialize() {
         decalableRenderers.Clear();
+        dilationNeeded.Clear();
     }
     
     internal static void GetRenderTextures(List<RenderTexture> textures, int textureId) {
@@ -73,7 +84,7 @@ internal class DecalableRenderer : MonoBehaviour {
         return true;
     }
     
-    private class TextureTarget {
+    internal class TextureTarget {
         private RenderTexture baseTexture;
         private RenderTexture outputTexture;
         public readonly DilationType dilation;
@@ -123,6 +134,13 @@ internal class DecalableRenderer : MonoBehaviour {
                 outputTexture.Release();
                 outputTexture = null;
             }
+        }
+
+        public void DoDilationInternal(CommandBuffer buffer) {
+            if (dilation != DilationType.None) {
+                buffer.Blit(GetBaseTexture(), GetOutputTexture(), PaintDecal.GetDilationMaterial(dilation));
+            }
+            buffer.GenerateMips(GetOutputTexture());
         }
 
         public void OverrideTexture(RenderTexture texture) {
@@ -235,7 +253,7 @@ internal class DecalableRenderer : MonoBehaviour {
         renderer.SetPropertyBlock(propertyBlock);
     }
 
-    public bool TryApply(CommandBuffer buffer, DecalProjector projector, DecalSettings decalSettings) {
+    public bool TryApply(CommandBuffer buffer, DecalProjector projector, DecalProjection projection, DecalSettings decalSettings) {
         try {
             Initialize();
             // Create the texture if we don't have it.
@@ -248,8 +266,7 @@ internal class DecalableRenderer : MonoBehaviour {
                     textureSize = decalSettings.resolution.size;
                 }
 
-                TextureTarget texTarget = new TextureTarget(decalSettings.textureID, textureSize,
-                    decalSettings.dilation, decalSettings.renderTextureFormat, decalSettings.renderTextureReadWrite);
+                TextureTarget texTarget = new TextureTarget(decalSettings.textureID, textureSize, decalSettings.dilation, decalSettings.renderTextureFormat, decalSettings.renderTextureReadWrite);
                 textureTargets.Add(decalSettings.textureID, texTarget);
                 renderer.GetPropertyBlock(propertyBlock);
                 propertyBlock.SetTexture(decalSettings.textureID, texTarget.GetOutputTexture());
@@ -258,23 +275,13 @@ internal class DecalableRenderer : MonoBehaviour {
 
             TextureTarget target = textureTargets[decalSettings.textureID];
             buffer.SetRenderTarget(target.GetBaseTexture());
-            Vector2 pixelRect = new Vector2(target.GetBaseTexture().width, target.GetBaseTexture().height);
-            buffer.SetViewport(new Rect(Vector2.zero, pixelRect));
+            buffer.SetViewProjectionMatrices(projection.view, projection.projection);
             buffer.DrawRenderer(renderer, projector.material);
-
-            if (textureTargets[decalSettings.textureID].dilation != DilationType.None) {
-                buffer.Blit(target.GetBaseTexture(), target.GetOutputTexture(),
-                    PaintDecal.GetDilationMaterial(textureTargets[decalSettings.textureID].dilation));
-                buffer.GenerateMips(target.GetOutputTexture());
-            } else {
-                buffer.GenerateMips(target.GetBaseTexture());
-            }
+            dilationNeeded.Add(target);
 
             lastUse = Time.time;
         } catch (UnityException e) {
-//#if UNITY_EDITOR
             Debug.LogException(e);
-//#endif
             return false;
         }
 

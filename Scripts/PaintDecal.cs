@@ -153,12 +153,6 @@ public static class PaintDecal {
         if (!(r is SkinnedMeshRenderer) && !(r is MeshRenderer)) {
             return;
         }
-        
-#if UNITY_EDITOR
-        if (r.localToWorldMatrix.determinant < 0f) {
-            Debug.LogError("Tried to render a decal on an inside-out object, this isn't supported! Make sure scales aren't negative.", r.gameObject);
-        }
-#endif
 
         if (!r.TryGetComponent(out MonoBehaviourHider.DecalableRenderer info)) {
             info = r.gameObject.AddComponent<MonoBehaviourHider.DecalableRenderer>();
