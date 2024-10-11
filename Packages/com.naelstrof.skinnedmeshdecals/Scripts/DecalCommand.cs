@@ -11,8 +11,7 @@ internal struct DecalCommand {
 
     public bool TryApply(CommandBuffer cmd) {
         valid = false;
-        cmd.SetViewProjectionMatrices(projection.view, projection.projection);
-        return decalableRenderer.TryApply(cmd, projector, decalSettings ?? SkinnedMeshDecalsSettings.DefaultDecalSettings);
+        return decalableRenderer.TryApply(cmd, projector, projection, decalSettings ?? SkinnedMeshDecalsSettings.DefaultDecalSettings);
     }
 }
 
