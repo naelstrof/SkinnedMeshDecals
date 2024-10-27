@@ -270,7 +270,7 @@ internal class DecalableRenderer : MonoBehaviour {
                     textureSize = decalSettings.resolution.size;
                 }
 
-                cachedSubmeshIndices.Clear();
+                cachedIndices.Clear();
                 renderer.GetSharedMaterials(cachedMaterials);
                 for (int i = 0; i < cachedMaterials.Count; i++) {
                     if (cachedMaterials[i].HasProperty(decalSettings.textureID)) {
