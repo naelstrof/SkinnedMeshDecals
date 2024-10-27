@@ -270,15 +270,17 @@ internal class DecalableRenderer : MonoBehaviour {
                     textureSize = decalSettings.resolution.size;
                 }
 
-                cachedIndices.Clear();
-                renderer.GetSharedMaterials(cachedMaterials);
-                for (int i = 0; i < cachedMaterials.Count; i++) {
-                    if (cachedMaterials[i].HasProperty(decalSettings.textureID)) {
-                        cachedIndices.Add(i);
+                if (!cachedSubmeshIndices.ContainsKey(decalSettings.textureID)) {
+                    cachedIndices.Clear();
+                    renderer.GetSharedMaterials(cachedMaterials);
+                    for (int i = 0; i < cachedMaterials.Count; i++) {
+                        if (cachedMaterials[i].HasProperty(decalSettings.textureID)) {
+                            cachedIndices.Add(i);
+                        }
                     }
+                    cachedSubmeshIndices.Add(decalSettings.textureID, cachedIndices.ToArray());
                 }
-                cachedSubmeshIndices.Add(decalSettings.textureID, cachedIndices.ToArray());
-                
+
                 TextureTarget texTarget = new TextureTarget(decalSettings.textureID, textureSize, decalSettings.dilation, decalSettings.renderTextureFormat, decalSettings.renderTextureReadWrite);
                 textureTargets.Add(decalSettings.textureID, texTarget);
                 renderer.GetPropertyBlock(propertyBlock);
