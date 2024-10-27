@@ -191,6 +191,7 @@ internal class DecalableRenderer : MonoBehaviour {
         }
     }
     private Dictionary<int, TextureTarget> textureTargets;
+    private Dictionary<int, int[]> cachedSubmeshIndices;
     private new Renderer renderer;
     
     private float lastUse;
@@ -206,6 +207,7 @@ internal class DecalableRenderer : MonoBehaviour {
         AddDecalableRenderer(this);
         DecalCommandProcessor.EnsureInstanceAlive();
         hideFlags = HideFlags.HideAndDontSave;
+        cachedSubmeshIndices = new Dictionary<int, int[]>();
     }
     
     public RenderTexture GetRenderTexture(int textureId) {
@@ -253,6 +255,8 @@ internal class DecalableRenderer : MonoBehaviour {
         renderer.SetPropertyBlock(propertyBlock);
     }
 
+    private static List<Material> cachedMaterials = new List<Material>();
+    private static List<int> cachedIndices = new List<int>();
     public bool TryApply(CommandBuffer buffer, DecalProjector projector, DecalProjection projection, DecalSettings decalSettings) {
         try {
             Initialize();
@@ -266,6 +270,15 @@ internal class DecalableRenderer : MonoBehaviour {
                     textureSize = decalSettings.resolution.size;
                 }
 
+                cachedSubmeshIndices.Clear();
+                renderer.GetSharedMaterials(cachedMaterials);
+                for (int i = 0; i < cachedMaterials.Count; i++) {
+                    if (cachedMaterials[i].HasProperty(decalSettings.textureID)) {
+                        cachedIndices.Add(i);
+                    }
+                }
+                cachedSubmeshIndices.Add(decalSettings.textureID, cachedIndices.ToArray());
+                
                 TextureTarget texTarget = new TextureTarget(decalSettings.textureID, textureSize, decalSettings.dilation, decalSettings.renderTextureFormat, decalSettings.renderTextureReadWrite);
                 textureTargets.Add(decalSettings.textureID, texTarget);
                 renderer.GetPropertyBlock(propertyBlock);
@@ -276,7 +289,11 @@ internal class DecalableRenderer : MonoBehaviour {
             TextureTarget target = textureTargets[decalSettings.textureID];
             buffer.SetRenderTarget(target.GetBaseTexture());
             buffer.SetViewProjectionMatrices(projection.view, projection.projection);
-            buffer.DrawRenderer(renderer, projector.material);
+            var indicesToRender = cachedSubmeshIndices[decalSettings.textureID];
+            var length = indicesToRender.Length;
+            for (int i = 0; i < length; i++) {
+                buffer.DrawRenderer(renderer, projector.material, indicesToRender[i]);
+            }
             dilationNeeded.Add(target);
 
             lastUse = Time.time;
