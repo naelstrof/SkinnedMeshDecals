@@ -34,14 +34,19 @@ internal class DecalableRenderer : MonoBehaviour {
             textures.Add(decalableRenderer.GetRenderTexture(textureId));
         }
     }
-
     internal static void TryHitTargetMemory(ulong targetBits) {
         while (GetTotalBitsInUse() > targetBits) {
+            DecalableRenderer oldest = null;
             foreach (var decalableRenderer in decalableRenderers) {
-                if (!decalableRenderer.initialized) continue;
-                decalableRenderer.Release();
-                break;
+                if (!decalableRenderer.initialized || decalableRenderer.textureTargets == null) continue;
+                if (!oldest || decalableRenderer.lastUse < oldest.lastUse) {
+                    oldest = decalableRenderer;
+                }
             }
+            if (oldest) {
+                oldest.Release();
+            }
+            break;
         }
     }
     internal static void ClearAll() {
