@@ -20,7 +20,7 @@ public static class AtlasPacker {
             atlasRects.Add(new MeshAtlasRect() {
                 mesh = null,
                 rect = new Rect(0f,0f,1f,1f),
-                scale = MonoBehaviourHider.DecalableRenderer.GetSurfaceArea(renderer)
+                scale = Mathf.Pow(MonoBehaviourHider.DecalableRenderer.GetSurfaceArea(renderer),0.4f)
             });
             if (renderer is MeshRenderer meshRenderer) {
                 var mesh = Mesh.Instantiate(meshRenderer.GetComponent<MeshFilter>().sharedMesh);
