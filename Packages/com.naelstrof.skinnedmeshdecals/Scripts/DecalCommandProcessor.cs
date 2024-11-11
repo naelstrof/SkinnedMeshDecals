@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -36,9 +37,14 @@ internal class DecalCommandProcessor : MonoBehaviour {
         commandBuffer.Clear();
         int stepSize = Mathf.Max(1, decalCommands.Count / SkinnedMeshDecalsSettings.MaxDecalsPerFrame);
         for (int i = 0; i < decalCommands.Count; i += stepSize) {
-            commandBuffer.Clear();
-            decalCommands[i].TryApply(commandBuffer);
-            Graphics.ExecuteCommandBuffer(commandBuffer);
+            try {
+                commandBuffer.Clear();
+                decalCommands[i].TryApply(commandBuffer);
+                Graphics.ExecuteCommandBuffer(commandBuffer);
+            } catch(Exception e) {
+                decalCommands[i].Invalidate();
+                Debug.LogException(e);
+            }
         }
 
         if (stepSize != 1) {

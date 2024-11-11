@@ -13,6 +13,10 @@ internal struct DecalCommand {
         valid = false;
         return decalableRenderer.TryApply(cmd, projector, projection, decalSettings ?? SkinnedMeshDecalsSettings.DefaultDecalSettings);
     }
+
+    public void Invalidate() {
+        valid = false;
+    }
 }
 
 }
