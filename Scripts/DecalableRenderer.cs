@@ -5,7 +5,7 @@ using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 
 namespace SkinnedMeshDecals {
-internal partial class MonoBehaviourHider {
+public partial class MonoBehaviourHider {
     
 public class DecalableRenderer : MonoBehaviour {
     private static readonly List<DecalableRenderer> decalableRenderers = new();

@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
 
 namespace SkinnedMeshDecals {
 
-internal partial class MonoBehaviourHider {
+public partial class MonoBehaviourHider {
 internal class DecalCommandProcessor : MonoBehaviour {
     private static List<DecalCommand> decalCommands;
     private static CommandBuffer commandBuffer;
