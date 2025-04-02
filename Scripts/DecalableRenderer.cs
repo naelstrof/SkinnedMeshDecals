@@ -208,11 +208,7 @@ public class DecalableRenderer : MonoBehaviour {
     }
 
     private void Awake() {
-        renderer = GetComponent<Renderer>();
-        AddDecalableRenderer(this);
-        DecalCommandProcessor.EnsureInstanceAlive();
-        hideFlags = HideFlags.HideAndDontSave;
-        cachedSubmeshIndices = new Dictionary<int, int[]>();
+        Initialize();
     }
     
     public RenderTexture GetRenderTexture(int textureId) {
@@ -243,8 +239,13 @@ public class DecalableRenderer : MonoBehaviour {
         if (initialized) {
             return;
         }
+        renderer = GetComponent<Renderer>();
+        AddDecalableRenderer(this);
+        DecalCommandProcessor.EnsureInstanceAlive();
         propertyBlock = new MaterialPropertyBlock();
         textureTargets = new Dictionary<int, TextureTarget>();
+        cachedSubmeshIndices = new Dictionary<int, int[]>();
+        hideFlags = HideFlags.HideAndDontSave;
         lastUse = Time.time;
     }
 
