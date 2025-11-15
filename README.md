@@ -107,7 +107,7 @@ SkinnedMeshDecals uses VRAM to store all the splat maps used, because VRAM is va
 
 512MB allows for about 30 2048x2048 RGBA textures. Dilation being enabled halves it to about 15 2048x2048 RGBA textures. This calculation is an estimate though, as the true capacity will vary depending on compatible in-gpu compression.
 
-It can be really easy to go over the budget, oldest splatmaps are removed first before new splatmaps are allocated. If you want to allow for more than the default memory budget, see *SkinnedMeshDecalsSettings.cs*, and adjust the values of the SO found at `SkinnedMeshDecals/Resources/SkinnedMeshDecalsSettings.asset`.
+It can be really easy to go over the budget, oldest splatmaps are removed first before new splatmaps are allocated. If you want to allow for more than the default memory budget, see *SkinnedMeshDecalsSettings.cs*, and adjust the values of the SO found at `Assets/SkinnedMeshDecals/Resources/SkinnedMeshDecalsSettings.asset`.
 
 (If it's not found, it is generated automatically as you use SkinnedMeshDecals for the first time in the editor.)
 
