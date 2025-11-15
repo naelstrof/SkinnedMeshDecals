@@ -72,15 +72,40 @@ var oneMeterSphereProj = new DecalProjection(hitPoint, 0.5f);
 
 You can find more overloads for constructing projections in the DecalProjectors class. Working with Quaternions to specify the orientation of the projection is hard but worth it I promise!
 
+## DecalSettings
+
+This struct represents any extraneous data needed for blitting the decal. You can specify the following within it:
+- The texture name, the name used in the shaders that it expects to override. Defaults to "_DecalColorMap".
+- The *RenderTextureFormat* that the splatmap should use, this can be useful if you need more precision (or less!) than RGBA8.
+- The *RenderTextureReadWrite* mode, allowing you to disable gamma/linear conversions to read/write raw values.
+- *DecalResolution*, to specify an exact texture dimensions, or allow SkinnedMeshDecals to guess based on the texels per meter setting found within SkinnedMeshDecalsSettings.
+- *DilationType*, to specify how dilation should be applied to avoid the rasterization error with seams.
+
+For example if you wanted a high-resolution, single-channel floating point splatmap without dilation, you'd give QueueDecal a DecalSettings like so:
+
+```csharp
+new DecalSettings(decalResolution = new DecalResolution(new Vector2Int(2048,2048)), dilation = DilationType.None, renderTextureFormat = RenderTextureFormat.R32);
+```
+
+See the DecalSettings.cs script to find out more about these settings.
+
 # Technical Feature Description
 
 This package essentially generates textures on meshes, this is an extremely powerful graphical effect that can be used in many ways. Here's a few features that can be added to your project with this technology and a short description on how you'd achieve it.
+
+## Texture Dilation
+
+This decal strategy specifically suffers from a rendering artifact where UV seams won't get painted. The issue is described in great detail [here](https://youtu.be/c7HBxBfCsas?t=329).
+
+Normally this can be solved by enabling Conservative Rasterization, but that is a hardware dependent feature, so we opted for a dilation shader instead.
+
+Any splat maps that were decaled in a frame, will have their dilated versions generated at the end of the frame using the dilation shader specified within the SkinnedMeshDecalsSettings.
 
 ## Memory Management
 
 SkinnedMeshDecals uses VRAM to store all the splat maps used, because VRAM is valuable and limited, SkinnedMeshDecals automatically attempts to budget splatmaps to fit within a specified budget.
 
-512MB allows for about 30 2048x2048 RGBA textures. Dilation being enabled halves it to about 15 2048x2048 RGBA textures.
+512MB allows for about 30 2048x2048 RGBA textures. Dilation being enabled halves it to about 15 2048x2048 RGBA textures. This calculation is an estimate though, as the true capacity will vary depending on compatible in-gpu compression.
 
 It can be really easy to go over the budget, oldest splatmaps are removed first before new splatmaps are allocated. If you want to allow for more than the default memory budget, see *SkinnedMeshDecalsSettings.cs*, and adjust the values of the SO found at `SkinnedMeshDecals/Resources/SkinnedMeshDecalsSettings.asset`.
 
@@ -136,6 +161,8 @@ Since the alpha channel isn't used as an alpha, this requires a custom DecalProj
 This will allow you to create specific shaders with custom color masking, custom color blending, backface culling, while not worrying too much about how decals are actually projected onto meshes.
 
 Please note that since drawing decals are deferred, configuring the material parameters might require cloning or instantiating the material at decal-time.
+
+You will need to specify the dilation type to be DilationType.Additive in your QueueDecal command if alpha doesn't represent an alpha blend.
 
 # Inspired by
 
