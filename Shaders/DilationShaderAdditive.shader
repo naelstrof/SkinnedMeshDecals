@@ -1,72 +1,63 @@
-// Made with Amplify Shader Editor v1.9.3.3
+// Made with Amplify Shader Editor v1.9.9.7
 // Available at the Unity Asset Store - http://u3d.as/y3X 
 Shader "Hidden/Naelstrof/DilationShaderAdditive"
 {
 	Properties
 	{
-		_MainTex("_MainTex", 2D) = "white" {}
+		_MainTex ( "Screen", 2D ) = "black" {}
+		_MainTex( "_MainTex", 2D ) = "white" {}
 
 	}
-	
+
 	SubShader
 	{
-		
-		
-		Tags { "RenderType"="Opaque" }
-	LOD 100
+		LOD 0
 
-		CGINCLUDE
-		#pragma target 3.0
-		ENDCG
-		Blend Off
-		AlphaToMask Off
+		
+
+		ZTest Always
 		Cull Off
-		ColorMask RGBA
-		ZWrite On
-		ZTest LEqual
-		Offset 0 , 0
-		
-		
+		ZWrite Off
+
 		
 		Pass
 		{
-			Name "Unlit"
-
 			CGPROGRAM
 
-			
+			#define ASE_VERSION 19907
 
-			#ifndef UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX
-			//only defining to not throw compilation error over Unity 5.5
-			#define UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input)
-			#endif
-			#pragma vertex vert
+
+			#pragma vertex vert_img_custom
 			#pragma fragment frag
-			#pragma multi_compile_instancing
+			#pragma target 3.5
 			#include "UnityCG.cginc"
-			
+			#define ASE_NEEDS_TEXTURE_COORDINATES0
+			#define ASE_NEEDS_FRAG_TEXTURE_COORDINATES0
 
-			struct appdata
+
+			struct appdata_img_custom
 			{
 				float4 vertex : POSITION;
-				float4 color : COLOR;
-				float4 ase_texcoord : TEXCOORD0;
-				UNITY_VERTEX_INPUT_INSTANCE_ID
+				half2 texcoord : TEXCOORD0;
+				
 			};
-			
-			struct v2f
+
+			struct v2f_img_custom
 			{
-				float4 vertex : SV_POSITION;
-				#ifdef ASE_NEEDS_FRAG_WORLD_POSITION
-				float3 worldPos : TEXCOORD0;
-				#endif
-				float4 ase_texcoord1 : TEXCOORD1;
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-				UNITY_VERTEX_OUTPUT_STEREO
+				float4 pos : SV_POSITION;
+				half2 uv   : TEXCOORD0;
+				half2 stereoUV : TEXCOORD2;
+		#if UNITY_UV_STARTS_AT_TOP
+				half4 uv2 : TEXCOORD1;
+				half4 stereoUV2 : TEXCOORD3;
+		#endif
+				
 			};
 
 			uniform sampler2D _MainTex;
-			float4 _MainTex_TexelSize;
+			uniform half4 _MainTex_TexelSize;
+			uniform half4 _MainTex_ST;
+
 			float4 DilateSample3( float texelDist, float2 uv, sampler2D tex, float2 texTexelSize )
 			{
 				float2 offsets[8] = {float2(-texelDist, 0), float2(texelDist,0),
@@ -86,72 +77,67 @@ Shader "Hidden/Naelstrof/DilationShaderAdditive"
 			}
 			
 
-			
-			v2f vert ( appdata v )
+
+			v2f_img_custom vert_img_custom ( appdata_img_custom v  )
 			{
-				v2f o;
-				UNITY_SETUP_INSTANCE_ID(v);
-				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
-				UNITY_TRANSFER_INSTANCE_ID(v, o);
-
-				o.ase_texcoord1.xy = v.ase_texcoord.xy;
+				v2f_img_custom o;
 				
-				//setting value to unused interpolator channels and avoid initialization warnings
-				o.ase_texcoord1.zw = 0;
-				float3 vertexValue = float3(0, 0, 0);
-				#if ASE_ABSOLUTE_VERTEX_POS
-				vertexValue = v.vertex.xyz;
-				#endif
-				vertexValue = vertexValue;
-				#if ASE_ABSOLUTE_VERTEX_POS
-				v.vertex.xyz = vertexValue;
-				#else
-				v.vertex.xyz += vertexValue;
-				#endif
-				o.vertex = UnityObjectToClipPos(v.vertex);
+				o.pos = UnityObjectToClipPos( v.vertex );
+				o.uv = float4( v.texcoord.xy, 1, 1 );
 
-				#ifdef ASE_NEEDS_FRAG_WORLD_POSITION
-				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+				#if UNITY_UV_STARTS_AT_TOP
+					o.uv2 = float4( v.texcoord.xy, 1, 1 );
+					o.stereoUV2 = UnityStereoScreenSpaceUVAdjust ( o.uv2, _MainTex_ST );
+
+					if ( _MainTex_TexelSize.y < 0.0 )
+						o.uv.y = 1.0 - o.uv.y;
 				#endif
+				o.stereoUV = UnityStereoScreenSpaceUVAdjust ( o.uv, _MainTex_ST );
 				return o;
 			}
-			
-			fixed4 frag (v2f i ) : SV_Target
+
+			half4 frag ( v2f_img_custom i ) : SV_Target
 			{
-				UNITY_SETUP_INSTANCE_ID(i);
-				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
-				fixed4 finalColor;
-				#ifdef ASE_NEEDS_FRAG_WORLD_POSITION
-				float3 WorldPosition = i.worldPos;
+				#ifdef UNITY_UV_STARTS_AT_TOP
+					half2 uv = i.uv2;
+					half2 stereoUV = i.stereoUV2;
+				#else
+					half2 uv = i.uv;
+					half2 stereoUV = i.stereoUV;
 				#endif
-				float texelDist3 = 1.0;
-				float2 texCoord5 = i.ase_texcoord1.xy * float2( 1,1 ) + float2( 0,0 );
+
+				half4 finalColor;
+
+				// ase common template code
+				float texelDist3 = 2.0;
+				float2 texCoord5 = i.uv.xy * float2( 1,1 ) + float2( 0,0 );
 				float2 uv3 = texCoord5;
 				sampler2D tex3 = _MainTex;
 				float2 appendResult7 = (float2(_MainTex_TexelSize.x , _MainTex_TexelSize.y));
 				float2 texTexelSize3 = appendResult7;
 				float4 localDilateSample3 = DilateSample3( texelDist3 , uv3 , tex3 , texTexelSize3 );
 				
-				
+
 				finalColor = localDilateSample3;
+
 				return finalColor;
 			}
 			ENDCG
 		}
 	}
-	CustomEditor "ASEMaterialInspector"
+	CustomEditor "AmplifyShaderEditor.MaterialInspector"
 	
 	Fallback Off
 }
 /*ASEBEGIN
-Version=19303
-Node;AmplifyShaderEditor.TexturePropertyNode;2;-882.0396,19.80602;Inherit;True;Property;_MainTex;_MainTex;0;0;Create;True;0;0;0;False;0;False;None;None;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
-Node;AmplifyShaderEditor.TexelSizeNode;6;-621.5676,200.8369;Inherit;False;-1;1;0;SAMPLER2D;;False;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.RangedFloatNode;4;-477.2756,-130.8202;Inherit;False;Constant;_Float0;Float 0;1;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.TextureCoordinatesNode;5;-787.266,-130.405;Inherit;False;0;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.DynamicAppendNode;7;-379.5673,264.837;Inherit;False;FLOAT2;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT2;0
-Node;AmplifyShaderEditor.CustomExpressionNode;3;-308.6451,-0.6990496;Inherit;False;float2 offsets[8] = {float2(-texelDist, 0), float2(texelDist,0),$float2(0, texelDist), float2(0,-texelDist),$float2(-texelDist, texelDist), float2(texelDist,texelDist),$float2(texelDist, -texelDist), float2(-texelDist,-texelDist)}@$float4 sample = tex2D(tex, uv)@$float4 sampleMax = sample@$for(int i=0@i<8@i++)$ {$	float2 curUV = uv + offsets[i]*texTexelSize.xy@$	float4 offsetSample = tex2D(tex, curUV)@$	sampleMax = max(offsetSample, sampleMax)@$}$sample = sampleMax@$return sample@;4;Create;4;True;texelDist;FLOAT;1;In;;Inherit;False;True;uv;FLOAT2;0,0;In;;Inherit;False;True;tex;SAMPLER2D;;In;;Inherit;False;True;texTexelSize;FLOAT2;0,0;In;;Inherit;False;DilateSample;True;False;0;;False;4;0;FLOAT;1;False;1;FLOAT2;0,0;False;2;SAMPLER2D;;False;3;FLOAT2;0,0;False;1;FLOAT4;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;1;0,0;Float;False;True;-1;2;ASEMaterialInspector;100;5;Hidden/Naelstrof/DilationShaderAdditive;0770190933193b94aaa3065e307002fa;True;Unlit;0;0;Unlit;2;False;True;0;1;False;;0;False;;0;1;False;;0;False;;True;0;False;;0;False;;False;False;False;False;False;False;False;False;False;True;0;False;;True;True;2;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;255;False;;255;False;;255;False;;7;False;;1;False;;1;False;;1;False;;7;False;;1;False;;1;False;;1;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;1;RenderType=Opaque=RenderType;True;2;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;0;;0;0;Standard;1;Vertex Position,InvertActionOnDeselection;1;0;0;1;True;False;;False;0
+Version=19907
+Node;AmplifyShaderEditor.TexelSizeNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;6;-621.5676,200.8369;Inherit;False;-1;Fetch;1;0;SAMPLER2D;;False;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.TexturePropertyNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;2;-882.0396,19.80602;Inherit;True;Property;_MainTex;_MainTex;0;0;Create;True;0;0;0;False;0;False;None;None;False;white;Auto;Texture2D;False;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
+Node;AmplifyShaderEditor.RangedFloatNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;4;-477.2756,-130.8202;Inherit;False;Constant;_Float0;Float 0;1;0;Create;True;0;0;0;False;0;False;2;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.TextureCoordinatesNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;5;-787.266,-130.405;Inherit;False;0;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.DynamicAppendNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;7;-379.5673,264.837;Inherit;False;FLOAT2;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT2;0
+Node;AmplifyShaderEditor.CustomExpressionNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;3;-308.6451,-0.6990496;Inherit;False;float2 offsets[8] = {float2(-texelDist, 0), float2(texelDist,0),$float2(0, texelDist), float2(0,-texelDist),$float2(-texelDist, texelDist), float2(texelDist,texelDist),$float2(texelDist, -texelDist), float2(-texelDist,-texelDist)}@$float4 sample = tex2D(tex, uv)@$float4 sampleMax = sample@$for(int i=0@i<8@i++)$ {$	float2 curUV = uv + offsets[i]*texTexelSize.xy@$	float4 offsetSample = tex2D(tex, curUV)@$	sampleMax = max(offsetSample, sampleMax)@$}$sample = sampleMax@$return sample@;4;Create;4;True;texelDist;FLOAT;1;In;;Inherit;False;True;uv;FLOAT2;0,0;In;;Inherit;False;True;tex;SAMPLER2D;;In;;Inherit;False;True;texTexelSize;FLOAT2;0,0;In;;Inherit;False;DilateSample;True;False;0;;False;4;0;FLOAT;1;False;1;FLOAT2;0,0;False;2;SAMPLER2D;;False;3;FLOAT2;0,0;False;1;FLOAT4;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;9;0,0;Float;False;True;-1;3;AmplifyShaderEditor.MaterialInspector;0;16;Hidden/Naelstrof/DilationShaderAdditive;c71b220b631b6344493ea3cf87110c93;True;SubShader 0 Pass 0;0;0;SubShader 0 Pass 0;1;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;2;False;;False;False;False;False;False;False;False;False;False;False;False;True;2;False;;True;7;False;;False;False;True;0;False;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;False;0;;0;0;Standard;0;0;1;True;False;;False;0
 WireConnection;6;0;2;0
 WireConnection;7;0;6;1
 WireConnection;7;1;6;2
@@ -159,6 +145,6 @@ WireConnection;3;0;4;0
 WireConnection;3;1;5;0
 WireConnection;3;2;2;0
 WireConnection;3;3;7;0
-WireConnection;1;0;3;0
+WireConnection;9;0;3;0
 ASEEND*/
-//CHKSM=A14339459DD3321BF89052F635FB7B91DB3D3615
+//CHKSM=841EE41AC56AA339C0EEFA9CFDFC96AA076AD918
