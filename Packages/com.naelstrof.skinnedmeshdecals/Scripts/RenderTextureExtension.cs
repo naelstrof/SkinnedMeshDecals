@@ -112,8 +112,10 @@ public static class RenderTextureExtension {
             case GraphicsFormat.RGBA_DXT1_UNorm:
             case GraphicsFormat.R_BC4_UNorm:
             case GraphicsFormat.R_BC4_SNorm:
+#if !UNITY_6000_0_OR_NEWER
             case GraphicsFormat.RGB_PVRTC_4Bpp_SRGB:
             case GraphicsFormat.RGB_PVRTC_4Bpp_UNorm:
+#endif
             case GraphicsFormat.RGB_ETC_UNorm:
             case GraphicsFormat.RGB_ETC2_SRGB:
             case GraphicsFormat.RGB_ETC2_UNorm:
@@ -133,8 +135,10 @@ public static class RenderTextureExtension {
             case GraphicsFormat.RGB_BC6H_SFloat:
             case GraphicsFormat.RGBA_BC7_SRGB:
             case GraphicsFormat.RGBA_BC7_UNorm:
+            #if !UNITY_6000_0_OR_NEWER
             case GraphicsFormat.RGBA_PVRTC_4Bpp_SRGB:
             case GraphicsFormat.RGBA_PVRTC_4Bpp_UNorm:
+            #endif
             case GraphicsFormat.RGBA_ETC2_UNorm:
             case GraphicsFormat.RG_EAC_UNorm:
             case GraphicsFormat.RG_EAC_SNorm:
@@ -142,11 +146,13 @@ public static class RenderTextureExtension {
             case GraphicsFormat.RGBA_ASTC4X4_UNorm:
             case GraphicsFormat.RGBA_ASTC4X4_UFloat:
                 return (ulong)(width*height) * 128L / (4L * 4L);
+            #if !UNITY_6000_0_OR_NEWER
             case GraphicsFormat.RGB_PVRTC_2Bpp_SRGB:
             case GraphicsFormat.RGB_PVRTC_2Bpp_UNorm:
             case GraphicsFormat.RGBA_PVRTC_2Bpp_SRGB:
             case GraphicsFormat.RGBA_PVRTC_2Bpp_UNorm:
                 return (ulong)(width*height) * 64L / (8L * 4L);
+            #endif
             case GraphicsFormat.RGBA_ASTC5X5_SRGB:
             case GraphicsFormat.RGBA_ASTC5X5_UNorm:
             case GraphicsFormat.RGBA_ASTC5X5_UFloat:

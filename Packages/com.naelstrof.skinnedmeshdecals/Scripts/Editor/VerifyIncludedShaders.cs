@@ -10,7 +10,7 @@ namespace SkinnedMeshDecals {
 public class VerifyIncludedShaders : AssetPostprocessor {
 #if UNITY_EDITOR
     private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths) {
-        Initialize();
+        //Initialize();
     }
 
     // TODO: Move these to a Resources folder
