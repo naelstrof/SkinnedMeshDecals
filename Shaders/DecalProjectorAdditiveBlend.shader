@@ -1,12 +1,12 @@
-// Made with Amplify Shader Editor v1.9.3.3
+// Made with Amplify Shader Editor v1.9.9.8
 // Available at the Unity Asset Store - http://u3d.as/y3X 
 Shader "Naelstrof/DecalProjectorAdditiveBlend"
 {
 	Properties
 	{
-		[Toggle(_BACKFACECULLING_ON)] _BACKFACECULLING("BACKFACECULLING", Float) = 1
-		_MainTex("MainTex", 2D) = "white" {}
-		[HDR]_Color("Color", Color) = (1,1,1,1)
+		[Toggle( _BACKFACECULLING_ON )] _BACKFACECULLING( "BACKFACECULLING", Float ) = 1
+		_MainTex( "MainTex", 2D ) = "white" {}
+		[HDR] _Color( "Color", Color ) = ( 1, 1, 1, 1 )
 
 	}
 	
@@ -25,6 +25,7 @@ Shader "Naelstrof/DecalProjectorAdditiveBlend"
 		Cull Off
 		ColorMask RGBA
 		ZWrite Off
+		ZClip True
 		ZTest Always
 		
 		
@@ -36,11 +37,13 @@ Shader "Naelstrof/DecalProjectorAdditiveBlend"
 			CGPROGRAM
 
 			#define ASE_ABSOLUTE_VERTEX_POS 1
+			#define ASE_VERSION 19908
 
 
 			#pragma vertex vert
 			#pragma fragment frag
 			#include "UnityCG.cginc"
+			#define ASE_NEEDS_TEXTURE_COORDINATES1
 			#define ASE_NEEDS_VERT_POSITION
 			#pragma multi_compile_local __ _BACKFACECULLING_ON
 
@@ -77,13 +80,13 @@ Shader "Naelstrof/DecalProjectorAdditiveBlend"
 				#else
 				float2 staticSwitch23_g2 = appendResult21_g2;
 				#endif
-				float3 objectToClip33_g2 = UnityObjectToClipPos(v.vertex.xyz).xyz;
+				float4 objectToClip33_g2 = UnityObjectToClipPos( v.vertex.xyz );
 				float3 appendResult26_g2 = (float3(staticSwitch23_g2 , objectToClip33_g2.z));
 				
 				float2 vertexToFrag5_g2 = ( ( (objectToClip33_g2).xy * float2( 0.5,0.5 ) ) + float2( 0.5,0.5 ) );
 				o.ase_texcoord1.xy = vertexToFrag5_g2;
-				float3 objectToClipDir39_g2 = normalize( mul(UNITY_MATRIX_VP, mul(unity_ObjectToWorld, float4(v.ase_normal, 0.0))) );
-				float dotResult9_g2 = dot( objectToClipDir39_g2 , float3(0,0,1) );
+				float3 objectToClipDir39_g2 = normalize( mul( UNITY_MATRIX_VP, mul( unity_ObjectToWorld, float4( v.ase_normal, 0.0 ) ) ).xyz );
+				float dotResult9_g2 = dot( objectToClipDir39_g2 , float3( 0, 0, 1 ) );
 				#ifdef UNITY_UV_STARTS_AT_TOP
 				float staticSwitch42_g2 = dotResult9_g2;
 				#else
@@ -137,17 +140,17 @@ Shader "Naelstrof/DecalProjectorAdditiveBlend"
 			ENDCG
 		}
 	}
-	CustomEditor "ASEMaterialInspector"
+	CustomEditor "AmplifyShaderEditor.MaterialInspector"
 	
 	Fallback Off
 }
 /*ASEBEGIN
-Version=19303
-Node;AmplifyShaderEditor.TexturePropertyNode;108;368,-128;Inherit;True;Property;_MainTex;MainTex;2;0;Create;True;0;0;0;False;0;False;None;None;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
-Node;AmplifyShaderEditor.ColorNode;109;654.8534,-317.6597;Inherit;False;Property;_Color;Color;3;1;[HDR];Create;True;0;0;0;False;0;False;1,1,1,1;1,1,1,1;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.FunctionNode;114;640,-128;Inherit;False;ProjectDecal;0;;2;66b18916e8faf2e499cabbb30e9dd724;0;1;34;SAMPLER2D;0;False;3;FLOAT;43;COLOR;0;FLOAT3;32
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;110;976,-288;Inherit;False;3;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;42;1200,-144;Float;False;True;-1;2;ASEMaterialInspector;100;16;Naelstrof/DecalProjectorAdditiveBlend;928f6a5fbd2e6444ea9bb91fa46f1aa9;True;Unlit;0;0;Unlit;2;True;True;4;1;False;;1;False;;0;1;False;;10;False;;True;0;False;;0;False;;False;False;False;False;False;False;False;False;False;True;0;False;;True;True;2;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;255;False;;255;False;;255;False;;7;False;;1;False;;1;False;;1;False;;7;False;;1;False;;1;False;;1;False;;False;True;2;False;;True;7;False;;True;False;0;False;;0;False;;True;1;RenderType=Opaque=RenderType;True;2;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=ForwardBase;False;False;0;;0;0;Standard;1;Vertex Position,InvertActionOnDeselection;0;0;0;1;True;False;;False;0
+Version=19908
+Node;AmplifyShaderEditor.TexturePropertyNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;108;368,-128;Inherit;True;Property;_MainTex;MainTex;2;0;Create;True;0;0;0;False;0;False;None;None;False;white;Auto;Texture2D;False;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
+Node;AmplifyShaderEditor.ColorNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;109;654.8534,-317.6597;Inherit;False;Property;_Color;Color;3;1;[HDR];Create;True;0;0;0;False;0;False;1,1,1,1;1,1,1,1;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
+Node;AmplifyShaderEditor.FunctionNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;114;640,-128;Inherit;False;ProjectDecal;0;;2;66b18916e8faf2e499cabbb30e9dd724;0;1;34;SAMPLER2D;0;False;3;FLOAT;43;COLOR;0;FLOAT3;32
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;110;976,-288;Inherit;False;3;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;42;1200,-144;Float;False;True;-1;2;AmplifyShaderEditor.MaterialInspector;100;12;Naelstrof/DecalProjectorAdditiveBlend;928f6a5fbd2e6444ea9bb91fa46f1aa9;True;Unlit;0;0;Unlit;2;True;True;4;1;False;;1;False;;0;1;False;;10;False;;True;0;False;;0;False;;False;False;False;False;False;False;False;False;False;True;0;False;;True;True;2;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;255;False;;255;False;;255;False;;7;False;;1;False;;1;False;;1;False;;7;False;;1;False;;1;False;;1;False;;False;True;2;False;;True;7;False;;True;False;0;False;;0;False;;True;1;False;;True;1;RenderType=Opaque=RenderType;True;2;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=ForwardBase;False;False;0;;0;0;Standard;1;Vertex Position;0;0;0;1;True;False;;False;0
 WireConnection;114;34;108;0
 WireConnection;110;0;109;0
 WireConnection;110;1;114;0
@@ -155,4 +158,4 @@ WireConnection;110;2;114;43
 WireConnection;42;0;110;0
 WireConnection;42;1;114;32
 ASEEND*/
-//CHKSM=398871BB40B078F105E77852AF0BC566A469E7F1
+//CHKSM=CD5233B9D47AB3289B4AF3B23EC1B27C59740CE0

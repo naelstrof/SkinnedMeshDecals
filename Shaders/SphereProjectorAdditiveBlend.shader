@@ -1,12 +1,12 @@
-// Made with Amplify Shader Editor v1.9.3.3
+// Made with Amplify Shader Editor v1.9.9.8
 // Available at the Unity Asset Store - http://u3d.as/y3X 
 Shader "Naelstrof/SphereProjectorAdditiveBlend"
 {
 	Properties
 	{
-		[Toggle(_BACKFACECULLING_ON)] _BACKFACECULLING("BACKFACECULLING", Float) = 1
-		_Power("Power", Float) = 1
-		[HDR]_Color("Color", Color) = (1,1,1,1)
+		[Toggle( _BACKFACECULLING_ON )] _BACKFACECULLING( "BACKFACECULLING", Float ) = 1
+		_Power( "Power", Float ) = 1
+		[HDR] _Color( "Color", Color ) = ( 1, 1, 1, 1 )
 
 	}
 	
@@ -25,6 +25,7 @@ Shader "Naelstrof/SphereProjectorAdditiveBlend"
 		Cull Off
 		ColorMask RGBA
 		ZWrite Off
+		ZClip True
 		ZTest Always
 		
 		
@@ -36,11 +37,13 @@ Shader "Naelstrof/SphereProjectorAdditiveBlend"
 			CGPROGRAM
 
 			#define ASE_ABSOLUTE_VERTEX_POS 1
+			#define ASE_VERSION 19908
 
 
 			#pragma vertex vert
 			#pragma fragment frag
 			#include "UnityCG.cginc"
+			#define ASE_NEEDS_TEXTURE_COORDINATES1
 			#define ASE_NEEDS_VERT_POSITION
 			#pragma multi_compile_local __ _BACKFACECULLING_ON
 
@@ -78,12 +81,12 @@ Shader "Naelstrof/SphereProjectorAdditiveBlend"
 				#else
 				float2 staticSwitch30_g1 = appendResult24_g1;
 				#endif
-				float4 objectToClip2_g1 = UnityObjectToClipPos(v.vertex.xyz);
-				float3 objectToClip2_g1NDC = objectToClip2_g1.xyz/objectToClip2_g1.w;
+				float4 objectToClip2_g1 = UnityObjectToClipPos( v.vertex.xyz );
+				float4 objectToClip2_g1NDC = objectToClip2_g1/objectToClip2_g1.w;
 				float3 appendResult32_g1 = (float3(staticSwitch30_g1 , objectToClip2_g1NDC.z));
 				
-				float3 objectToClipDir41_g1 = normalize( mul(UNITY_MATRIX_VP, mul(unity_ObjectToWorld, float4(v.ase_normal, 0.0))) );
-				float dotResult44_g1 = dot( objectToClipDir41_g1 , float3(0,0,1) );
+				float3 objectToClipDir41_g1 = normalize( mul( UNITY_MATRIX_VP, mul( unity_ObjectToWorld, float4( v.ase_normal, 0.0 ) ) ).xyz );
+				float dotResult44_g1 = dot( objectToClipDir41_g1 , float3( 0, 0, 1 ) );
 				#ifdef UNITY_UV_STARTS_AT_TOP
 				float staticSwitch43_g1 = dotResult44_g1;
 				#else
@@ -116,14 +119,14 @@ Shader "Naelstrof/SphereProjectorAdditiveBlend"
 #ifdef ASE_NEEDS_FRAG_WORLD_POSITION
 				float3 WorldPosition = i.worldPos;
 #endif
-				float4 objectToClip2_g1 = UnityObjectToClipPos(i.ase_texcoord1.xyz);
-				float3 objectToClip2_g1NDC = objectToClip2_g1.xyz/objectToClip2_g1.w;
+				float4 objectToClip2_g1 = UnityObjectToClipPos( i.ase_texcoord1.xyz );
+				float4 objectToClip2_g1NDC = objectToClip2_g1/objectToClip2_g1.w;
 				#ifdef UNITY_UV_STARTS_AT_TOP
-				float3 staticSwitch9_g1 = ( ( objectToClip2_g1NDC - float3( 0,0,0.5 ) ) * float3(1,1,2) );
+				float4 staticSwitch9_g1 = ( ( objectToClip2_g1NDC - float4( 0,0,0.5,0 ) ) * float4( float3( 1, 1, 2 ) , 0.0 ) );
 				#else
-				float3 staticSwitch9_g1 = objectToClip2_g1NDC;
+				float4 staticSwitch9_g1 = objectToClip2_g1NDC;
 				#endif
-				float temp_output_27_0_g1 = saturate( pow( saturate( ( 1.0 - distance( float3(0,0,0) , staticSwitch9_g1 ) ) ) , _Power ) );
+				float temp_output_27_0_g1 = saturate( pow( saturate( ( 1.0 - distance( float4( float3( 0, 0, 0 ) , 0.0 ) , staticSwitch9_g1 ) ) ) , _Power ) );
 				float vertexToFrag26_g1 = i.ase_texcoord2.x;
 				#ifdef _BACKFACECULLING_ON
 				float staticSwitch33_g1 = ( temp_output_27_0_g1 * vertexToFrag26_g1 );
@@ -138,19 +141,18 @@ Shader "Naelstrof/SphereProjectorAdditiveBlend"
 			ENDCG
 		}
 	}
-	CustomEditor "ASEMaterialInspector"
 	
 	Fallback Off
 }
 /*ASEBEGIN
-Version=19303
-Node;AmplifyShaderEditor.FunctionNode;153;688,-80;Inherit;False;ProjectDecalSphere;0;;1;0210e53a33ec5d2438280b488af95eff;0;0;2;FLOAT;0;FLOAT3;38
-Node;AmplifyShaderEditor.ColorNode;145;576,-304;Inherit;False;Property;_Color;Color;3;1;[HDR];Create;True;0;0;0;False;0;False;1,1,1,1;1,1,1,1;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;154;880,-304;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;FLOAT;0;False;1;COLOR;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;42;1097.151,-111.8234;Float;False;True;-1;2;ASEMaterialInspector;100;16;Naelstrof/SphereProjectorAdditiveBlend;928f6a5fbd2e6444ea9bb91fa46f1aa9;True;Unlit;0;0;Unlit;2;True;True;4;1;False;;1;False;;0;1;False;;10;False;;True;0;False;;0;False;;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;2;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;255;False;;255;False;;255;False;;7;False;;1;False;;1;False;;1;False;;7;False;;1;False;;1;False;;1;False;;False;True;2;False;;True;7;False;;True;False;0;False;;0;False;;True;1;RenderType=Opaque=RenderType;True;2;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=ForwardBase;False;False;0;;0;0;Standard;1;Vertex Position,InvertActionOnDeselection;0;0;0;1;True;False;;False;0
+Version=19908
+Node;AmplifyShaderEditor.FunctionNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;153;688,-80;Inherit;False;ProjectDecalSphere;0;;1;0210e53a33ec5d2438280b488af95eff;0;0;2;FLOAT;0;FLOAT3;38
+Node;AmplifyShaderEditor.ColorNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;145;576,-304;Inherit;False;Property;_Color;Color;3;1;[HDR];Create;True;0;0;0;False;0;False;1,1,1,1;1,1,1,1;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;154;880,-304;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;FLOAT;0;False;1;COLOR;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;42;1097.151,-111.8234;Float;False;True;-1;2;AmplifyShaderEditor.MaterialInspector;100;12;Naelstrof/SphereProjectorAdditiveBlend;928f6a5fbd2e6444ea9bb91fa46f1aa9;True;Unlit;0;0;Unlit;2;True;True;4;1;False;;1;False;;0;1;False;;10;False;;True;0;False;;0;False;;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;2;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;255;False;;255;False;;255;False;;7;False;;1;False;;1;False;;1;False;;7;False;;1;False;;1;False;;1;False;;False;True;2;False;;True;7;False;;True;False;0;False;;0;False;;True;1;False;;True;1;RenderType=Opaque=RenderType;True;2;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=ForwardBase;False;False;0;;0;0;Standard;1;Vertex Position;0;0;0;1;True;False;;False;0
 WireConnection;154;0;145;0
 WireConnection;154;1;153;0
 WireConnection;42;0;154;0
 WireConnection;42;1;153;38
 ASEEND*/
-//CHKSM=BE9284AA6825E687FA546A4F91AD96BEB51B8C60
+//CHKSM=67496BD7D72EEDB8EF5DF48E9BAE27A25FA991D9

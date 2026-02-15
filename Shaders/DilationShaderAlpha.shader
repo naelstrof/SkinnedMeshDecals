@@ -1,12 +1,11 @@
-// Made with Amplify Shader Editor v1.9.9.7
+// Made with Amplify Shader Editor v1.9.9.8
 // Available at the Unity Asset Store - http://u3d.as/y3X 
 Shader "Hidden/Naelstrof/DilationShaderAlpha"
 {
 	Properties
 	{
 		_MainTex ( "Screen", 2D ) = "black" {}
-		_MainTex( "_MainTex", 2D ) = "white" {}
-
+		
 	}
 
 	SubShader
@@ -24,7 +23,7 @@ Shader "Hidden/Naelstrof/DilationShaderAlpha"
 		{
 			CGPROGRAM
 
-			#define ASE_VERSION 19907
+			#define ASE_VERSION 19908
 
 
 			#pragma vertex vert_img_custom
@@ -133,21 +132,21 @@ Shader "Hidden/Naelstrof/DilationShaderAlpha"
 	Fallback Off
 }
 /*ASEBEGIN
-Version=19907
+Version=19908
 Node;AmplifyShaderEditor.TexelSizeNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;6;-621.5676,200.8369;Inherit;False;-1;Fetch;1;0;SAMPLER2D;;False;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.TexturePropertyNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;2;-882.0396,19.80602;Inherit;True;Property;_MainTex;_MainTex;0;0;Create;True;0;0;0;False;0;False;None;None;False;white;Auto;Texture2D;False;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
 Node;AmplifyShaderEditor.RangedFloatNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;4;-477.2756,-130.8202;Inherit;False;Constant;_Float0;Float 0;1;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.TextureCoordinatesNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;5;-787.266,-130.405;Inherit;False;0;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.DynamicAppendNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;7;-379.5673,264.837;Inherit;False;FLOAT2;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT2;0
+Node;AmplifyShaderEditor.TemplateShaderPropertyNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;10;-960,64;Inherit;False;0;0;_MainTex;Shader;False;0;5;SAMPLER2D;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.CustomExpressionNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;3;-308.6451,-0.6990496;Inherit;False;float2 offsets[8] = {float2(-texelDist, 0), float2(texelDist,0),$float2(0, texelDist), float2(0,-texelDist),$float2(-texelDist, texelDist), float2(texelDist,texelDist),$float2(texelDist, -texelDist), float2(-texelDist,-texelDist)}@$float4 sample = tex2D(tex, uv)@$float maxAlpha = sample.a@$float3 totalColor = sample.rgb * sample.a@$float totalAlpha = 0@$$for(int i=0@i<8@i++)$ {$	float2 curUV = uv + offsets[i]*texTexelSize.xy@$	float4 offsetSample = tex2D(tex, curUV)@$	totalAlpha += offsetSample.a@$	totalColor += offsetSample.rgb * offsetSample.a@$	maxAlpha = max(offsetSample.a, maxAlpha)@$}$return float4(totalColor/totalAlpha, maxAlpha)@;4;Create;4;True;texelDist;FLOAT;1;In;;Inherit;False;True;uv;FLOAT2;0,0;In;;Inherit;False;True;tex;SAMPLER2D;;In;;Inherit;False;True;texTexelSize;FLOAT2;0,0;In;;Inherit;False;DilateSample;True;False;0;;False;4;0;FLOAT;1;False;1;FLOAT2;0,0;False;2;SAMPLER2D;;False;3;FLOAT2;0,0;False;1;FLOAT4;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;9;0,0;Float;False;True;-1;3;AmplifyShaderEditor.MaterialInspector;0;16;Hidden/Naelstrof/DilationShaderAlpha;c71b220b631b6344493ea3cf87110c93;True;SubShader 0 Pass 0;0;0;SubShader 0 Pass 0;1;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;2;False;;False;False;False;False;False;False;False;False;False;False;False;True;2;False;;True;7;False;;False;False;True;0;False;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;False;0;;0;0;Standard;0;0;1;True;False;;False;0
-WireConnection;6;0;2;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;9;0,0;Float;False;True;-1;3;AmplifyShaderEditor.MaterialInspector;0;2;Hidden/Naelstrof/DilationShaderAlpha;c71b220b631b6344493ea3cf87110c93;True;SubShader 0 Pass 0;0;0;SubShader 0 Pass 0;1;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;2;False;;False;False;False;False;False;False;False;False;False;False;False;True;2;False;;True;7;False;;False;False;True;0;False;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;False;0;;0;0;Standard;0;0;1;True;False;;False;0
+WireConnection;6;0;10;0
 WireConnection;7;0;6;1
 WireConnection;7;1;6;2
 WireConnection;3;0;4;0
 WireConnection;3;1;5;0
-WireConnection;3;2;2;0
+WireConnection;3;2;10;0
 WireConnection;3;3;7;0
 WireConnection;9;0;3;0
 ASEEND*/
-//CHKSM=278FEBC93DA386324EC84CBBD83FE851B4F6B2E7
+//CHKSM=ADD129D65A167883BA171291762BB0CA29D326F0
