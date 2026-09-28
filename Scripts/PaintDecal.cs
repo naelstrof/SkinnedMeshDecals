@@ -164,11 +164,13 @@ public static class PaintDecal {
     /// Immediately destroys all decals everywhere. And frees up the memory associated with them.
     /// </summary>
     public static void ClearDecalMaps() {
+        MonoBehaviourHider.DecalCommandProcessor.ClearAllCommands();
         MonoBehaviourHider.DecalableRenderer.ClearAll();
     }
     // This clears the decals and frees memory for the specified renderer.
     // If you wanted to "clean" renderers in a more believable way, you could draw decals in a subtractive mode on the renderer.
     public static void ClearDecalsForRenderer(Renderer r) {
+        MonoBehaviourHider.DecalCommandProcessor.RemoveCommandsForRenderer(r);
         if (r.TryGetComponent(out MonoBehaviourHider.DecalableRenderer info)) {
             info.Release();
         }

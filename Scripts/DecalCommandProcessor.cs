@@ -67,6 +67,17 @@ internal class DecalCommandProcessor : MonoBehaviour {
         DecalableRenderer.TryHitTargetMemory(SkinnedMeshDecalsSettings.TargetMemoryBudgetBits);
     }
 
+    internal static void RemoveCommandsForRenderer(Renderer renderer) {
+        for (int i = decalCommands.Count - 1; i >= 0; i--) {
+            if (decalCommands[i].decalableRenderer.GetRenderer() == renderer) {
+                decalCommands.RemoveAt(i);
+            }
+        }
+    }
+    internal static void ClearAllCommands() {
+        decalCommands.Clear();
+    }
+
     internal static void AddDecalCommand(DecalCommand command) {
         decalCommands.Add(command);
     }
